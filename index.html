@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Mobile-first viewport: no zoom, extend under notches in landscape. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0b1118">
+  <title>Clone Wars: Battle of Naboo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 3D view -->
+  <canvas id="game-canvas"></canvas>
+
+  <!-- ================================================================ HUD -->
+  <div id="hud" class="hidden">
+    <!-- Phase I clone trooper helmet interior: brow, cheek guards and T-visor edges -->
+    <svg id="helmet-frame" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="shell" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#05080c" stop-opacity="0.92"/>
+          <stop offset="1" stop-color="#0a0f15" stop-opacity="0.75"/>
+        </linearGradient>
+      </defs>
+      <!-- Outer shell minus the visor opening (even-odd cut-out). -->
+      <path fill="url(#shell)" fill-rule="evenodd" d="
+        M0,0 H1000 V600 H0 Z
+        M40,90 C120,40 330,28 470,40 L500,58 L530,40 C670,28 880,40 960,90
+        C985,190 990,330 975,440 C960,520 930,575 900,600 H100 C70,575 40,520 25,440
+        C10,330 15,190 40,90 Z"/>
+      <!-- Visor rim highlights (the T-shaped visor outline). -->
+      <path class="visor-edge" d="M40,90 C120,40 330,28 470,40 L500,58 L530,40 C670,28 880,40 960,90"/>
+      <path class="visor-edge faint" d="M25,440 C40,520 70,575 100,600 M975,440 C960,520 930,575 900,600"/>
+    </svg>
+    <div id="visor-glass"></div>
+    <div id="scanlines"></div>
+    <div id="low-health"></div>
+    <div id="damage-flash"></div>
+
+    <!-- Top-left: trooper ID + health -->
+    <div id="health-panel" class="panel">
+      <div class="panel-label">CT-7567 <span class="dim">// 501ST</span></div>
+      <div class="bar-row">
+        <span class="bar-icon">✚</span>
+        <div class="bar"><div id="health-fill"></div><div class="bar-ticks"></div></div>
+        <span id="health-value">100</span>
+      </div>
+    </div>
+
+    <!-- Top-right: score & wave -->
+    <div id="score-panel" class="panel">
+      <div class="panel-label">SCORE</div>
+      <div id="score-value">000000</div>
+      <div class="sub-row">WAVE <span id="wave-value">0</span> <span class="dim">·</span> DROIDS <span id="droids-left">0</span></div>
+    </div>
+
+    <!-- Motion tracker -->
+    <canvas id="radar" width="120" height="120"></canvas>
+
+    <!-- Ammo counter -->
+    <div id="ammo-panel" class="panel">
+      <div class="panel-label">DC-15A <span class="dim">// POWER CELL</span></div>
+      <div class="ammo-row">
+        <span id="ammo-count">30</span><span id="ammo-mag">/30</span>
+        <span class="reserve-wrap"><span class="dim">CELLS</span> <span id="ammo-reserve">150</span></span>
+      </div>
+      <div id="reload-indicator"><span>RELOADING</span><div class="reload-bar"><div id="reload-fill"></div></div></div>
+    </div>
+
+    <!-- Crosshair (gap driven by --gap) + hit marker -->
+    <div id="crosshair">
+      <svg viewBox="-50 -50 100 100" aria-hidden="true">
+        <circle r="1.6" class="dot"/>
+        <path class="arc" d="M-18,-8 A20,20 0 0 1 -8,-18"/>
+        <path class="arc" d="M8,-18 A20,20 0 0 1 18,-8"/>
+        <path class="arc" d="M18,8 A20,20 0 0 1 8,18"/>
+        <path class="arc" d="M-8,18 A20,20 0 0 1 -18,8"/>
+      </svg>
+      <i class="tick t-up"></i><i class="tick t-down"></i><i class="tick t-left"></i><i class="tick t-right"></i>
+    </div>
+    <div id="hitmarker"><i></i><i></i><i></i><i></i></div>
+    <div id="damage-indicator"></div>
+
+    <!-- Centre messages & score popups -->
+    <div id="message"><div id="message-title"></div><div id="message-sub"></div></div>
+    <div id="score-popups"></div>
+    <div id="rotate-hint">↻ Rotate to landscape for the best experience</div>
+  </div>
+
+  <!-- ====================================================== Touch controls -->
+  <div id="touch-controls" class="hidden">
+    <div id="joystick-zone"><div id="joystick-base"><div id="joystick-knob"></div></div><span class="zone-hint">MOVE</span></div>
+    <div id="look-zone"><span class="zone-hint">DRAG TO AIM</span></div>
+    <button id="btn-fire" class="touch-btn" aria-label="Fire">FIRE</button>
+    <button id="btn-reload" class="touch-btn small" aria-label="Reload">⟳</button>
+    <button id="btn-jump" class="touch-btn small" aria-label="Jump">⤒</button>
+    <button id="btn-pause" class="touch-btn tiny" aria-label="Pause">❚❚</button>
+  </div>
+
+  <!-- ============================================================= Menus -->
+  <div id="start-screen" class="screen">
+    <div class="menu-card">
+      <div class="menu-kicker">GRAND ARMY OF THE REPUBLIC</div>
+      <h1>CLONE WARS</h1>
+      <h2>BATTLE OF NABOO</h2>
+      <p class="brief">The Separatists are marching on Theed. Hold the palace courtyard against
+        wave after wave of B1 battle droids. Use the stone barricades for cover.</p>
+
+      <div class="mode-select">
+        <button class="mode-btn" data-mode="mobile"><span class="mode-icon">📱</span>MOBILE<small>Touch controls</small></button>
+        <button class="mode-btn" data-mode="pc"><span class="mode-icon">🖥</span>PC<small>Mouse &amp; keyboard</small></button>
+      </div>
+
+      <div class="controls-help pc-only">
+        <b>WASD</b> move · <b>Mouse</b> aim · <b>Click</b> fire · <b>R</b> reload · <b>Shift</b> sprint · <b>Space</b> jump · <b>Esc</b> pause
+      </div>
+      <div class="controls-help mobile-only">
+        <b>Left thumb</b> move (push fully to sprint) · <b>Right thumb</b> drag to aim · <b>FIRE</b> hold &amp; drag · <b>⟳</b> reload · <b>⤒</b> jump
+      </div>
+
+      <div class="options">
+        <label>Look sensitivity <input id="sensitivity" type="range" min="0.3" max="2.5" step="0.1" value="1"></label>
+        <label class="check"><input id="voice-toggle" type="checkbox" checked> Droid voices</label>
+      </div>
+
+      <button id="btn-start" class="primary-btn">DEPLOY</button>
+      <div class="best">Best score: <span id="best-score">0</span></div>
+    </div>
+  </div>
+
+  <div id="pause-screen" class="screen hidden">
+    <div class="menu-card compact">
+      <h2>PAUSED</h2>
+      <p id="pause-hint" class="brief"></p>
+      <button id="btn-resume" class="primary-btn">RESUME</button>
+      <button id="btn-switch-mode" class="secondary-btn">Switch to <span id="pause-mode-label"></span></button>
+      <button id="btn-restart" class="secondary-btn">Restart</button>
+    </div>
+  </div>
+
+  <div id="gameover-screen" class="screen hidden">
+    <div class="menu-card compact">
+      <div class="menu-kicker danger">TROOPER DOWN</div>
+      <h2>MISSION FAILED</h2>
+      <div class="stats">
+        <div><span>SCORE</span><b id="final-score">0</b></div>
+        <div><span>WAVE</span><b id="final-wave">0</b></div>
+        <div><span>BEST</span><b id="final-best">0</b></div>
+      </div>
+      <button id="btn-retry" class="primary-btn">REDEPLOY</button>
+      <button id="btn-menu" class="secondary-btn">Main menu</button>
+    </div>
+  </div>
+
+  <!-- Three.js (classic build, so the game also runs straight from file://) -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/controls.js"></script>
+  <script src="js/weapons.js"></script>
+  <script src="js/enemies.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
