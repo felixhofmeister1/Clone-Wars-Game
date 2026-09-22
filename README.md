@@ -51,3 +51,7 @@ js/main.js        Renderer, Naboo courtyard, lighting, player movement, HUD, gam
   and a bonus for clearing each wave. Your best score is saved in the browser.
 - **Health and ammo:** clearing a wave restores 25 health and adds 60 power-cell rounds.
 - **Cover:** droids can't hit you through stone, and they only fire when they can see you.
+
+## Also in this repo: Family Portal
+
+[`family-portal/`](family-portal/) is a separate, installable family web app. It has a shared calendar, realtime chat, kudos and a shop, a 3D family island, and a multiplayer arcade with Battleships, Pool and Poker. It runs on Supabase, or in a built-in demo mode that needs no setup. See [`family-portal/README.md`](family-portal/README.md).

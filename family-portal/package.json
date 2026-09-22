@@ -1,0 +1,11 @@
+{
+  "name": "family-portal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Family Portal PWA: calendar, chat, kudos, shop, 3D lobby and a multiplayer arcade on Supabase.",
+  "type": "module",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "test": "node --test tests/rules.test.mjs"
+  }
+}
