@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Invest</title>
+  <meta name="description" content="Stocks, ETFs, crypto, NFTs, commodities, currencies, bonds, real estate, art, collectibles and private markets in one Apple-style app, with real, dated data.">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark light">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Invest">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="css/app.css">
+  <script>
+    // Apply the saved theme before first paint to avoid a flash.
+    (function () {
+      var t = 'system';
+      try { t = (JSON.parse(localStorage.getItem('invest.v1') || '{}').settings || {}).theme || 'system'; } catch (e) {}
+      if (t === 'system') t = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body>
+  <div id="app">
+    <aside id="side" aria-label="Sidebar">
+      <div class="brand"><span class="mark"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-5 4 4 8-9"/><path d="M15 7h5v5"/></svg></span>Invest</div>
+      <button class="side-search" id="side-search" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20 20"/></svg>Search<kbd>/</kbd></button>
+      <nav id="side-nav"></nav>
+      <div class="side-foot" id="side-foot"></div>
+    </aside>
+    <main id="main"><div class="view"><div class="skel" style="height:40px;margin:60px 0 16px;width:50%"></div><div class="skel" style="height:220px"></div></div></main>
+  </div>
+  <nav class="tabbar" id="tabbar" aria-label="Tabs"></nav>
+  <noscript><p style="padding:24px">Invest needs JavaScript to run.</p></noscript>
+
+  <!-- Market data written by the scheduled data job (optional; the app also fetches newer copies). -->
+  <script src="data/market.js" defer></script>
+  <script src="js/catalog.js" defer></script>
+  <script src="js/content.js" defer></script>
+  <script src="js/util.js" defer></script>
+  <script src="js/store.js" defer></script>
+  <script src="js/data.js" defer></script>
+  <script src="js/charts.js" defer></script>
+  <script src="js/tv.js" defer></script>
+  <script src="js/ui.js" defer></script>
+  <script src="js/views/markets.js" defer></script>
+  <script src="js/views/explore.js" defer></script>
+  <script src="js/views/asset.js" defer></script>
+  <script src="js/views/watchlist.js" defer></script>
+  <script src="js/views/portfolio.js" defer></script>
+  <script src="js/views/more.js" defer></script>
+  <script src="js/views/tools.js" defer></script>
+  <script src="js/app.js" defer></script>
+</body>
+</html>

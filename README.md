@@ -51,3 +51,9 @@ js/main.js        Renderer, Naboo courtyard, lighting, player movement, HUD, gam
   and a bonus for clearing each wave. Your best score is saved in the browser.
 - **Health and ammo:** clearing a wave restores 25 health and adds 60 power-cell rounds.
 - **Cover:** droids can't hit you through stone, and they only fire when they can see you.
+
+## Also in this repository: Invest
+
+[`invest/`](invest/) is a separate, Apple-style investing app (stocks, ETFs, crypto, NFTs,
+commodities, currencies, bonds, real estate, art, collectibles and private markets) with real,
+dated market data refreshed by a scheduled GitHub Action. See [`invest/README.md`](invest/README.md).
