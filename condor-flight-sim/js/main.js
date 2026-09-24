@@ -226,7 +226,7 @@
     input.enabled = true;
     input.settings.sensitivity = cfg.sens;
     input.settings.invertThrottle = cfg.invThr;
-    audio.init(); audio.setVolume(cfg.vol); audio.voice = cfg.voice;
+    audio.init(); audio.pause(false); audio.setVolume(cfg.vol); audio.voice = cfg.voice;
     sim.mode = 'flight'; sim.paused = false;
     view.mode = cfg.start === 'cruise' ? 'chase' : 'cockpit';
     if (view.mode !== 'cockpit') view.ext = 'chase';
@@ -344,6 +344,7 @@
     if (sim.mode !== 'flight') return;
     sim.paused = !sim.paused;
     $('pauseMenu').classList.toggle('hidden', !sim.paused);
+    audio.pause(sim.paused);
     if (sim.paused) {
       $('pause-info').textContent = `${plan.dep.city} → ${plan.arr.city} · ${fm.phase} · fuel ${(ac.fuel / 1000).toFixed(1)} t · sim time ${Math.floor(sim.flightTime / 3600)}h${String(Math.floor(sim.flightTime / 60) % 60).padStart(2, '0')}`;
       if (window.speechSynthesis) speechSynthesis.cancel();
@@ -693,7 +694,7 @@
     input.enabled = false;
     $('pauseMenu').classList.add('hidden'); $('report').classList.add('hidden'); $('help').classList.add('hidden');
     $('hud').classList.add('hidden'); $('touch').classList.add('hidden'); $('menu').classList.remove('hidden');
-    if (window.speechSynthesis) speechSynthesis.cancel();
+    audio.pause(true);
     menuAircraft();
   }
 

@@ -153,8 +153,9 @@
       float d = max(-mv.z, 1.0);
       float vis = 1.0;
       if (dot(ldir, ldir) > 0.1) {
-        vec3 toCam = normalize((inverse(modelViewMatrix) * vec4(0.0, 0.0, 0.0, 1.0)).xyz - position);
-        vis = smoothstep(-0.05, 0.35, dot(toCam, normalize(ldir)));
+        // Directional light: compare in view space (camera at the origin).
+        vec3 toCam = normalize(-mv.xyz);
+        vis = smoothstep(-0.05, 0.35, dot(toCam, normalize(normalMatrix * ldir)));
       }
       float px = size * pxScale / d;
       gl_PointSize = clamp(px * (0.6 + 1.6 * night), 1.6 + night * 1.2, 26.0);

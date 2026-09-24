@@ -50,6 +50,11 @@
       this.motor = chain(noise(), 'bandpass', 380, 8);
     }
     setVolume(v) { this.volume = v; if (this.master) this.master.gain.value = v; }
+    pause(on) {
+      if (!this.ctx) return;
+      if (on) { this.ctx.suspend?.(); if (window.speechSynthesis) speechSynthesis.cancel(); }
+      else this.ctx.resume?.();
+    }
 
     /** Continuous sounds from the aircraft state. */
     update(ac, view, dt) {
