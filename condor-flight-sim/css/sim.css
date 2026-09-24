@@ -28,7 +28,7 @@ button { font-family: inherit; cursor: pointer; }
 
 /* ------------------------------------------------------------------ planner */
 #menu { background: linear-gradient(90deg, rgba(8,12,18,0.55), rgba(8,12,18,0.1) 60%, rgba(8,12,18,0.35)); align-items: stretch; justify-content: flex-start; overflow-y: auto; }
-.planner { width: min(1180px, 100%); margin: auto; background: var(--paper); color: var(--ink); border-radius: 18px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.45); }
+.planner { width: min(1180px, 100%); margin: auto; background: var(--paper); color: var(--ink); border-radius: 18px; overflow: clip; box-shadow: 0 30px 80px rgba(0,0,0,0.45); }
 .brand { position: relative; height: 92px; display: flex; align-items: center; padding: 0 28px; overflow: hidden; }
 .brand-stripes { position: absolute; inset: 0; background: repeating-linear-gradient(90deg, var(--liv) 0 14px, var(--paper) 14px 28px); opacity: 0.95; transition: background 0.3s; }
 .brand-text { position: relative; background: var(--paper); padding: 6px 18px 8px; border-radius: 12px; }
@@ -110,6 +110,9 @@ details.adv summary { cursor: pointer; font: 700 13px 'Barlow Condensed', sans-s
 #topbar button { background: rgba(255,255,255,0.08); border: 1px solid var(--hud-line); color: #fff; border-radius: 7px; padding: 4px 9px; font: 600 14px 'Barlow', sans-serif; }
 #topbar button:hover { background: rgba(255,255,255,0.18); }
 .tb-btns { display: flex; gap: 6px; margin-left: auto; }
+#cabinFrame { position: absolute; inset: 0; overflow: hidden; }
+#cabinFrame .win { position: absolute; left: 50%; top: 52%; width: min(62vw, 88vh); height: min(78vh, 110vw); transform: translate(-50%, -50%); border-radius: 42% / 32%;
+  box-shadow: 0 0 0 16px #cfcac0, 0 0 0 26px #bdb7ab, 0 0 0 200vmax #e4e0d7, inset 0 0 40px 6px rgba(0,0,0,0.55); }
 #subtitle { position: absolute; left: 50%; bottom: 22%; transform: translateX(-50%); font: 600 20px 'B612', sans-serif; color: #fff; text-shadow: 0 2px 6px #000; text-align: center; transition: opacity 0.3s; }
 #toast { position: absolute; left: 50%; top: 64px; transform: translateX(-50%); background: var(--hud-bg); border: 1px solid var(--hud-line); border-radius: 10px; padding: 7px 14px; font: 600 15px 'Barlow', sans-serif; opacity: 0; transition: opacity 0.3s; white-space: nowrap; }
 #toast.show { opacity: 1; }
@@ -134,6 +137,8 @@ details.adv summary { cursor: pointer; font: 700 13px 'Barlow Condensed', sans-s
 #touch > * { pointer-events: auto; }
 #t-stick { position: absolute; left: calc(18px + var(--safe-l)); bottom: calc(18px + var(--safe-b)); width: 150px; height: 150px; border-radius: 50%; background: rgba(10,14,20,0.45); border: 2px solid rgba(255,255,255,0.25); touch-action: none; }
 #t-stick span, #t-thrust > span { position: absolute; left: 50%; bottom: -16px; transform: translateX(-50%); font: 700 10px 'Barlow Condensed', sans-serif; letter-spacing: 1.5px; color: rgba(255,255,255,0.7); }
+#t-thrust > span { bottom: auto; top: -30px; }
+body.overlay-open #touch { visibility: hidden; }
 #t-stick-knob { position: absolute; left: 50%; top: 50%; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 50%; background: rgba(255,255,255,0.85); box-shadow: 0 2px 8px rgba(0,0,0,0.5); }
 #t-thrust { position: absolute; right: calc(20px + var(--safe-r)); bottom: calc(24px + var(--safe-b)); width: 70px; height: 190px; touch-action: none; }
 #t-thrust-track { position: absolute; inset: 0 20px; background: rgba(10,14,20,0.5); border: 2px solid rgba(255,255,255,0.25); border-radius: 12px; }
@@ -146,6 +151,7 @@ details.adv summary { cursor: pointer; font: 700 13px 'Barlow Condensed', sans-s
 /* ------------------------------------------------------------------ responsive */
 @media (max-width: 900px) {
   .planner-body { grid-template-columns: 1fr; padding: 14px 16px 20px; }
+  .fly { position: sticky; bottom: 10px; z-index: 5; }
   .brand { height: 76px; }
   .brand-logo { font-size: 34px; }
   .liveries { grid-template-columns: repeat(5, 1fr); gap: 5px; }

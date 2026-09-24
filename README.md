@@ -51,3 +51,13 @@ js/main.js        Renderer, Naboo courtyard, lighting, player movement, HUD, gam
   and a bonus for clearing each wave. Your best score is saved in the browser.
 - **Health and ammo:** clearing a wave restores 25 health and adds 60 power-cell rounds.
 - **Cover:** droids can't hit you through stone, and they only fire when they can see you.
+
+---
+
+## Also in this repo: Condor A330neo Flight Simulator
+
+[`condor-flight-sim/`](condor-flight-sim/) is a browser flight simulator of the Condor Airbus A330-900neo.
+It has all five Condor stripe liveries, the captain's cockpit with working Airbus displays and
+autopilot, outside views, and real airports and terrain. Fly Condor routes such as
+Frankfurt → Johannesburg from take-off to landing. Open `condor-flight-sim/index.html` and see
+[its README](condor-flight-sim/README.md).

@@ -184,6 +184,7 @@
         flapLever: 0, speedbrake: 0, spoilersArmed: false,
         gearDown: true, autobrake: 0,    // 0 off, 1 LO, 2 MED, 3 MAX
         law: 'normal',                   // 'normal' | 'direct'
+        pitchTrim: 0,                    // manual trim switch (-1 nose down .. +1 nose up), direct law
       };
       // Autoflight demand interface (written by the FMGC each step).
       this.ap = { engaged: false, gammaDot: null, pCmd: null, yaw: 0, flare: false };
@@ -529,6 +530,8 @@
         // Pitch trim on ground: the THS keeps its take-off setting until lift-off, then auto-resets after landing.
         if (!air && this.gs < 40 && this.groundTime > 5) this.ths = approach(this.ths, 2.5 * D2R, 0.5 * D2R * dt);
       }
+      // Manual pitch trim (direct law): the THS moves at 0.5°/s while the switch is held.
+      if (direct && c.pitchTrim) this.ths = clamp(this.ths + c.pitchTrim * 0.5 * D2R * dt, P.thsMin, P.thsMax);
       const eCmd = lerp(eGround, eFlight, fb);
       this.elev = approach(this.elev, clamp(eCmd, -P.elevDown, P.elevUp), 45 * D2R * dt);
 

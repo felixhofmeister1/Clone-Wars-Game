@@ -21,6 +21,7 @@
       ['↑ / Num8', 'Sidestick forward (nose down)'], ['↓ / Num2', 'Sidestick back (nose up)'],
       ['← → / Num4 Num6', 'Sidestick roll'], ['Q / E  (Num0 / NumEnter)', 'Rudder & nose-wheel steering'],
       ['Shift (hold) + arrows', 'Fine sidestick input'],
+      ['9 / 0 (hold)', 'Pitch trim nose down / up (direct law only — normal law trims itself)'],
     ]],
     ['Thrust', [
       ['PgUp / PgDn  or  + / −', 'Thrust levers forward / back'],
@@ -138,6 +139,7 @@
       if (k.has('PageDown', 'Minus', 'NumpadSubtract', 'F2')) dThr -= 0.45 * dt;
       if (dThr) { this.throttle = clamp(this.throttle + dThr, 0, 1); this.throttleFromAxis = false; }
       this.reverseHeld = k.has('KeyR');
+      this.trim = (k.has('Digit0') ? 1 : 0) - (k.has('Digit9') ? 1 : 0);
 
       let pitch = this.stick.pitch, roll = this.stick.roll, pedal = this.rudder, tiller = null;
       // ---- gamepad / joystick
@@ -198,7 +200,7 @@
       if (T.brake) brake = 1;
       if (T.throttle != null) { this.throttle = T.throttle; T.throttle = null; this.throttleFromAxis = false; }
       if (T.reverse) this.reverseHeld = true;
-      return { pitch, roll, pedal, tiller, brake, throttle: this.throttle, reverse: this.reverseHeld };
+      return { pitch, roll, pedal, tiller, brake, throttle: this.throttle, reverse: this.reverseHeld, trim: this.trim || 0 };
     }
 
     setDetent(v) { this.throttle = v; this.throttleFromAxis = false; }

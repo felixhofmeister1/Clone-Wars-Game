@@ -109,6 +109,7 @@
         this.roots.push(t);
       }
       this.stats = { drawn: 0, loaded: 0 };
+      this.drawList = []; this.dirty = true; this.lastSelect = 0; this.lastCam = null;
       this.listeners = [];
     }
 
@@ -189,9 +190,9 @@
               const px = g.getImageData(0, 0, 256, 256).data;
               const out = new Float32Array(256 * 256);
               for (let i = 0; i < out.length; i++) out[i] = px[i * 4] * 256 + px[i * 4 + 1] + px[i * 4 + 2] / 256 - 32768;
-              d.data = out; d.state = 'ready'; this.demOk++;
+              d.data = out; d.state = 'ready'; this.demOk++; this.dirty = true;
             } catch (e) { d.state = 'failed'; this.demFail++; }
-          } else { d.state = 'failed'; this.demFail++; if (this.demFail === 12 && !this.demOk) this.status('Elevation data unavailable — flat terrain'); }
+          } else { d.state = 'failed'; this.demFail++; this.dirty = true; if (this.demFail === 12 && !this.demOk) this.status('Elevation data unavailable — flat terrain'); }
           done();
         }),
       });
@@ -251,6 +252,7 @@
             loadImage(prov.url(t.z, t.x, t.y), (img) => {
               done();
               if (t.state === 'evicted') return;
+              this.dirty = true;
               if (img) { t.image = img; t.imgState = 'ready'; this.okCount[provider] = (this.okCount[provider] || 0) + 1; }
               else {
                 t.imgState = 'failed';
@@ -269,6 +271,7 @@
         this.provider = next;
         this.status(next === 'none' ? 'Satellite imagery unavailable — procedural scenery' : `Esri imagery unavailable — using ${PROVIDERS[next].name}`);
         for (const t of this.tiles.values()) if (t.state !== 'ready') { t.state = 'new'; t.imgState = 'new'; }
+        this.dirty = true;
       }
     }
 
@@ -388,58 +391,66 @@
     update(camEcef, frame) {
       this.frame++;
       const camR = Math.hypot(camEcef[0], camEcef[1], camEcef[2]);
+      const alt = camR - Geo.R;
+      // Re-select the tile set only when the camera moved, a tile finished loading, or periodically.
+      const moved = !this.lastCam || dist3(camEcef, this.lastCam) > Math.max(15, Math.abs(alt) * 0.01);
+      if (moved || this.dirty || this.frame - this.lastSelect > 20) {
+        this.dirty = false;
+        this.lastCam = camEcef.slice();
+        this.lastSelect = this.frame;
+        this.select(camEcef, camR);
+      }
+      for (const t of this.drawList) frame.placeEcef(t.mesh, t.center, null);
+      this.imgLoader.pump();
+      this.demLoader.pump();
+      if (this.frame % 60 === 0) this.evict();
+    }
+
+    select(camEcef, camR) {
       const camDir = camEcef.map((v) => v / camR);
       const horizon = Math.acos(clamp(Geo.R / Math.max(camR, Geo.R + 1), -1, 1)) + Math.acos(Geo.R / (Geo.R + 9000));
       const drawList = [];
       const maxZ = PROVIDERS[this.provider].maxZ;
-      const visit = (t, below = 0) => {
-        t.lastUsed = this.frame;
-        // Horizon cull
+      const hidden = (t) => {
         const ang = Math.acos(clamp(t.cDir[0] * camDir[0] + t.cDir[1] * camDir[1] + t.cDir[2] * camDir[2], -1, 1));
-        if (ang - t.angRadius > horizon) return 'hidden';
-        // Progressive refinement: request at most 3 levels below the deepest loaded ancestor.
+        return ang - t.angRadius > horizon;
+      };
+      const visit = (t, below) => {
+        t.lastUsed = this.frame;
+        if (hidden(t)) return;
+        // Progressive refinement: only request/expand a few levels below the deepest loaded ancestor.
         if (t.state === 'new' && below <= 3) this.requestTile(t, camEcef);
         if (t.state === 'loading') this.tryBuild(t);
         const depth = t.ready ? 0 : below + 1;
         const dist = Math.max(0, dist3(t.center, camEcef) - t.angRadius * Geo.R * 0.9);
-        const want = t.z < maxZ && (t.z < ROOT_Z + 1 || dist < t.size * this.lodFactor);
+        const want = t.z < maxZ && depth <= 3 && (t.z < ROOT_Z + 1 || dist < t.size * this.lodFactor);
         if (want) {
           if (!t.children) t.children = [0, 1, 2, 3].map((i) => {
             const c = new Tile(t.z + 1, t.x * 2 + (i & 1), t.y * 2 + (i >> 1), t);
             this.tiles.set(c.key, c);
             return c;
           });
-          // Check readiness of visible children
           let allReady = true;
           for (const c of t.children) {
-            const a = Math.acos(clamp(c.cDir[0] * camDir[0] + c.cDir[1] * camDir[1] + c.cDir[2] * camDir[2], -1, 1));
             c.lastUsed = this.frame;
-            if (a - c.angRadius > horizon) continue;
+            if (hidden(c)) continue;
             if (c.state === 'new' && depth <= 3) this.requestTile(c, camEcef);
             if (c.state === 'loading') this.tryBuild(c);
             if (!c.ready) allReady = false;
           }
           if (allReady || !t.ready) {
             for (const c of t.children) visit(c, depth);
-            if (!allReady && !t.ready) return 'pending';
-            return 'split';
+            return;
           }
         }
         if (t.ready) drawList.push(t);
-        return 'drawn';
       };
-      for (const r of this.roots) visit(r);
-
-      // Visibility & placement
-      for (const t of this.tiles.values()) if (t.mesh) t.mesh.visible = false;
-      for (const t of drawList) {
-        frame.placeEcef(t.mesh, t.center, null);
-        t.mesh.visible = true;
-      }
+      for (const r of this.roots) visit(r, 0);
+      const now = new Set(drawList);
+      for (const t of this.drawList) if (!now.has(t) && t.mesh) t.mesh.visible = false;
+      for (const t of drawList) t.mesh.visible = true;
+      this.drawList = drawList;
       this.stats.drawn = drawList.length;
-      this.imgLoader.pump();
-      this.demLoader.pump();
-      if (this.frame % 60 === 0) this.evict();
     }
 
     evict() {
@@ -469,6 +480,7 @@
       }
       t.mesh = null; t.texture = null; t.image = null;
       t.state = 'evicted';
+      this.drawList = this.drawList.filter((d) => d !== t);
       this.tiles.delete(t.key);
     }
 

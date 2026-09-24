@@ -290,10 +290,10 @@
         break;
       }
       case 'panel': setPanel($('panel2d').classList.contains('hidden')); break;
-      case 'map': $('mapOverlay').classList.toggle('hidden'); break;
+      case 'map': $('mapOverlay').classList.toggle('hidden'); syncOverlayClass(); break;
       case 'timeScale': changeRate(v); break;
       case 'pause': togglePause(); break;
-      case 'help': $('help').classList.toggle('hidden'); break;
+      case 'help': $('help').classList.toggle('hidden'); syncOverlayClass(); break;
       case 'message': toast(v); break;
       case 'lights': sim.lights.landing = !sim.lights.landing; toast(`Landing lights ${sim.lights.landing ? 'ON' : 'OFF'}`); break;
       case 'parkbrakeOff': k.parkingBrake = false; break;
@@ -305,6 +305,12 @@
     if (map[what]) command(...map[what]);
   };
   cockpit.onMaster = () => { fm.apOffWarn = 0; fm.athrOffWarn = 0; };
+
+  function syncOverlayClass() {
+    const open = ['mapOverlay', 'help', 'pauseMenu', 'report'].some((id) => !$(id).classList.contains('hidden'));
+    document.body.classList.toggle('overlay-open', open);
+  }
+  new MutationObserver(syncOverlayClass).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class'] });
 
   function setView(m) {
     view.mode = m;
@@ -355,7 +361,7 @@
         case 'touchdown': {
           const fpm = -e.vs;
           audio.touchdown(fpm);
-          if (!sim.touchdown) sim.touchdown = Object.assign({ fuel: ac.fuel, vapp: fm.perf.vapp, flightTime: sim.flightTime }, e, { ils: fm.ilsDeviation() });
+          if (!sim.touchdown) sim.touchdown = Object.assign({ fuel: ac.fuel, vapp: fm.perf.vapp, flightTime: sim.flightTime, hdg: ac.heading * R2D }, e);
           subtitle(`Touchdown ${Math.round(fpm)} fpm`, 3);
           break;
         }
@@ -408,10 +414,31 @@
     return s;
   }
 
+  /** The runway (of any network airport) that a touchdown point lies on. */
+  function findRunway(lat, lon, hdgDeg) {
+    let best = null;
+    for (const ap of AIRPORTS) {
+      if (Geo.distance(lat, lon, ap.lat, ap.lon) > 9000) continue;
+      for (const rw of ap.runways) for (const e of rw.ends) {
+        const r = FlightPlan.runwayEnd(ap, e.id);
+        if (hdgDeg != null && Math.abs(Geo.wrap180(hdgDeg - r.hdg)) > 50) continue;
+        const ti = Geo.trackInfo(lat, lon, r.thr.lat, r.thr.lon, r.far.lat, r.far.lon);
+        if (Math.abs(ti.xtk) > r.width / 2 + 40 || ti.atk < -600 || ti.atk > r.length + 200) continue;
+        if (!best || Math.abs(ti.xtk) < Math.abs(best.ti.xtk)) best = { ap, r, ti };
+      }
+    }
+    return best;
+  }
+
   function landingReport() {
     const td = sim.touchdown;
-    const rw = plan.arrRwy;
-    const onRwy = Geo.trackInfo(td.lat, td.lon, rw.thr.lat, rw.thr.lon, rw.far.lat, rw.far.lon);
+    const found = findRunway(td.lat, td.lon, td.hdg);
+    if (!found) {
+      ui.showReport({ title: 'Landed off the runway', grade: 'F', stats: [['Touchdown rate', `${Math.round(-td.vs)} fpm`], ...flightStats()], note: 'The aircraft came to rest away from any runway.' });
+      return;
+    }
+    const rw = found.r;
+    const onRwy = found.ti;
     const stop = Geo.trackInfo(ac.lat, ac.lon, rw.thr.lat, rw.thr.lon, rw.far.lat, rw.far.lon);
     const fpm = -td.vs;
     let score = 100;
@@ -424,7 +451,7 @@
     if (dThr > 700) { score -= (dThr - 700) / 20; notes.push('Long landing — aim for the touchdown zone markers 300–600 m in.'); }
     const cl = Math.abs(onRwy.xtk);
     if (cl > 4) score -= (cl - 4) * 2;
-    const dv = td.ias - fm.perf.vapp;
+    const dv = td.ias - (td.vapp || fm.perf.vapp);
     if (Math.abs(dv) > 5) score -= (Math.abs(dv) - 5) * 1.5;
     if (td.gMax > 1.45) score -= (td.gMax - 1.45) * 40;
     if (ac.tailStrike) { score -= 30; notes.push('Tail strike on landing.'); }
@@ -436,8 +463,11 @@
       ['From threshold', `${Math.round(dThr)} m`], ['Centreline', `${onRwy.xtk >= 0 ? 'R' : 'L'} ${cl.toFixed(1)} m`], ['Speed', `${Math.round(td.ias)} kt (${dv >= 0 ? '+' : ''}${Math.round(dv)})`],
       ['Stopped after', `${Math.round(stop.atk - dThr)} m`], ...flightStats(),
     ];
-    ui.showReport({ title: `Welcome to ${plan.arr.city}`, grade, stats, note: `Score ${score}/100. ${notes.join(' ')}` });
-    if (sim.cfg.voice) setTimeout(() => audio.say(`Ladies and gentlemen, welcome to ${plan.arr.city}. On behalf of Condor and the entire crew, thank you for flying with us.`, { pitch: 1, rate: 1.0 }), 1200);
+    const city = found.ap.city;
+    if (found.ap !== plan.arr) notes.push(found.ap === plan.dep ? 'You returned to the departure airport.' : `Diverted to ${city}.`);
+    stats.unshift(['Runway', `${found.ap.iata} ${rw.id}`]);
+    ui.showReport({ title: `Welcome to ${city}`, grade, stats, note: `Score ${score}/100. ${notes.join(' ')}` });
+    if (sim.cfg.voice) setTimeout(() => audio.say(`Ladies and gentlemen, welcome to ${city}. On behalf of Condor and the entire crew, thank you for flying with us.`, { pitch: 1, rate: 1.0 }), 1200);
   }
 
   /* ================================================================ skip ahead */
@@ -729,6 +759,7 @@
     const cabinView = view.mode === 'cabin';
     model.setExteriorVisible(!cockpitView);
     model.parts.fuselage.visible = !cockpitView && !cabinView;
+    $('cabinFrame').classList.toggle('hidden', !cabinView);
     cockpit.group.visible = cockpitView;
     if (cockpitView || cabinView) {
       if (camera.parent !== model.root) model.root.add(camera);
@@ -740,9 +771,10 @@
         camera.fov = view.fov;
         camera.near = 0.03;
       } else {
-        camera.position.set(-7.5, 0.45, 2.55);
-        camera.rotation.set(view.headPitch - 0.08, -Math.PI + 0.25 + view.headYaw, 0);
-        camera.fov = 58; camera.near = 0.05;
+        // Window seat behind the wing on the right side (row ~34)
+        camera.position.set(-12.5, 0.55, 2.45);
+        camera.rotation.set(view.headPitch - 0.02, -Math.PI + 0.62 + view.headYaw, 0);
+        camera.fov = 60; camera.near = 0.05;
       }
     } else {
       if (camera.parent !== scene) scene.add(camera);
@@ -906,6 +938,7 @@
     sim.frameNo++;
     if (!ac) return;
 
+    const T0 = performance.now();
     if (sim.mode === 'flight' && !sim.paused) {
       // Pilot inputs
       const pin = input.update(rdt);
@@ -913,6 +946,7 @@
       const c = ac.controls;
       c.pitch = pin.pitch; c.roll = pin.roll; c.yaw = pin.pedal;
       c.brakeL = c.brakeR = pin.brake;
+      c.pitchTrim = pin.trim;
       if (!(pin.reverse && ac.onGround)) c.throttle = pin.throttle;
       if (sim.cfg.autoRudder && ac.onGround && ac.gs > 20 * KT && Math.abs(pin.pedal) < 0.05) {
         const rw = fm.phase === 'takeoff' || fm.phase === 'preflight' ? plan.depRwy : plan.arrRwy;
@@ -939,6 +973,7 @@
       sim.utc = new Date(sim.utc.getTime() + rdt * 1000);
     }
 
+    const T1 = performance.now();
     // ---------- world & rendering
     placeAircraft();
     const camWorld = new THREE.Vector3();
@@ -964,6 +999,7 @@
     model.update(ac, rdt, sim.lights, sky.night);
     renderer.toneMappingExposure = 0.95 + sky.night * 0.5;
 
+    const T2 = performance.now();
     if (sim.mode === 'flight' && fm) {
       cockpit.update(ac, fm, sky.night);
       // Displays: PFD every other frame, the rest round-robin
@@ -981,10 +1017,17 @@
       updateHud(rdt);
     }
 
+    const T3 = performance.now();
     renderer.clear();
     renderer.render(sky.scene, sky.camera);
     renderer.clearDepth();
     renderer.render(scene, camera);
+    const T4 = performance.now();
+    // Main-thread cost per frame (exponential average, ms): physics, world, avionics+HUD, render
+    const P = sim.perf || (sim.perf = { sim: 0, world: 0, avionics: 0, render: 0, calls: 0, tris: 0 });
+    const k = 0.05;
+    P.sim += (T1 - T0 - P.sim) * k; P.world += (T2 - T1 - P.world) * k; P.avionics += (T3 - T2 - P.avionics) * k; P.render += (T4 - T3 - P.render) * k;
+    P.calls = renderer.info.render.calls; P.tris = renderer.info.render.triangles;
   }
 
   /* ================================================================ boot */
