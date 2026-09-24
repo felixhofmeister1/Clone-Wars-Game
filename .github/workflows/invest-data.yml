@@ -1,0 +1,72 @@
+# Refreshes the Invest app's market data (invest/data/*) from public sources
+# and commits the result back to the branch it runs on.
+#
+# Schedules (UTC) are chosen to work across US daylight-saving changes:
+#   14:45  mid-morning in New York, after the European and Asian sessions
+#   17:30  early afternoon in New York
+#   21:15  after the 4:00 PM ET close (also refreshes history, profiles, macro)
+#   13:00  Saturday and Sunday, for crypto and NFTs
+# Scheduled runs only happen on the repository's default branch.
+# Delete this file (or disable the workflow in the Actions tab) to stop updates.
+name: Invest market data
+
+on:
+  schedule:
+    - cron: '45 14 * * 1-5'
+    - cron: '30 17 * * 1-5'
+    - cron: '15 21 * * 1-5'
+    - cron: '0 13 * * 0,6'
+  workflow_dispatch:
+    inputs:
+      full:
+        description: 'Also refresh history, profiles and macro data'
+        type: boolean
+        default: true
+  push:
+    paths:
+      - 'invest/scripts/**'
+      - 'invest/js/catalog.js'
+      - '.github/workflows/invest-data.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: invest-data-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Fetch market data
+        run: node invest/scripts/update-data.mjs
+        env:
+          COINGECKO_DEMO_KEY: ${{ secrets.COINGECKO_DEMO_KEY }}
+          FORCE_HISTORY: ${{ (github.event_name == 'push' || inputs.full) && '1' || '' }}
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add invest/data
+          if git diff --cached --quiet; then
+            echo "No data changes."
+            exit 0
+          fi
+          git commit -q -m "Update Invest market data" -m "Automated run of invest/scripts/update-data.mjs"
+          for attempt in 1 2 3 4; do
+            if git pull -q --rebase origin "$GITHUB_REF_NAME" && git push -q origin "HEAD:$GITHUB_REF_NAME"; then
+              exit 0
+            fi
+            sleep $((attempt * 5))
+          done
+          echo "Could not push data update" >&2
+          exit 1
