@@ -3120,7 +3120,8 @@ function buildSolar() {
   // Sun
   const sunCol = blackbody(5772);
   const sphere = new THREE.SphereGeometry(1, 128, 64);
-  solar.sunMat = makeStarMaterial(V3(sunCol.r, sunCol.g, sunCol.b), 28, 70, 1);
+  // shown through a warm 'solar filter' tint, as in white-light solar photography
+  solar.sunMat = makeStarMaterial(V3(sunCol.r, sunCol.g, sunCol.b).lerp(V3(1.0, 0.62, 0.28), 0.55), 28, 70, 1);
   solar.sun = new THREE.Mesh(sphere, solar.sunMat);
   scene.add(solar.sun);
   solar.corona = makeCorona(V3(1.0, 0.86, 0.7), true);
