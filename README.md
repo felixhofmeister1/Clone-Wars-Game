@@ -51,10 +51,3 @@ js/main.js        Renderer, Naboo courtyard, lighting, player movement, HUD, gam
   and a bonus for clearing each wave. Your best score is saved in the browser.
 - **Health and ammo:** clearing a wave restores 25 health and adds 60 power-cell rounds.
 - **Cover:** droids can't hit you through stone, and they only fire when they can see you.
-
-## Echoes in the Drywall (UE5 C++)
-
-`EchoesInTheDrywall/` holds a separate Unreal Engine 5 C++ project for a psychological horror
-game: a flashlight with a draining battery, breath holding, perception-driven level shifts and
-a horror audio director. See [`EchoesInTheDrywall/README.md`](EchoesInTheDrywall/README.md).
-It does not affect the browser game above.

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0a0908">
+<title>Echoes in the Drywall</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;600&family=Big+Shoulders+Stencil+Display:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <canvas id="scene" aria-label="First-person view of the apartment"></canvas>
+
+  <div id="hud" hidden>
+    <div id="vignette"></div>
+    <div id="pulse"></div>
+    <p id="objective"></p>
+    <div id="meters">
+      <div class="meter" id="m-breath" hidden>
+        <span class="label" id="breath-label">HOLD</span>
+        <span class="bar"><i id="breath-fill"></i></span>
+      </div>
+      <div class="meter" id="m-cell">
+        <span class="label">CELL</span>
+        <span class="bar"><i id="cell-fill"></i></span>
+        <span class="value" id="cell-pct">60%</span>
+      </div>
+      <div class="meter" id="noise">
+        <span class="label">NOISE</span>
+        <span class="segs"><i class="seg"></i><i class="seg"></i><i class="seg"></i><i class="seg"></i></span>
+      </div>
+    </div>
+    <p id="toast" role="status" aria-live="polite"></p>
+  </div>
+
+  <div id="touch" hidden>
+    <div id="joy-zone"></div>
+    <div id="look-zone"></div>
+    <div id="joy-base" hidden><div id="joy-knob"></div></div>
+    <button id="btn-pause" type="button" aria-label="Pause">II</button>
+    <button id="btn-light" type="button">LIGHT</button>
+    <button id="btn-breath" type="button">BREATH</button>
+  </div>
+
+  <section id="screen-title" class="screen">
+    <div class="sheet">
+      <p class="stamp">1/2 IN. REGULAR GYPSUM BOARD &middot; 4 FT &times; 8 FT &middot; FASTEN 16 IN. O.C.</p>
+      <h1>Echoes in the Drywall</h1>
+      <p class="premise">The last tenant recorded something living inside these walls. Find the three cassette tapes and get out. It hunts by sound.</p>
+      <div class="modes" role="group" aria-label="Controls">
+        <button id="mode-pc" type="button" aria-pressed="true">Computer</button>
+        <button id="mode-mobile" type="button" aria-pressed="false">Phone</button>
+      </div>
+      <dl class="legend" id="legend-pc">
+        <dt>Move</dt><dd>W A S D</dd>
+        <dt>Run</dt><dd>Shift</dd>
+        <dt>Sneak</dt><dd>C</dd>
+        <dt>Look</dt><dd>Mouse</dd>
+        <dt>Flashlight</dt><dd>F</dd>
+        <dt>Hold breath</dt><dd>Hold Space</dd>
+        <dt>Pause</dt><dd>Esc</dd>
+      </dl>
+      <dl class="legend" id="legend-mobile" hidden>
+        <dt>Move</dt><dd>Left thumb: lightly to sneak, fully to run</dd>
+        <dt>Look</dt><dd>Drag the right side</dd>
+        <dt>Flashlight</dt><dd>LIGHT</dd>
+        <dt>Hold breath</dt><dd>Hold BREATH</dd>
+      </dl>
+      <button id="btn-start" class="primary" type="button">Enter the apartment</button>
+      <p class="fine">Headphones on. Sound tells you where it is. <span id="best" hidden></span></p>
+      <p id="rotate-note" hidden>Turn your phone sideways for a wider view.</p>
+    </div>
+  </section>
+
+  <section id="screen-pause" class="screen" hidden>
+    <div class="sheet">
+      <h2>Paused</h2>
+      <p class="premise">It is still in the walls.</p>
+      <div class="stack">
+        <button id="btn-resume" class="primary" type="button">Resume</button>
+        <button id="btn-restart" type="button">Start over</button>
+        <button id="pause-mode" type="button">Switch to phone controls</button>
+        <button id="btn-menu" type="button">Main menu</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="screen-end" class="screen" hidden>
+    <div class="sheet">
+      <h2 id="end-title">It heard you</h2>
+      <p id="end-detail" class="premise"></p>
+      <p id="end-hint" class="fine"></p>
+      <div class="stack">
+        <button id="btn-again" class="primary" type="button">Try again</button>
+        <button id="btn-menu-end" type="button">Main menu</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+<script src="js/systems.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/world.js"></script>
+<script src="js/entity.js"></script>
+<script src="js/input.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
