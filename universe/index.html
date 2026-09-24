@@ -1471,7 +1471,13 @@ function siteViewDir(out) {
 const TIER_VIEW = {
   1: out => siteViewDir(out),
   2: out => litViewDir(world.pos.earth, V3(0, 1, 0).applyQuaternion(world.quat.earth), 18, 42, out),
-  6: out => { const ax = V3().subVectors(M31_POS, GC_POS).normalize(); return out.crossVectors(ax, GAL_Z).normalize().multiplyScalar(Math.cos(38 * DEG)).addScaledVector(GAL_Z, Math.sin(38 * DEG)).normalize(); },
+  6: out => {
+    // look across the Milky Way–Andromeda axis, turned 35° toward M31 so both sit near screen centre
+    const ax = V3().subVectors(M31_POS, GC_POS).normalize();
+    const side = V3().crossVectors(ax, GAL_Z).normalize();
+    const h = side.multiplyScalar(Math.cos(35 * DEG)).addScaledVector(ax, Math.sin(35 * DEG)).normalize();
+    return out.copy(h).multiplyScalar(Math.cos(34 * DEG)).addScaledVector(GAL_Z, Math.sin(34 * DEG)).normalize();
+  },
 };
 const autoTarget = (L, n) => ({
   key: null,
