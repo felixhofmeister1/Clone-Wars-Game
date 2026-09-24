@@ -17,6 +17,7 @@
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; overflow: hidden; background: #0d1117; color: #fff; font-family: 'Barlow', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
 canvas#view { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; touch-action: none; }
+#whiteout { position: fixed; inset: 0; pointer-events: none; opacity: 0; z-index: 1; }
 .hidden { display: none !important; }
 button { font-family: inherit; cursor: pointer; }
 

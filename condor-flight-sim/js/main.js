@@ -74,6 +74,9 @@
   earth.renderOrder = -5;
   scene.add(earth);
 
+  const clouds = new Clouds();
+  scene.add(clouds.mesh);
+
   const avionics = new Avionics();
   const model = new A330Model.AircraftModel('island', { lowQuality: lowQ });
   scene.add(model.root);
@@ -154,6 +157,7 @@
       scene.add(terrain.group);
     }
     ground.lat = 1e9;
+    clouds.configure(weather.clouds.cover, weather.cloudBase, weather.clouds.depth);
     ac = new FDM.Aircraft(makeEnv(weather, dep.lat));
     ac.controls.law = cfg.law || 'normal';
     const rw = plan.depRwy;
@@ -710,6 +714,8 @@
     menuAc.reset({ lat: p.lat, lon: p.lon, heading: rw.hdg, onGround: true, flapLever: 1 });
     menuAc.engines.forEach((e) => { e.n1 = 21; });
     menuAc.gearComp = [0.19, 0.3, 0.3];
+    weather = ui.weather || makeWeather('light', dep, BY.get(cfg.arr));
+    clouds.configure(weather.clouds.cover, weather.cloudBase, weather.clouds.depth);
     ac = menuAc; fm = null;
     view.mode = 'menu';
     sim.utc = utcFor(cfg.time === 'now' ? 'now' : cfg.time, dep);
@@ -984,7 +990,7 @@
     const camE = camEcefFrom(camWorld);
     terrain.setLighting(sky.terrainTint);
     frame.placeEcef(earth, [0, 0, 0], null);
-    earthMat.color.setRGB(0.12, 0.17, 0.2).multiply(sky.terrainTint);
+    earthMat.color.setRGB(0.25, 0.28, 0.25).multiply(sky.terrainTint); // neutral land/sea tone under the haze
     terrain.update(camE, frame);
     // Fog/haze: denser near the ground, thin at cruise altitude
     const altM = Math.max(0, Geo.ecefToLla(camE).h);
@@ -994,6 +1000,15 @@
     scene.fog.far = 140000 + hk * 700000;
     refreshEnv(sky.day, sky.uniforms.horizon.value);
     const camLla = Geo.ecefToLla(camE);
+    clouds.update(frame, camE, camLla, sky);
+    const wo = clouds.inCloud;
+    if (weather) weather.cloudTurb = sim.mode === 'flight' ? wo : 0;
+    if (Math.abs(wo - (sim.woShown || 0)) > 0.01) {
+      sim.woShown = wo;
+      const d = sky.day || 0;
+      $('whiteout').style.opacity = (wo * 0.92).toFixed(3);
+      $('whiteout').style.background = `rgb(${Math.round(40 + 190 * d)},${Math.round(44 + 192 * d)},${Math.round(52 + 196 * d)})`;
+    }
     airports3d.update(rdt, camLla.lat, camLla.lon, frame, camWorld, camera, renderer, sky.night, sky.terrainTint);
     const pxScale = (renderer.getSize(new THREE.Vector2()).y * renderer.getPixelRatio()) / (2 * Math.tan((camera.fov * D2R) / 2));
     model.setPixelScale(pxScale);

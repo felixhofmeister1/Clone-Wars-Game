@@ -38,7 +38,16 @@
         default: return { dir: Geo.wrap360(d + (rnd() - 0.5) * 70), kt: 20, gust: 12 };
       }
     };
-    const w = { kind, dep: surf(dep), arr: surf(arr), turb: kind === 'gusty' ? 1 : kind === 'cross' ? 0.5 : 0.15, phase: rnd() * 100 };
+    const w = { kind, dep: surf(dep), arr: surf(arr), turb: kind === 'gusty' ? 1 : kind === 'cross' ? 0.5 : 0.15, phase: rnd() * 100, cloudTurb: 0 };
+    // Cumulus layer: coverage, base above the local airport elevation, thickness
+    w.clouds = {
+      calm: { cover: 0.08, baseAgl: 5500 * FT, depth: 700 }, light: { cover: 0.28, baseAgl: 4500 * FT, depth: 900 },
+      cross: { cover: 0.45, baseAgl: 3500 * FT, depth: 1100 }, gusty: { cover: 0.62, baseAgl: 2600 * FT, depth: 1400 },
+    }[kind] || { cover: 0.2, baseAgl: 4000 * FT, depth: 900 };
+    w.cloudBase = (lat, lon) => {
+      const near = Geo.distance(lat, lon, dep.lat, dep.lon) < Geo.distance(lat, lon, arr.lat, arr.lon) ? dep : arr;
+      return w.clouds.baseAgl + near.elev * FT;
+    };
     w.isaDev = (lat) => clamp(15 - Math.abs(lat) * 0.38, -6, 14);
     // Wind aloft by latitude: westerlies/jet in mid-latitudes, trade-wind easterlies in the tropics.
     w.aloft = (lat) => {
@@ -62,7 +71,7 @@
       const gust = sw.gust * KT * low * (0.5 + 0.5 * Math.sin(k * 0.37) * Math.sin(k * 0.13 + 1.1));
       const mag = Math.hypot(n, e) || 1;
       n += (n / mag) * gust; e += (e / mag) * gust;
-      const tb = w.turb * (0.6 * low + 0.25);
+      const tb = w.turb * (0.6 * low + 0.25) + w.cloudTurb * 1.6;
       n += tb * (Math.sin(k * 1.7) + Math.sin(k * 2.9 + 2)) * 0.6;
       e += tb * (Math.sin(k * 1.3 + 1) + Math.sin(k * 3.7)) * 0.6;
       const dn = tb * (Math.sin(k * 2.3 + 0.5) + 0.6 * Math.sin(k * 4.1)) * 0.5 * (0.3 + low);
