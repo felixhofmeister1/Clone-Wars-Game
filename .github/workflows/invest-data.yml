@@ -38,7 +38,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
@@ -46,8 +46,25 @@ jobs:
         with:
           node-version: 22
 
-      - name: Fetch market data
-        run: node invest/scripts/update-data.mjs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install yfinance
+        run: pip install --disable-pip-version-check -q "yfinance>=1.7,<2" curl_cffi
+
+      - name: List symbols
+        run: node invest/scripts/update-data.mjs --list-symbols "$RUNNER_TEMP/symbols.json"
+        env:
+          FORCE_HISTORY: ${{ (github.event_name == 'push' || inputs.full) && '1' || '' }}
+
+      - name: Fetch Yahoo Finance data
+        run: python invest/scripts/fetch_yahoo.py "$RUNNER_TEMP/symbols.json" "$RUNNER_TEMP/yahoo.json"
+        timeout-minutes: 20
+        continue-on-error: true
+
+      - name: Fetch other sources and build data files
+        run: node invest/scripts/update-data.mjs --yahoo "$RUNNER_TEMP/yahoo.json"
         env:
           COINGECKO_DEMO_KEY: ${{ secrets.COINGECKO_DEMO_KEY }}
           FORCE_HISTORY: ${{ (github.event_name == 'push' || inputs.full) && '1' || '' }}
