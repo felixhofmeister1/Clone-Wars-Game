@@ -666,6 +666,7 @@
       const up = b.up;
       const gnd = this.ground;
       const wow = [false, false, false];
+      const comp3 = [0, 0, 0];
       let gearLoad = 0;
       const surface = this.env.surface(this.lat, this.lon);
       const muRoll = surface === 'grass' ? 0.06 : 0.015;
@@ -678,6 +679,7 @@
         if (h >= 0) continue;
         let comp = -h;
         wow[i] = true;
+        comp3[i] = comp;
         const vP = add(this.vel, mulMV(M, cross(this.omega, g.p)));
         const vUp = dot(vP, up);
         // Oleo: gas spring + orifice damping that builds up over the first few cm of stroke.
@@ -726,6 +728,7 @@
         else this.crash('Fuselage impact');
       }
       this.wow = wow;
+      this.gearComp = comp3;
       this.gearLoad = gearLoad;
       return { Fb: F, Fe, Mo };
     }

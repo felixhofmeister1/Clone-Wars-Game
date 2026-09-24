@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0d1117">
+  <title>Condor A330neo Flight Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=B612:wght@400;700&family=B612+Mono:wght@400;700&family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/sim.css">
+</head>
+<body>
+  <canvas id="view"></canvas>
+
+  <!-- ============================================================ In-flight HUD -->
+  <div id="hud" class="hidden">
+    <div id="topbar">
+      <div class="tb-route"><b id="tb-from">FRA</b><span class="tb-plane">✈</span><b id="tb-to">JNB</b></div>
+      <div class="tb-cell"><span class="lbl">PHASE</span><span id="tb-phase">PREFLIGHT</span></div>
+      <div class="tb-cell"><span class="lbl">TO GO</span><span id="tb-togo">—</span></div>
+      <div class="tb-cell"><span class="lbl">ETA</span><span id="tb-eta">—</span></div>
+      <div class="tb-cell"><span class="lbl">UTC</span><span id="tb-utc">—</span></div>
+      <div class="tb-time">
+        <button id="tb-slower" title="Slower (Shift+T)">−</button>
+        <span id="tb-rate">1×</span>
+        <button id="tb-faster" title="Faster (T)">+</button>
+        <button id="tb-skip" class="hidden" title="Skip ahead to the top of descent">⏩ T/D</button>
+      </div>
+      <div class="tb-btns">
+        <button id="tb-view" title="Cockpit / outside (C)">👁 <span id="tb-view-name">COCKPIT</span></button>
+        <button id="tb-panel" title="Instruments (I)">▦</button>
+        <button id="tb-map" title="Route map (M)">🗺</button>
+        <button id="tb-help" title="Controls (F1)">?</button>
+        <button id="tb-pause" title="Pause (Esc)">❚❚</button>
+      </div>
+    </div>
+    <div id="subtitle"></div>
+    <div id="toast"></div>
+    <div id="warnbar"></div>
+
+    <!-- Instruments overlay (outside views / on request) -->
+    <div id="panel2d" class="hidden">
+      <div id="fcu2d">
+        <canvas id="fcu-canvas" width="1024" height="220"></canvas>
+      </div>
+      <div id="screens2d">
+        <canvas class="scr" id="pfd2d"></canvas>
+        <canvas class="scr" id="nd2d"></canvas>
+        <canvas class="scr" id="ewd2d"></canvas>
+      </div>
+    </div>
+    <!-- Mini flight strip for outside views when the panel is hidden -->
+    <div id="minidata" class="hidden">
+      <div><span class="lbl">IAS</span><b id="md-ias">0</b></div>
+      <div><span class="lbl">ALT</span><b id="md-alt">0</b></div>
+      <div><span class="lbl">V/S</span><b id="md-vs">0</b></div>
+      <div><span class="lbl">HDG</span><b id="md-hdg">0</b></div>
+      <div><span class="lbl">THR</span><b id="md-thr">IDLE</b></div>
+      <div><span class="lbl">FLAPS</span><b id="md-flaps">0</b></div>
+      <div><span class="lbl">GEAR</span><b id="md-gear">DN</b></div>
+    </div>
+    <div id="mapOverlay" class="hidden"><canvas id="map-canvas" width="900" height="560"></canvas><button class="close" data-close="mapOverlay">×</button></div>
+    <div id="credits"></div>
+    <div id="loading" class="hidden"><div class="spinner"></div><span id="loading-text">Loading scenery…</span></div>
+  </div>
+
+  <!-- ============================================================ Touch controls -->
+  <div id="touch" class="hidden">
+    <div id="t-stick"><div id="t-stick-knob"></div><span>SIDESTICK</span></div>
+    <div id="t-thrust">
+      <div id="t-thrust-track">
+        <span class="det" style="bottom:100%">TOGA</span><span class="det" style="bottom:80%">FLX</span>
+        <span class="det" style="bottom:60%">CL</span><span class="det" style="bottom:0%">IDLE</span>
+        <div id="t-thrust-knob"></div>
+      </div>
+      <span>THRUST</span>
+    </div>
+    <div id="t-buttons">
+      <button data-cmd="gear">GEAR</button>
+      <button data-cmd="flaps" data-val="-1">FLAP −</button>
+      <button data-cmd="flaps" data-val="1">FLAP +</button>
+      <button data-cmd="speedbrakeCycle">SPD BRK</button>
+      <button data-cmd="ap1">AP</button>
+      <button data-cmd="athr">A/THR</button>
+      <button data-cmd="appr">APPR</button>
+      <button id="t-brake" data-hold="brake">BRAKE</button>
+      <button id="t-rev" data-hold="reverse">REV</button>
+      <button id="t-left" data-hold="rudderL">◀</button>
+      <button id="t-right" data-hold="rudderR">▶</button>
+    </div>
+  </div>
+
+  <!-- ============================================================ Flight planner -->
+  <div id="menu" class="screen">
+    <div class="planner">
+      <header class="brand">
+        <div class="brand-stripes"></div>
+        <div class="brand-text">
+          <div class="brand-logo">condor</div>
+          <div class="brand-sub">A330-900neo &middot; Flight Simulator</div>
+        </div>
+      </header>
+      <div class="planner-body">
+        <section class="col">
+          <h3>Route</h3>
+          <div class="row2">
+            <label>From<select id="sel-dep"></select></label>
+            <label>To<select id="sel-arr"></select></label>
+          </div>
+          <div class="row2">
+            <label>Departure runway<select id="sel-deprwy"></select></label>
+            <label>Arrival runway<select id="sel-arrrwy"></select></label>
+          </div>
+          <div class="featured" id="featured"></div>
+
+          <h3>Aircraft</h3>
+          <div class="liveries" id="liveries"></div>
+          <div class="row2">
+            <label>Passengers <output id="out-pax">280</output><input id="in-pax" type="range" min="0" max="310" value="280"></label>
+            <label>Cruise level<select id="sel-fl"></select></label>
+          </div>
+
+          <h3>Flight</h3>
+          <div class="row3">
+            <label>Start<select id="sel-start">
+              <option value="runway">Lined up on the runway</option>
+              <option value="final">On final approach (12 NM)</option>
+              <option value="cruise">In cruise (autopilot on)</option>
+            </select></label>
+            <label>Time<select id="sel-time">
+              <option value="now">Now (real UTC)</option>
+              <option value="morning">Morning</option>
+              <option value="noon">Midday</option>
+              <option value="sunset">Sunset</option>
+              <option value="night">Night</option>
+            </select></label>
+            <label>Weather<select id="sel-wx">
+              <option value="calm">Calm</option>
+              <option value="light" selected>Light winds</option>
+              <option value="cross">15 kt crosswind</option>
+              <option value="gusty">Gusty 20G32 kt</option>
+            </select></label>
+          </div>
+          <details class="adv">
+            <summary>Settings</summary>
+            <div class="row3">
+              <label>Scenery<select id="sel-imagery">
+                <option value="esri">Satellite (Esri)</option>
+                <option value="eox">Satellite (Sentinel-2)</option>
+                <option value="none">Offline (procedural)</option>
+              </select></label>
+              <label>Graphics<select id="sel-quality">
+                <option value="auto">Auto</option><option value="high">High</option><option value="low">Low (phones)</option>
+              </select></label>
+              <label>Controls<select id="sel-controls">
+                <option value="auto">Auto</option><option value="keyboard">Keyboard &amp; mouse</option><option value="touch">Touch</option>
+              </select></label>
+            </div>
+            <div class="row3">
+              <label>Flight law<select id="sel-law">
+                <option value="normal">Normal law (Airbus)</option><option value="direct">Direct law</option>
+              </select></label>
+              <label>Stick sensitivity<input id="in-sens" type="range" min="0.4" max="2" step="0.1" value="1"></label>
+              <label>Volume<input id="in-vol" type="range" min="0" max="1" step="0.05" value="0.8"></label>
+            </div>
+            <div class="row3">
+              <label class="check"><input id="chk-voice" type="checkbox" checked> Callouts &amp; announcements</label>
+              <label class="check"><input id="chk-invthr" type="checkbox"> Invert joystick throttle</label>
+              <label class="check"><input id="chk-autocoord" type="checkbox"> Auto-rudder on the ground</label>
+            </div>
+          </details>
+        </section>
+        <section class="col col-right">
+          <div class="mapwrap"><canvas id="route-map" width="720" height="400"></canvas></div>
+          <div class="summary" id="summary"></div>
+          <button id="btn-fly" class="fly">FLY <span id="fly-route">FRA → JNB</span></button>
+          <div class="hint" id="menu-hint">Keyboard · mouse · gamepad / joystick · touch</div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ Pause -->
+  <div id="pauseMenu" class="screen hidden">
+    <div class="card small">
+      <h2>Paused</h2>
+      <button class="primary" id="btn-resume">Resume</button>
+      <button id="btn-restart">Restart this flight</button>
+      <button id="btn-tomenu">Flight planner</button>
+      <button id="btn-help2">Controls</button>
+      <p class="muted" id="pause-info"></p>
+    </div>
+  </div>
+
+  <!-- ============================================================ Help -->
+  <div id="help" class="screen hidden">
+    <div class="card wide">
+      <h2>Controls</h2>
+      <div id="help-grid"></div>
+      <div class="howto">
+        <h3>How to fly it</h3>
+        <ol>
+          <li><b>Take-off:</b> check flaps 1+F (press <b>F</b>), spoilers armed, autobrake MAX. Release the parking brake (<b>P</b>). Set thrust to <b>FLX</b> (<b>3</b>). Follow the runway centreline with <b>Q/E</b>. At “Rotate” pull back gently (~3°/s) to about 12.5° and follow the green flight-director bars.</li>
+          <li><b>Climb:</b> “Positive climb” → gear up (<b>G</b>). At LVR CLB flashing move the levers to <b>CL</b> (<b>2</b>): autothrust takes over. Engage the autopilot (<b>Z</b>) above 100 ft. Retract flaps on schedule (F / S speeds).</li>
+          <li><b>Cruise:</b> the FMS flies the great-circle route (NAV) and climbs to the FCU altitude. Speed up time with <b>T</b>.</li>
+          <li><b>Descent:</b> at T/D set a lower FCU altitude (<b>End</b>) and push the altitude knob (<b>U</b>). Use the speed brake if the FMA says MORE DRAG.</li>
+          <li><b>Approach:</b> press <b>APPR</b> (<b>A</b>) when cleared; flaps 1–2–3 on schedule, gear down, flaps FULL, arm spoilers (<b>Shift+/</b>) and autobrake (<b>K</b>). Autoland, or disconnect the AP (<b>Z</b>) and hand-fly the ILS.</li>
+          <li><b>Landing:</b> at “Fifty… thirty…” flare gently, at “RETARD” pull the thrust to idle (<b>1</b>). Reverse (<b>R</b>) and brake.</li>
+        </ol>
+      </div>
+      <button class="primary" data-close="help">Close</button>
+    </div>
+  </div>
+
+  <!-- ============================================================ Landing report -->
+  <div id="report" class="screen hidden">
+    <div class="card">
+      <div class="report-head">
+        <div class="kicker" id="rep-kicker">LANDED</div>
+        <h2 id="rep-title">Welcome to Johannesburg</h2>
+        <div class="grade" id="rep-grade">A</div>
+      </div>
+      <div class="stats" id="rep-stats"></div>
+      <p class="muted" id="rep-note"></p>
+      <div class="btnrow">
+        <button class="primary" id="btn-nextleg">Fly the return leg</button>
+        <button id="btn-continue">Keep taxiing</button>
+        <button id="btn-rep-menu">Flight planner</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="boot" class="screen"><div class="spinner"></div><p>Loading the Condor A330neo…</p></div>
+
+  <!-- three.js (classic build, works from file:// and any static server) -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+  <script src="js/data/airports.js"></script>
+  <script src="js/sim/geo.js"></script>
+  <script src="js/sim/fdm.js"></script>
+  <script src="js/sim/flightplan.js"></script>
+  <script src="js/sim/autoflight.js"></script>
+  <script src="js/world/frame.js"></script>
+  <script src="js/world/terrain.js"></script>
+  <script src="js/world/sky.js"></script>
+  <script src="js/world/airports3d.js"></script>
+  <script src="js/aircraft/liveries.js"></script>
+  <script src="js/aircraft/model.js"></script>
+  <script src="js/cockpit/displays.js"></script>
+  <script src="js/cockpit/cockpit3d.js"></script>
+  <script src="js/input.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

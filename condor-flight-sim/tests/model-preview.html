@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>A330 preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
+<style>html,body{margin:0;background:#8fb3d9;overflow:hidden}canvas{display:block}</style></head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+<script src="../js/aircraft/liveries.js"></script>
+<script src="../js/aircraft/model.js"></script>
+<script>
+  const q = new URLSearchParams(location.search);
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  document.body.appendChild(renderer.domElement);
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x8fb3d9);
+  // Gradient environment for reflections
+  const envScene = new THREE.Scene();
+  const envMesh = new THREE.Mesh(new THREE.SphereGeometry(10, 32, 16), new THREE.ShaderMaterial({ side: THREE.BackSide,
+    vertexShader: 'varying vec3 d; void main(){ d = normalize(position); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }',
+    fragmentShader: 'varying vec3 d; void main(){ vec3 sky = mix(vec3(0.75,0.85,0.95), vec3(0.25,0.45,0.8), clamp(d.y,0.,1.)); vec3 gr = vec3(0.35,0.33,0.3); gl_FragColor = vec4(d.y>0.?sky:gr,1.); }' }));
+  envScene.add(envMesh);
+  const pm = new THREE.PMREMGenerator(renderer);
+  scene.environment = pm.fromScene(envScene).texture;
+  scene.add(new THREE.HemisphereLight(0xcfe0ff, 0x5a5448, 1.0));
+  const sun = new THREE.DirectionalLight(0xfff2de, 2.6); sun.position.set(40, 60, 30); scene.add(sun);
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshStandardMaterial({ color: 0x4d4f52, roughness: 0.9 }));
+  ground.rotation.x = -Math.PI / 2; ground.position.y = -5.3; scene.add(ground);
+  const model = new A330Model.AircraftModel(q.get('livery') || 'island');
+  model.root.matrixAutoUpdate = true;
+  scene.add(model.root);
+  const shadow = A330Model.makeShadow(); shadow.matrixAutoUpdate = true; shadow.position.y = -5.28; scene.add(shadow);
+  const cam = new THREE.PerspectiveCamera(+(q.get('fov') || 35), innerWidth / innerHeight, 0.5, 2000);
+  const az = +(q.get('az') || 210) * Math.PI / 180, el = +(q.get('el') || 12) * Math.PI / 180, dist = +(q.get('dist') || 95);
+  const tgt = new THREE.Vector3(+(q.get('tx') || -3), +(q.get('ty') || 0), +(q.get('tz') || 0));
+  cam.position.set(tgt.x + dist * Math.cos(el) * Math.cos(az), tgt.y + dist * Math.sin(el), tgt.z + dist * Math.cos(el) * Math.sin(az));
+  cam.lookAt(tgt);
+  // Fake aircraft state for animation checks
+  const st = { slat: +(q.get('slat') || 0), flap: +(q.get('flap') || 0), ail: +(q.get('ail') || 0) * Math.PI / 180, spoilerSB: +(q.get('sb') || 0), groundSpoiler: +(q.get('gsp') || 0), elev: +(q.get('elev') || 0) * Math.PI / 180, rud: +(q.get('rud') || 0) * Math.PI / 180, ths: 0.03,
+    engines: [{ n1: 30, rev: +(q.get('rev') || 0) }, { n1: 30, rev: +(q.get('rev') || 0) }], gearPos: +(q.get('gear') ?? 1), gearComp: [0.19, 0.3, 0.3], wowMain: true, onGround: true, gs: 0, steer: +(q.get('steer') || 0) * Math.PI / 180 };
+  function frame() { model.update(st, 0.016, { nav: true, beacon: true, strobe: false, landing: true, taxi: true, logo: true }, 0); renderer.render(scene, cam); }
+  const wait = setInterval(() => { if (model.liveryReady) { clearInterval(wait); frame(); frame(); document.title = 'ready'; } }, 50);
+</script></body></html>
