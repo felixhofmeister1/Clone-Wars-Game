@@ -753,6 +753,13 @@ const BODIES = [
     sig: 'A Kuiper Belt world whose heart-shaped nitrogen glacier, Sputnik Planitia, was revealed by the New Horizons flyby in July 2015.' },
 ];
 const BODY = Object.fromEntries(BODIES.map(b => [b.key, b]));
+const BODY_SUB = {
+  sun: 'The star at the centre of the Solar System', mercury: 'Innermost planet', venus: 'Second planet from the Sun',
+  earth: 'Third planet from the Sun', moon: 'Earth’s only natural satellite', mars: 'Fourth planet from the Sun',
+  jupiter: 'Fifth planet · largest in the Solar System', saturn: 'Sixth planet from the Sun', uranus: 'Seventh planet from the Sun',
+  neptune: 'Eighth and outermost planet', pluto: 'Largest known Kuiper Belt object',
+};
+for (const b of BODIES) b.sub = BODY_SUB[b.key];
 for (const b of BODIES) b.tier = b.key === 'earth' || b.key === 'moon' ? 2 : ['sun', 'mercury', 'venus', 'mars'].includes(b.key) ? 3 : 4;
 
 // Regions and probes of the outer Solar System (label anchors are representative points).
@@ -1176,7 +1183,8 @@ const params = {
   timeWarp: 1,
   pixelRatio: Math.min(window.devicePixelRatio || 1, 1.5),
   msaa: true,
-  cloudSteps: 14,
+  adaptive: true,
+  cloudSteps: 12,
   terrainDetail: 0,
   cmbLmax: 8,
   cmbDipole: false,
@@ -2226,7 +2234,7 @@ void main() {
   } else {
     vec3 direct = vSunCol * ndl * vShadow;
     vec3 amb = vSkyAmb * (0.55 + 0.45 * dot(n, up)) + vSunCol * vShadow * 0.035 * alb;
-    col = alb / PI * (direct + amb * 1.8);
+    col = alb / PI * (direct + amb * 3.0);
     if (snowW > 0.0) {
       vec3 hv = normalize(L + v);
       col += snowW * pow(max(dot(n, hv), 0.0), 60.0) * vSunCol * vShadow * 0.08;
@@ -2623,6 +2631,8 @@ function updateEarth(t) {
   _eq.copy(camInvQ).multiply(view.frameQ).multiply(qBody).invert();
   a.uToBody.value.setFromMatrix4(_em.makeRotationFromQuaternion(_eq));
   earth.sunView = sunView;
+  const sunAlt = Math.asin(clamp(camRel.clone().normalize().dot(sunDirW), -1, 1)) / DEG;
+  earth.daylight = smooth(-14, 2, sunAlt) * (1 - smooth(25, 90, altKm));
 }
 const RT_M = 6451e3;
 
@@ -3544,7 +3554,8 @@ function updateStars(t) {
   const u = stars.points.material.uniforms;
   u.uRenderToPc.value = view.d / PC;
   u.uPR.value = renderer.getPixelRatio();
-  u.uOpacity.value = op;
+  const night = 1 - 0.97 * (earth.daylight || 0);
+  u.uOpacity.value = op * night;
   u.uSunFade.value = smooth(12.6, 14.2, L);
   u.uLimit.value = 6.8 + 1.2 * smooth(15.5, 18, L);
   // stellar discs and coronae near named stars
@@ -3567,7 +3578,7 @@ function updateStars(t) {
   stars.sky.visible = so > 0.003;
   const m = new THREE.Matrix3().setFromMatrix4(new THREE.Matrix4().makeRotationFromQuaternion(_sq.copy(view.frameQ).invert()));
   stars.sky.material.uniforms.uRenderToGal.value.multiplyMatrices(_galBasis, m);
-  stars.sky.material.uniforms.uOpacity.value = so;
+  stars.sky.material.uniforms.uOpacity.value = so * night;
 }
 
 /* =====================================================================================
@@ -3594,9 +3605,9 @@ vec3 orbitPos(out float lifeFade) {
   float omega = uVflat * (1.0 - exp(-a / uRcore)) / max(a, 0.05);
   float th;
   if ((kind > 0.5 && kind < 2.5) || kind > 4.5) {
-    float life = kind > 4.5 ? 150.0 : kind > 1.5 ? 25.0 : 70.0;
+    float life = kind > 4.5 ? 35.0 : kind > 1.5 ? 18.0 : 50.0;
     float ph = fract(uTime / life + seed);
-    th = aOrbit.z + (omega - uOmegaP) * life * (ph - 0.4);
+    th = aOrbit.z + (omega - uOmegaP) * life * (ph - 0.3);
     lifeFade = sin(3.14159265 * ph);
   } else {
     th = aOrbit.z + (omega - uOmegaP) * uTime;
@@ -3688,22 +3699,22 @@ class ParticleGalaxy {
         do { a = -o.hR * Math.log(rng() * rng() + 1e-12); } while (a > o.rMax || a < 0.2);
         const young = a > o.barR && rng() < o.young;
         // young stars are born at the arm crests (ellipse ends) and fade within ~150 Myr
-        const th0 = young ? (rng() < 0.5 ? 0 : Math.PI) + rng.gauss() * 0.3 : rng() * 2 * Math.PI;
+        const th0 = young ? (rng() < 0.5 ? 0 : Math.PI) + rng.gauss() * 0.13 : rng() * 2 * Math.PI;
         const T = young ? rng.range(9000, 26000) : (rng() < 0.6 ? rng.range(4200, 5800) : rng.range(5800, 7600));
         const c = blackbody(T);
-        const inten = (young ? 1.1 : 0.42) * rng.range(0.6, 1.25) * o.bright;
+        const inten = (young ? 1.7 : 0.42) * rng.range(0.6, 1.25) * o.bright;
         const h = rng.gauss() * o.hz * (young ? 0.5 : rng() < 0.15 ? 3 : 1) * (1 + 0.8 * Math.exp(-a / 2));
         push(lit, [a, ratio(a), th0, h], [c.r, c.g, c.b, inten], rng.range(0.06, 0.17) * o.sizeScale, young ? 5 : 0);
       }
       for (let i = 0; i < o.nHII; i++) {
         const a = rng.range(o.barR, o.rMax * 0.85);
-        const th0 = (rng() < 0.5 ? 0 : Math.PI) + rng.gauss() * 0.22;
+        const th0 = (rng() < 0.5 ? 0 : Math.PI) + rng.gauss() * 0.12;
         const blue = rng() < 0.28;
         push(lit, [a, ratio(a), th0, rng.gauss() * o.hz * 0.3], blue ? [0.7, 0.82, 1.0, 1.6 * o.bright] : [1.0, 0.3, 0.42, rng.range(1.1, 2.1) * o.bright], rng.range(0.05, 0.15) * o.sizeScale, 2);
       }
       for (let i = 0; i < o.nDust; i++) {
         const a = rng.range(o.barR * 0.9, o.rMax * 0.82);
-        const th0 = (rng() < 0.5 ? 0 : Math.PI) - 0.12 + rng.gauss() * 0.2;
+        const th0 = (rng() < 0.5 ? 0 : Math.PI) - 0.1 + rng.gauss() * 0.12;
         push(dust, [a, ratio(a), th0, rng.gauss() * o.hz * 0.35], [1, 1, 1, rng.range(0.22, 0.42) * o.dustOpacity], rng.range(0.22, 0.5) * o.sizeScale, 1);
       }
     }
@@ -3842,7 +3853,7 @@ function buildMilkyWay() {
   galaxies.mw = new ParticleGalaxy({
     seed: 7, spiral: true, nDisk: 140000, nHII: 7000, nDust: 18000, nBulge: 36000, nGC: 160,
     rMax: 16, hR: 3.2, hz: 0.27, barR: 3.8, barRatio: 0.45, ratio: 0.82, ratioOuter: 0.92, twist: 0.37, tilt0: 27 * DEG,
-    barLen: 4.4, barWidth: 1.3, barFrac: 0.55, bulgeSigma: 0.75, bulgeH: 1.0, bulgeBright: 0.7, sizeScale: 1.0, young: 0.16,
+    barLen: 4.4, barWidth: 1.3, barFrac: 0.55, bulgeSigma: 0.75, bulgeH: 1.0, bulgeBright: 0.7, sizeScale: 1.0, young: 0.24,
     vflat: 0.235, rcore: 1.0, rPattern: 8.2, bright: 1.0, dustOpacity: 1.0,
   });
 }
@@ -3896,10 +3907,10 @@ function buildLocalGroup() {
   const list = [];
   for (const g of LOCAL_GROUP) {
     const p = radecDir(g.ra, g.dec).multiplyScalar(g.kpc);
-    if (g.type === 'dwarf') list.push({ p, c: [1.0, 0.92, 0.8, 0.9], s: g.rk * 0.8 });
-    else list.push({ p, c: g.type === 'spiral' ? [1.0, 0.9, 0.78, 1.6] : [0.8, 0.86, 1.0, 1.2], s: g.rk * 0.45 });
+    if (g.type === 'dwarf') list.push({ p, c: [1.0, 0.92, 0.8, 0.28], s: g.rk * 0.8 });
+    else list.push({ p, c: g.type === 'spiral' ? [1.0, 0.9, 0.78, 0.9] : [0.8, 0.86, 1.0, 0.5], s: g.rk * 0.45 });
   }
-  list.push({ p: GC_POS.clone().divideScalar(KPC), c: [1.0, 0.9, 0.76, 1.8], s: 7 });
+  list.push({ p: GC_POS.clone().divideScalar(KPC), c: [1.0, 0.9, 0.76, 0.9], s: 7 });
   galaxies.halos = glowPoints(list, KPC, 16);
 }
 function buildSupercluster() {
@@ -3949,7 +3960,7 @@ function updateGalaxies() {
   galaxies.m33.update(galaxies.m33.pos, 'm33', galaxies.m33.disc.q, lg, 0.3);
   galaxies.lmc.update(galaxies.lmc.pos, 'lmc', galaxies.lmc.disc.q, win(L, 17.6, 19.2, 24.0, 24.8), 0.25);
   galaxies.smc.update(galaxies.smc.pos, 'smc', galaxies.smc.disc.q, win(L, 17.6, 19.2, 24.0, 24.8), 0.25);
-  updateGlow(galaxies.halos, win(L, 19.6, 20.6, 24.6, 25.4), 40, 2);
+  updateGlow(galaxies.halos, win(L, 19.6, 20.6, 24.6, 25.4), 14, 2);
   updateGlow(galaxies.lsc, win(L, 21.6, 22.6, 24.9, 25.8), 30, 0.3);
 }
 
@@ -4292,7 +4303,7 @@ function buildEntries() {
       minDistance: () => R() * (b.minD || (b.rings ? 1.3 : 1.12)),
       releaseDistance: () => b.releaseD || (b.kepler ? Math.max(world.el[b.key].a * 0.6, R() * 200) : 3e13),
       releaseInward: !!b.releaseInward,
-      sub: b.key === 'sun' ? 'Our star' : b.kind, facts: b.facts, sig: b.sig, fromEarth: b.key !== 'earth', tier: b.tier,
+      sub: b.sub || b.kind, facts: b.facts, sig: b.sig, fromEarth: b.key !== 'earth', tier: b.tier,
       viewDir: out => litViewDir(world.pos[b.key], V3(0, 1, 0).applyQuaternion(world.quat[b.key]), b.rings === 'saturn' ? 24 : 16, 44, out),
     });
   }
@@ -4329,7 +4340,7 @@ function buildEntries() {
     });
   }
   addEntry({
-    key: 'milkyway', name: 'Milky Way', kind: RECORDS.milkyway.kind.replace('Scale tier 5 · ', 'Galaxy · '), cls: 'galaxy', label: [19.7, 23.5], prio: 1,
+    key: 'milkyway', name: 'Milky Way', kind: 'Galaxy · our home', cls: 'galaxy', label: [19.7, 23.5], prio: 1,
     radius: () => 15 * KPC, getPos: out => out.copy(GC_POS), frame: fixedFrame(FRAMES.gal),
     focusDistance: () => 1.05e21, minDistance: () => 1e19, releaseDistance: () => 4e22,
     sub: RECORDS.milkyway.sub, facts: RECORDS.milkyway.facts, sig: RECORDS.milkyway.sig, note: RECORDS.milkyway.note, fromEarth: false, tier: 5,
@@ -4680,7 +4691,8 @@ function buildGUI() {
   fs.add(params, 'galaxyBrightness', 0.2, 3, 0.01).name('Galaxy brightness');
   fs.add(params, 'beltScale', 1, 400, 1).name('Belt body size ×');
   const fq = gui.addFolder('Quality');
-  fq.add(params, 'pixelRatio', 0.5, Math.max(1, Math.min(2, window.devicePixelRatio || 1)), 0.05).name('Pixel ratio').onChange(v => { renderer.setPixelRatio(v); onResize(); });
+  fq.add(params, 'pixelRatio', 0.5, Math.max(1, Math.min(2, window.devicePixelRatio || 1)), 0.05).name('Max pixel ratio').onChange(v => { renderer.setPixelRatio(v); onResize(); });
+  fq.add(params, 'adaptive').name('Adaptive resolution').onChange(v => { if (!v) { renderer.setPixelRatio(params.pixelRatio); onResize(); } });
   fq.add(params, 'msaa').name('MSAA').onChange(() => { buildComposer(); onResize(); });
   fq.add(params, 'cloudSteps', 0, 24, 1).name('Cloud raymarch steps');
   fq.add(params, 'terrainDetail', -3, 2, 0.5).name('Terrain detail bias');
@@ -4781,6 +4793,20 @@ function aimAtSunset() {
   camera.lookAt(0, 0, 0);
   controls.update();
 }
+// Dynamic resolution: trade pixels for frame rate, aiming at 60 fps.
+const perf = { acc: 0, frames: 0, cool: 2 };
+function adaptResolution(dt) {
+  perf.acc += dt; perf.frames++; perf.cool -= dt;
+  if (perf.acc < 1.5) return;
+  const fps = perf.frames / perf.acc;
+  perf.acc = 0; perf.frames = 0;
+  if (!params.adaptive || perf.cool > 0) return;
+  const pr = renderer.getPixelRatio();
+  let next = pr;
+  if (fps < 45 && pr > 0.6) next = Math.max(0.6, pr - 0.15);
+  else if (fps > 58 && pr < params.pixelRatio) next = Math.min(params.pixelRatio, pr + 0.1);
+  if (Math.abs(next - pr) > 1e-3) { renderer.setPixelRatio(next); onResize(); perf.cool = 3; }
+}
 let lastT = performance.now();
 function loop(now) {
   const dt = Math.min(0.1, Math.max(0, (now - lastT) / 1000));
@@ -4802,6 +4828,7 @@ function loop(now) {
   updateLabels();
   updateHUD(dt);
   composer.render(dt);
+  adaptResolution(dt);
   requestAnimationFrame(loop);
 }
 async function boot() {
@@ -4851,7 +4878,7 @@ async function boot() {
     lock: key => lockOn(ENTRY[key]),
     setL: L => { release(true); view.L = L; view.zoomVel = 0; view.focusOffset.set(0, 0, 0); view.frameBlend = 1; },
     entries: ENTRY,
-    setQuality: (pr, clouds) => { params.pixelRatio = pr; params.cloudSteps = clouds; renderer.setPixelRatio(pr); onResize(); },
+    setQuality: (pr, clouds) => { params.adaptive = false; params.pixelRatio = pr; params.cloudSteps = clouds; renderer.setPixelRatio(pr); onResize(); },
   };
   requestAnimationFrame(loop);
   await nextFrame();
