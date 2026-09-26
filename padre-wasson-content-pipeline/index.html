@@ -3,137 +3,202 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Content Pipeline · Padre Wasson Foundation</title>
-<meta name="description" content="Turn raw notes into a bilingual WordPress blog post, social captions and a Mailchimp newsletter, then push drafts to WordPress.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231f5d58'/%3E%3Cpath d='M22.5 17.5c1.6-1.6 3-3.4 3-5.8a5 5 0 0 0-5-5c-1.8 0-3 .6-4.5 2.1-1.5-1.5-2.7-2.1-4.5-2.1a5 5 0 0 0-5 5c0 2.4 1.4 4.2 3 5.8L16 24z' fill='%23f7a256'/%3E%3C/svg%3E">
+<title>Content Studio · Padre Wasson Foundation</title>
+<meta name="description" content="Turn notes, photos and documents into a bilingual WordPress blog post, social captions and a Mailchimp newsletter, then upload everything to WordPress in one go.">
+<meta name="theme-color" content="#1f5d58">
+<link rel="icon" id="favicon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style>
+  /* ---------- Brand theme: two base colors, every shade derived from them (changeable in Settings) ---------- */
+  :root {
+    --brand: #1f5d58;
+    --accent: #e0712a;
+    --on-brand: #ffffff;
+    --on-accent: #ffffff;
+    --brand-50: color-mix(in oklab, var(--brand) 7%, white);
+    --brand-100: color-mix(in oklab, var(--brand) 14%, white);
+    --brand-200: color-mix(in oklab, var(--brand) 28%, white);
+    --brand-300: color-mix(in oklab, var(--brand) 45%, white);
+    --brand-400: color-mix(in oklab, var(--brand) 62%, white);
+    --brand-500: color-mix(in oklab, var(--brand) 78%, white);
+    --brand-600: color-mix(in oklab, var(--brand) 90%, white);
+    --brand-700: var(--brand);
+    --brand-800: color-mix(in oklab, var(--brand) 82%, black);
+    --brand-900: color-mix(in oklab, var(--brand) 64%, black);
+    --brand-950: color-mix(in oklab, var(--brand) 42%, black);
+    --accent-50: color-mix(in oklab, var(--accent) 8%, white);
+    --accent-100: color-mix(in oklab, var(--accent) 16%, white);
+    --accent-200: color-mix(in oklab, var(--accent) 32%, white);
+    --accent-300: color-mix(in oklab, var(--accent) 52%, white);
+    --accent-400: color-mix(in oklab, var(--accent) 76%, white);
+    --accent-500: var(--accent);
+    --accent-600: color-mix(in oklab, var(--accent) 86%, black);
+    --accent-700: color-mix(in oklab, var(--accent) 70%, black);
+  }
+</style>
 <style type="text/tailwindcss">
   @theme {
     --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
     --font-serif: "Source Serif 4", ui-serif, Georgia, "Times New Roman", serif;
-    --color-brand-50: #eef8f6;
-    --color-brand-100: #d5eee9;
-    --color-brand-200: #acdcd3;
-    --color-brand-300: #7cc3b8;
-    --color-brand-400: #4fa69a;
-    --color-brand-500: #338a7f;
-    --color-brand-600: #266f67;
-    --color-brand-700: #1f5d58;
-    --color-brand-800: #1b4a46;
-    --color-brand-900: #173d3a;
-    --color-brand-950: #0b2523;
-    --color-accent-50: #fff6ed;
-    --color-accent-100: #ffe9d3;
-    --color-accent-200: #fdcfa5;
-    --color-accent-300: #fbb070;
-    --color-accent-400: #f7a256;
-    --color-accent-500: #ec7f33;
-    --color-accent-600: #d4661c;
-    --color-accent-700: #b04f18;
+    --color-brand-50: var(--brand-50);
+    --color-brand-100: var(--brand-100);
+    --color-brand-200: var(--brand-200);
+    --color-brand-300: var(--brand-300);
+    --color-brand-400: var(--brand-400);
+    --color-brand-500: var(--brand-500);
+    --color-brand-600: var(--brand-600);
+    --color-brand-700: var(--brand-700);
+    --color-brand-800: var(--brand-800);
+    --color-brand-900: var(--brand-900);
+    --color-brand-950: var(--brand-950);
+    --color-accent-50: var(--accent-50);
+    --color-accent-100: var(--accent-100);
+    --color-accent-200: var(--accent-200);
+    --color-accent-300: var(--accent-300);
+    --color-accent-400: var(--accent-400);
+    --color-accent-500: var(--accent-500);
+    --color-accent-600: var(--accent-600);
+    --color-accent-700: var(--accent-700);
+    --color-on-brand: var(--on-brand);
+    --color-on-accent: var(--on-accent);
   }
   @layer components {
-    .card { @apply rounded-2xl border border-slate-200/80 bg-white shadow-[0_1px_2px_rgba(15,23,42,.04),0_12px_32px_-18px_rgba(15,23,42,.18)]; }
+    .card { @apply rounded-2xl border border-slate-200/70 bg-white shadow-[0_1px_2px_rgba(15,23,42,.04),0_18px_40px_-24px_rgba(15,23,42,.25)] transition-shadow duration-300 hover:shadow-[0_1px_2px_rgba(15,23,42,.05),0_24px_48px_-24px_rgba(15,23,42,.30)]; }
     .card-head { @apply flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 px-5 py-4; }
-    .step { @apply text-[11px] font-semibold uppercase tracking-[.14em] text-brand-600; }
-    .card-title { @apply mt-0.5 text-base font-semibold text-slate-900; }
+    .step { @apply inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[.14em] text-brand-600; }
+    .step-num { @apply grid size-5 place-items-center rounded-full bg-brand-100 text-[10px] font-bold tracking-normal text-brand-800; }
+    .card-title { @apply mt-1 text-[17px] font-semibold tracking-tight text-slate-900; }
     .card-sub { @apply mt-0.5 text-sm text-slate-500; }
     .label { @apply mb-1.5 block text-sm font-medium text-slate-700; }
-    .input { @apply block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/15 disabled:bg-slate-50 disabled:text-slate-500; }
-    .btn { @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold whitespace-nowrap transition select-none focus-visible:outline-none focus-visible:ring-4 disabled:cursor-not-allowed disabled:opacity-50; }
-    .btn-primary { @apply bg-brand-700 text-white shadow-sm hover:bg-brand-800 focus-visible:ring-brand-500/30; }
-    .btn-accent { @apply bg-accent-500 text-white shadow-sm hover:bg-accent-600 focus-visible:ring-accent-500/30; }
-    .btn-secondary { @apply border border-slate-300 bg-white text-slate-700 shadow-sm hover:border-slate-400 hover:bg-slate-50 focus-visible:ring-brand-500/20; }
-    .btn-ghost { @apply text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus-visible:ring-brand-500/20; }
-    .btn-xs { @apply gap-1.5 rounded-md px-2 py-1 text-xs; }
-    .btn-icon { @apply inline-grid size-9 place-items-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/20; }
-    .pill { @apply inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 shadow-sm; }
+    .input { @apply block w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/15 disabled:bg-slate-50 disabled:text-slate-500; }
+    .btn { @apply relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-xl px-3.5 py-2 text-sm font-semibold whitespace-nowrap transition duration-200 select-none focus-visible:outline-none focus-visible:ring-4 active:scale-[.97] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100; }
+    .btn-primary { @apply bg-brand-700 text-on-brand shadow-sm shadow-brand-900/20 hover:bg-brand-800 hover:shadow-md focus-visible:ring-brand-500/30; }
+    .btn-accent { @apply bg-accent-500 text-on-accent shadow-lg shadow-accent-600/25 hover:bg-accent-600 hover:shadow-xl hover:shadow-accent-600/30 focus-visible:ring-accent-500/30; }
+    .btn-secondary { @apply border border-slate-300 bg-white text-slate-700 shadow-sm hover:border-brand-300 hover:bg-brand-50 hover:text-brand-800 focus-visible:ring-brand-500/20; }
+    .btn-ghost { @apply text-slate-600 hover:bg-brand-50 hover:text-brand-800 focus-visible:ring-brand-500/20; }
+    .btn-xs { @apply gap-1.5 rounded-lg px-2.5 py-1 text-xs; }
+    .btn-icon { @apply inline-grid size-9 place-items-center rounded-xl text-slate-500 transition hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/20 active:scale-95; }
+    .pill { @apply inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 shadow-sm transition hover:border-brand-200; }
     .dot { @apply inline-block size-2 shrink-0 rounded-full bg-slate-300; }
     .chip { @apply inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600; }
-    .copy-btn { @apply inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-600 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/20; }
+    .copy-btn { @apply inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-600 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/20 active:scale-95; }
     .copy-btn.copied { @apply border-emerald-300 bg-emerald-50 text-emerald-700; }
-    .tab { @apply relative -mb-px inline-flex items-center gap-2 border-b-2 border-transparent px-3 py-3 text-sm font-medium whitespace-nowrap text-slate-500 transition hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/30; }
-    .tab[aria-selected="true"] { @apply border-brand-600 text-brand-800; }
-    .count { @apply rounded-full bg-slate-100 px-1.5 py-px text-[11px] font-semibold text-slate-500; }
+    .tab { @apply relative inline-flex items-center gap-2 px-3 py-3.5 text-sm font-medium whitespace-nowrap text-slate-500 transition-colors hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/30; }
+    .tab[aria-selected="true"] { @apply text-brand-800; }
+    .count { @apply rounded-full bg-slate-100 px-1.5 py-px text-[11px] font-semibold text-slate-500 transition-colors; }
     .tab[aria-selected="true"] .count { @apply bg-brand-100 text-brand-800; }
     .seg { @apply grid gap-1 rounded-xl bg-slate-100 p-1; }
     .seg-item { @apply block cursor-pointer rounded-lg px-3 py-2 text-center text-sm font-medium text-slate-600 transition hover:text-slate-900 peer-checked:bg-white peer-checked:text-brand-800 peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-brand-500/40; }
-    .lang-btn { @apply rounded-md px-2.5 py-1 text-xs font-semibold text-slate-500 transition hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 disabled:cursor-not-allowed disabled:opacity-40; }
+    .lang-btn { @apply rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-500 transition hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 disabled:cursor-not-allowed disabled:opacity-40; }
     .lang-btn[aria-pressed="true"] { @apply bg-white text-brand-800 shadow-sm; }
     .meta { @apply text-xs text-slate-500 tabular-nums; }
     .ok { @apply text-emerald-700; }
     .warn { @apply text-amber-700; }
+    .check-row { @apply flex cursor-pointer items-start gap-2.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 transition hover:border-brand-200 hover:bg-brand-50/40 has-[:checked]:border-brand-300 has-[:checked]:bg-brand-50/60; }
   }
 </style>
 <style>
   [hidden] { display: none !important; }
-  :root {
-    --pw-brand-50: #eef8f6; --pw-brand-100: #d5eee9; --pw-brand-300: #7cc3b8; --pw-brand-600: #266f67;
-    --pw-brand-700: #1f5d58; --pw-brand-800: #1b4a46; --pw-accent-400: #f7a256; --pw-accent-500: #ec7f33;
-  }
-  html { -webkit-text-size-adjust: 100%; }
-  body { background: #f5f7f6; }
-  body { background-image: radial-gradient(1200px 400px at 85% -120px, rgba(51,138,127,.10), transparent 70%), radial-gradient(900px 360px at -10% -80px, rgba(236,127,51,.07), transparent 70%); background-repeat: no-repeat; }
-  ::selection { background: #acdcd3; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body { background: #f4f6f5; }
+  ::selection { background: var(--brand-200); }
+  input[type="checkbox"] { accent-color: var(--brand-700); }
+
+  /* Hero band */
+  .hero { background:
+      radial-gradient(700px 260px at 88% 10%, color-mix(in oklab, var(--accent) 32%, transparent), transparent 70%),
+      radial-gradient(520px 240px at 8% 120%, color-mix(in oklab, var(--brand-400) 40%, transparent), transparent 70%),
+      linear-gradient(135deg, var(--brand-950), var(--brand-800) 55%, var(--brand-700)); }
+  .hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5;
+    background-image: radial-gradient(rgba(255,255,255,.12) 1px, transparent 1px); background-size: 22px 22px;
+    mask-image: linear-gradient(to bottom, black, transparent 90%); }
 
   /* Blog preview (mirrors typical WordPress theme typography) */
   .pw-article { font-family: "Source Serif 4", ui-serif, Georgia, serif; font-size: 1.075rem; line-height: 1.75; color: #1e293b; padding: 1.5rem 1.75rem 1.75rem; min-height: 14rem; outline: none; overflow-wrap: anywhere; }
   .pw-article > * + * { margin-top: 1em; }
-  .pw-article h2 { font-family: "Inter", ui-sans-serif, system-ui, sans-serif; font-size: 1.28rem; line-height: 1.3; font-weight: 700; color: #102f2c; letter-spacing: -.01em; margin-top: 1.8em; }
-  .pw-article h3 { font-family: "Inter", ui-sans-serif, system-ui, sans-serif; font-size: 1.08rem; line-height: 1.35; font-weight: 700; color: #102f2c; }
+  .pw-article h2 { font-family: "Inter", ui-sans-serif, system-ui, sans-serif; font-size: 1.28rem; line-height: 1.3; font-weight: 700; color: var(--brand-900); letter-spacing: -.01em; margin-top: 1.8em; }
+  .pw-article h3 { font-family: "Inter", ui-sans-serif, system-ui, sans-serif; font-size: 1.08rem; line-height: 1.35; font-weight: 700; color: var(--brand-900); }
   .pw-article .pw-lead { font-size: 1.18rem; color: #334155; }
   .pw-article ul, .pw-article ol { padding-left: 1.4em; }
   .pw-article ul { list-style: disc; }
   .pw-article ol { list-style: decimal; }
   .pw-article li + li { margin-top: .35em; }
-  .pw-article li::marker { color: var(--pw-brand-600); }
-  .pw-article blockquote { border-left: 4px solid var(--pw-accent-400); padding: .2em 0 .2em 1.1em; font-style: italic; color: #334155; }
-  .pw-article a { color: var(--pw-brand-700); text-decoration: underline; text-underline-offset: 3px; }
-  .pw-article .pw-cta { margin-top: 2em; border-radius: 1rem; background: var(--pw-brand-50); border: 1px solid var(--pw-brand-100); padding: 1.25rem 1.5rem; }
+  .pw-article li::marker { color: var(--brand-600); }
+  .pw-article blockquote { border-left: 4px solid var(--accent-400); padding: .2em 0 .2em 1.1em; font-style: italic; color: #334155; }
+  .pw-article a { color: var(--brand-700); text-decoration: underline; text-underline-offset: 3px; }
+  .pw-article .pw-cta { margin-top: 2em; border-radius: 1rem; background: var(--brand-50); border: 1px solid var(--brand-100); padding: 1.25rem 1.5rem; }
   .pw-article .pw-cta > * + * { margin-top: .5em; }
-  .pw-article .pw-cta h3 { margin-top: 0; color: var(--pw-brand-800); }
+  .pw-article .pw-cta h3 { margin-top: 0; color: var(--brand-800); }
   .pw-article .pw-cta-btn { margin-top: 1em !important; }
-  .pw-article .pw-cta-btn a { display: inline-block; background: var(--pw-accent-500); color: #fff; font-family: "Inter", ui-sans-serif, system-ui, sans-serif; font-weight: 600; font-size: .95rem; padding: .6em 1.35em; border-radius: 999px; text-decoration: none; }
+  .pw-article .pw-cta-btn a { display: inline-block; background: var(--accent-500); color: var(--on-accent); font-family: "Inter", ui-sans-serif, system-ui, sans-serif; font-weight: 600; font-size: .95rem; padding: .6em 1.35em; border-radius: 999px; text-decoration: none; }
 
   /* Email preview */
   .pw-email { font-family: "Source Serif 4", Georgia, serif; font-size: 1.02rem; line-height: 1.7; color: #1f2937; }
   .pw-email p + p { margin-top: 1em; }
-  .pw-email-btn { display: inline-block; background: var(--pw-accent-500); color: #fff; font-family: "Inter", Arial, sans-serif; font-weight: 700; font-size: .95rem; padding: .75em 1.6em; border-radius: 999px; min-width: 6rem; outline: none; }
+  .pw-email-btn { display: inline-block; background: var(--accent-500); color: var(--on-accent); font-family: "Inter", Arial, sans-serif; font-weight: 700; font-size: .95rem; padding: .75em 1.6em; border-radius: 999px; min-width: 6rem; outline: none; }
 
   [contenteditable] { outline: none; }
   [contenteditable]:hover { box-shadow: inset 0 0 0 1px #e2e8f0; }
-  [contenteditable]:focus { box-shadow: inset 0 0 0 2px var(--pw-brand-300); border-radius: .5rem; }
-  .pw-email-btn[contenteditable]:focus { box-shadow: 0 0 0 3px var(--pw-brand-300); border-radius: 999px; }
+  [contenteditable]:focus { box-shadow: inset 0 0 0 2px var(--brand-300); border-radius: .5rem; }
+  .pw-email-btn[contenteditable]:focus { box-shadow: 0 0 0 3px var(--brand-300); border-radius: 999px; }
 
+  /* File tiles */
+  .tile { transition: transform .2s ease, box-shadow .2s ease, opacity .25s ease, filter .25s ease; }
+  .tile:hover { transform: translateY(-2px); box-shadow: 0 10px 22px -12px rgba(15,23,42,.35); }
+  .tile.is-off { opacity: .5; filter: grayscale(.7); }
+  .tile.is-off:hover { opacity: .8; }
+  .tile[aria-checked="true"] { box-shadow: 0 0 0 2px var(--brand-500); }
+  .tile[aria-checked="true"]:hover { box-shadow: 0 0 0 2px var(--brand-500), 0 10px 22px -12px rgba(15,23,42,.35); }
+  .tile:focus-visible { box-shadow: 0 0 0 4px color-mix(in oklab, var(--brand) 45%, transparent) !important; }
+  .dropzone.is-over { border-color: var(--brand-500); background: var(--brand-50); box-shadow: 0 0 0 6px color-mix(in oklab, var(--brand) 12%, transparent); transform: scale(1.01); }
+  .progress-fill { background: linear-gradient(90deg, var(--brand-500), var(--accent-500)); transition: width .25s ease; }
+
+  /* Motion */
   .spin { animation: pwspin .8s linear infinite; }
   @keyframes pwspin { to { transform: rotate(360deg); } }
   .pulse-dot { animation: pwpulse 1.4s ease-in-out infinite; }
   @keyframes pwpulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
-  .toast-in { animation: pwtoast .22s ease-out; }
-  @keyframes pwtoast { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+  .toast-in { animation: pwtoast .28s cubic-bezier(.2,.9,.3,1.2); }
+  @keyframes pwtoast { from { opacity: 0; transform: translateY(10px) scale(.96); } to { opacity: 1; transform: none; } }
+  .pop { animation: pwpop .38s cubic-bezier(.2,.9,.3,1.35); }
+  @keyframes pwpop { 0% { transform: scale(.4); } 60% { transform: scale(1.18); } 100% { transform: scale(1); } }
+  .tile-in { animation: pwtilein .38s cubic-bezier(.2,.9,.3,1.15) both; }
+  @keyframes pwtilein { from { opacity: 0; transform: translateY(8px) scale(.9); } to { opacity: 1; transform: none; } }
+  .fade-up { animation: pwfadeup .35s ease-out both; }
+  @keyframes pwfadeup { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .shimmer { background-image: linear-gradient(110deg, transparent 25%, rgba(255,255,255,.4) 50%, transparent 75%); background-size: 220% 100%; animation: pwshimmer 1.3s linear infinite; }
+  @keyframes pwshimmer { from { background-position: 120% 0; } to { background-position: -120% 0; } }
+  .float { animation: pwfloat 1.8s ease-in-out infinite; }
+  @keyframes pwfloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  .ink { transition: left .3s cubic-bezier(.3,.8,.3,1), width .3s cubic-bezier(.3,.8,.3,1); }
   textarea.autosize { resize: vertical; overflow: hidden; }
-  dialog::backdrop { background: rgba(15, 23, 42, .45); backdrop-filter: blur(2px); }
-  @media (prefers-reduced-motion: reduce) { .spin, .pulse-dot, .toast-in { animation: none; } }
+  dialog::backdrop { background: rgba(15, 23, 42, .5); backdrop-filter: blur(3px); }
+  dialog[open] { animation: pwdialog .25s cubic-bezier(.2,.9,.3,1.1); }
+  @keyframes pwdialog { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .spin, .pulse-dot, .toast-in, .pop, .tile-in, .fade-up, .shimmer, .float, dialog[open] { animation: none !important; }
+    .tile, .ink, .progress-fill { transition: none; }
+    html { scroll-behavior: auto; }
+  }
 </style>
 </head>
 <body class="min-h-screen font-sans text-slate-800 antialiased">
 
-<!-- ============================ Header ============================ -->
-<header class="sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur">
+<!-- ============================ Top bar ============================ -->
+<header class="sticky top-0 z-30 border-b border-slate-200/70 bg-white/85 backdrop-blur-md">
   <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
     <div class="flex min-w-0 items-center gap-3">
-      <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-brand-700 shadow-sm ring-1 ring-brand-900/10">
-        <svg viewBox="0 0 24 24" class="size-5" aria-hidden="true"><path fill="#f7a256" d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-      </span>
+      <span id="logo-mark" data-logo class="grid size-10 shrink-0 place-items-center overflow-hidden rounded-xl bg-brand-700 shadow-sm ring-1 ring-brand-900/10"></span>
       <div class="min-w-0">
         <p class="truncate text-[15px] font-semibold leading-tight text-slate-900" data-org-name>Padre Wasson Foundation</p>
-        <p class="truncate text-xs text-slate-500">Content Pipeline · Campaign Studio</p>
+        <p class="truncate text-xs text-slate-500">Content Studio</p>
       </div>
     </div>
     <div class="flex items-center gap-2">
-      <button type="button" id="engine-pill" class="pill whitespace-nowrap hover:border-slate-300" data-open-settings title="Generation engine – click to change">
+      <button type="button" id="engine-pill" class="pill whitespace-nowrap" data-open-settings title="Generation engine – click to change">
         <span class="dot" id="engine-dot"></span><span id="engine-label" class="max-w-[8.5rem] truncate sm:max-w-none">Simulated engine</span>
       </button>
       <span id="wp-pill" class="pill hidden sm:inline-flex" title="WordPress connection">
@@ -144,34 +209,88 @@
   </div>
 </header>
 
-<main class="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-12 lg:py-8">
+<!-- ============================ Hero ============================ -->
+<section class="hero relative overflow-hidden text-white">
+  <div class="relative z-10 mx-auto max-w-7xl px-4 pb-20 pt-8 sm:px-6 sm:pt-10">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div class="max-w-2xl">
+        <p class="text-sm font-medium text-white/70" id="greeting">Welcome</p>
+        <h1 class="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">Turn today's story into a full campaign.</h1>
+        <p class="mt-2 text-sm leading-relaxed text-white/75 sm:text-base">Notes, photos and documents in, a blog post, social posts and a newsletter out, in German and English, ready for WordPress.</p>
+      </div>
+      <p class="hidden rounded-2xl bg-white/10 px-4 py-2.5 text-sm text-white/85 ring-1 ring-white/15 backdrop-blur md:block">
+        <span class="font-serif text-lg italic">“Do it now!”</span> <span class="text-white/60">– Padre Wasson</span>
+      </p>
+    </div>
+    <ol id="journey" class="mt-7 grid grid-cols-4 gap-2 sm:gap-4" aria-label="Progress"></ol>
+  </div>
+</section>
+
+<main class="relative z-10 mx-auto -mt-12 grid max-w-7xl grid-cols-1 gap-6 px-4 pb-8 sm:px-6 lg:grid-cols-12">
 
   <!-- ============================ Left column ============================ -->
   <div class="min-w-0 space-y-6 lg:col-span-5">
 
-    <!-- Step 1 · Input -->
+    <!-- Step 1 · Notes & files -->
     <section class="card" aria-labelledby="input-title">
       <div class="card-head">
         <div>
-          <p class="step">Step 1</p>
-          <h2 id="input-title" class="card-title">Raw input</h2>
-          <p class="card-sub">Paste notes, bullet points or a meeting transcript.</p>
+          <p class="step"><span class="step-num">1</span>Notes &amp; files</p>
+          <h2 id="input-title" class="card-title">What happened?</h2>
+          <p class="card-sub">Paste notes or a transcript, and add photos and documents.</p>
         </div>
         <div class="flex items-center gap-1">
           <button type="button" class="btn btn-ghost btn-xs" data-example="de" title="Load German example notes">Beispiel DE</button>
           <button type="button" class="btn btn-ghost btn-xs" data-example="en" title="Load English example notes">Example EN</button>
         </div>
       </div>
-      <div class="space-y-4 p-5">
+      <div class="space-y-5 p-5">
         <div>
           <label for="notes" class="sr-only">Raw notes</label>
-          <textarea id="notes" rows="13" spellcheck="true" class="input min-h-[220px] resize-y leading-relaxed" placeholder="e.g.&#10;Charity run 2026 – team meeting notes&#10;- 230 runners, 3 school classes joined&#10;- €18,400 raised for school supplies&#10;- 40 volunteers at the stations&#10;- Next year: second run in Hamburg"></textarea>
+          <textarea id="notes" rows="10" spellcheck="true" class="input min-h-[180px] resize-y leading-relaxed" placeholder="e.g.&#10;Charity run 2026 – team meeting notes&#10;- 230 runners, 3 school classes joined&#10;- €18,400 raised for school supplies&#10;- 40 volunteers at the stations&#10;- Next year: second run in Hamburg"></textarea>
           <div class="mt-2 flex flex-wrap items-center justify-between gap-2">
             <span id="notes-stats" class="meta">0 words · 0 characters</span>
             <div class="flex items-center gap-2">
               <span id="notes-lang" class="chip" hidden></span>
               <button type="button" id="clear-notes" class="btn btn-ghost btn-xs">Clear</button>
             </div>
+          </div>
+        </div>
+
+        <!-- Files & photos -->
+        <div>
+          <div class="mb-2 flex items-center justify-between gap-2">
+            <p class="shrink-0 text-sm font-medium text-slate-700">Photos &amp; files</p>
+            <span class="meta min-w-0 truncate" id="files-count-chip"></span>
+          </div>
+          <input type="file" id="file-input" multiple class="sr-only" tabindex="-1" aria-hidden="true">
+          <input type="file" id="folder-input" multiple webkitdirectory class="sr-only" tabindex="-1" aria-hidden="true">
+
+          <div id="dropzone" class="dropzone group relative cursor-pointer rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50/70 px-4 py-6 text-center transition duration-200 hover:border-brand-400 hover:bg-brand-50/60" role="button" tabindex="0" aria-label="Add photos and files">
+            <div class="mx-auto flex w-fit items-center -space-x-2">
+              <span class="grid size-11 -rotate-6 place-items-center rounded-xl bg-white text-accent-500 shadow-sm ring-1 ring-slate-200 transition group-hover:-rotate-12 group-hover:-translate-x-1"><i data-icon="image" class="size-5"></i></span>
+              <span class="z-10 grid size-12 place-items-center rounded-xl bg-brand-700 text-on-brand shadow-md transition group-hover:-translate-y-1"><i data-icon="upload" class="size-6"></i></span>
+              <span class="grid size-11 rotate-6 place-items-center rounded-xl bg-white text-brand-600 shadow-sm ring-1 ring-slate-200 transition group-hover:rotate-12 group-hover:translate-x-1"><i data-icon="file" class="size-5"></i></span>
+            </div>
+            <p class="mt-3 text-sm font-semibold text-slate-800">Drop photos &amp; files here</p>
+            <p class="mt-0.5 text-xs text-slate-500">or <span class="font-semibold text-brand-700 underline underline-offset-2">choose files</span> · <button type="button" id="dz-folder" class="font-semibold text-brand-700 underline underline-offset-2">add a folder</button> · paste with Ctrl+V</p>
+            <p class="mt-2 text-[11px] text-slate-400">Photos, PDFs, Word, text, video, anything. Select as many as you like at once.</p>
+          </div>
+
+          <div id="files-wrap" hidden>
+            <div class="mb-2.5 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-slate-50 px-3 py-2 ring-1 ring-slate-200/70">
+              <label class="flex cursor-pointer items-center gap-2 text-sm font-medium text-slate-700">
+                <input type="checkbox" id="files-all" class="size-4 rounded" checked>
+                <span id="files-summary">All selected</span>
+              </label>
+              <div class="flex items-center gap-1">
+                <button type="button" id="files-add" class="btn btn-ghost btn-xs"><i data-icon="plus" class="size-3.5"></i>Add</button>
+                <button type="button" id="files-folder" class="btn btn-ghost btn-xs"><i data-icon="folder" class="size-3.5"></i>Folder</button>
+                <button type="button" id="files-clear" class="btn btn-ghost btn-xs text-slate-500 hover:text-red-600"><i data-icon="trash" class="size-3.5"></i>Clear</button>
+              </div>
+            </div>
+            <div id="files-grid" class="grid grid-cols-3 gap-2.5 sm:grid-cols-4" role="group" aria-label="Attached files – click a file to include or exclude it"></div>
+            <p class="mt-2 flex items-center gap-1.5 text-[11px] text-slate-500"><i data-icon="star" class="size-3 text-accent-500"></i>Star a photo to make it the featured image. Click a file to leave it out.</p>
           </div>
         </div>
 
@@ -184,21 +303,23 @@
           </div>
         </fieldset>
 
-        <button type="button" id="generate" class="btn btn-accent w-full py-3 text-base">
+        <button type="button" id="generate" class="btn btn-accent w-full rounded-2xl py-3.5 text-base">
+          <span id="generate-shine" class="shimmer pointer-events-none absolute inset-0" hidden></span>
           <span id="generate-icon" class="inline-flex"><i data-icon="sparkles" class="size-5"></i></span><span id="generate-label">Generate Campaign</span>
-          <kbd class="ml-1 hidden rounded bg-white/20 px-1.5 py-0.5 font-sans text-[11px] font-medium sm:inline">Ctrl ↵</kbd>
+          <kbd class="ml-1 hidden rounded-md bg-black/10 px-1.5 py-0.5 font-sans text-[11px] font-medium sm:inline">Ctrl ↵</kbd>
         </button>
-        <p id="engine-hint" class="text-center text-xs text-slate-500"></p>
+        <p id="engine-hint" class="text-center text-xs leading-relaxed text-slate-500"></p>
       </div>
     </section>
 
     <!-- Step 2 · Pipeline -->
-    <section class="card" aria-labelledby="pipeline-title">
+    <section class="card overflow-hidden" aria-labelledby="pipeline-title">
+      <div class="h-1 bg-slate-100"><div id="run-bar" class="progress-fill h-full w-0"></div></div>
       <div class="card-head">
         <div>
-          <p class="step">Step 2</p>
-          <h2 id="pipeline-title" class="card-title">Pipeline</h2>
-          <p class="card-sub" id="pipeline-sub">Four outputs, one run.</p>
+          <p class="step"><span class="step-num">2</span>Pipeline</p>
+          <h2 id="pipeline-title" class="card-title">Generation</h2>
+          <p class="card-sub" id="pipeline-sub">Six steps, one click.</p>
         </div>
         <div class="flex items-center gap-2">
           <button type="button" id="cancel-run" class="btn btn-ghost btn-xs" hidden>Cancel</button>
@@ -217,31 +338,32 @@
     <section class="card" id="outputs-card" aria-labelledby="outputs-title">
       <div class="card-head">
         <div>
-          <p class="step">Step 3</p>
+          <p class="step"><span class="step-num">3</span>Review</p>
           <h2 id="outputs-title" class="card-title">Campaign outputs</h2>
-          <p class="card-sub">Review, edit inline, copy — or send the blog post to WordPress.</p>
+          <p class="card-sub">Edit anything inline, copy it, or send it to WordPress.</p>
         </div>
         <div class="flex items-center gap-2">
           <span class="hidden text-xs font-medium text-slate-500 sm:inline" id="lang-toggle-label">Language</span>
-          <div class="flex gap-1 rounded-lg bg-slate-100 p-1" id="lang-toggle" role="group" aria-labelledby="lang-toggle-label">
+          <div class="flex gap-1 rounded-xl bg-slate-100 p-1" id="lang-toggle" role="group" aria-labelledby="lang-toggle-label">
             <button type="button" class="lang-btn" data-lang="de" aria-pressed="true">DE</button>
             <button type="button" class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
           </div>
         </div>
       </div>
 
-      <div class="flex gap-1 overflow-x-auto border-b border-slate-200 px-3 sm:px-5" role="tablist" aria-label="Output type">
+      <div class="relative flex gap-1 overflow-x-auto border-b border-slate-200 px-3 sm:px-5" role="tablist" aria-label="Output type" id="tablist">
         <button type="button" class="tab" role="tab" id="tab-blog" data-tab="blog" aria-controls="panel-blog" aria-selected="true"><i data-icon="file" class="size-4"></i>Blog post</button>
         <button type="button" class="tab" role="tab" id="tab-social" data-tab="social" aria-controls="panel-social" aria-selected="false" tabindex="-1"><i data-icon="message" class="size-4"></i>Social posts <span class="count">3</span></button>
         <button type="button" class="tab" role="tab" id="tab-email" data-tab="email" aria-controls="panel-email" aria-selected="false" tabindex="-1"><i data-icon="mail" class="size-4"></i>Newsletter</button>
+        <span id="tab-ink" class="ink pointer-events-none absolute bottom-0 h-[3px] rounded-t-full bg-brand-600" style="left:0;width:0"></span>
       </div>
 
-      <div id="output-notice" class="mx-5 mt-4 flex gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-900" hidden></div>
+      <div id="output-notice" class="mx-5 mt-4 flex gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-900" hidden></div>
 
       <div id="empty-state" class="px-6 py-14 text-center">
-        <div class="mx-auto grid size-14 place-items-center rounded-2xl bg-brand-50 text-brand-600 ring-1 ring-brand-100"><i data-icon="sparkles" class="size-7"></i></div>
-        <h3 class="mt-4 text-sm font-semibold text-slate-900">Your campaign will appear here</h3>
-        <p class="mx-auto mt-1 max-w-sm text-sm text-slate-500">Paste your notes, choose a language and press <strong class="font-semibold text-slate-700">Generate Campaign</strong>. You'll get a blog post, three social captions and a newsletter.</p>
+        <div class="float mx-auto grid size-16 place-items-center rounded-2xl bg-linear-to-br from-brand-50 to-accent-50 text-brand-600 ring-1 ring-brand-100"><i data-icon="sparkles" class="size-8"></i></div>
+        <h3 class="mt-5 text-base font-semibold text-slate-900">Your campaign will appear here</h3>
+        <p class="mx-auto mt-1 max-w-sm text-sm leading-relaxed text-slate-500">Add your notes and photos, choose a language and press <strong class="font-semibold text-slate-700">Generate Campaign</strong>. You'll get a blog post, three social posts and a newsletter.</p>
         <button type="button" class="btn btn-secondary mt-5" data-example="de">Try it with example notes</button>
       </div>
 
@@ -254,9 +376,9 @@
     <section class="card" id="wp-card" aria-labelledby="wp-title">
       <div class="card-head">
         <div>
-          <p class="step">Step 4</p>
-          <h2 id="wp-title" class="card-title">Export draft to WordPress</h2>
-          <p class="card-sub">Uploads the blog post via the REST API (<code class="rounded bg-slate-100 px-1 text-[12px]">/wp-json/wp/v2/posts</code>).</p>
+          <p class="step"><span class="step-num">4</span>Publish</p>
+          <h2 id="wp-title" class="card-title">Export to WordPress</h2>
+          <p class="card-sub">Uploads your files and creates the drafts in one click, via the REST API.</p>
         </div>
         <span id="wp-status" class="chip"><span class="dot"></span>Not connected</span>
       </div>
@@ -273,7 +395,7 @@
           <label class="label" for="wp-pass">Application password</label>
           <div class="relative">
             <input id="wp-pass" name="password" type="password" class="input pr-16 font-mono" placeholder="xxxx xxxx xxxx xxxx xxxx xxxx" autocomplete="current-password" spellcheck="false">
-            <button type="button" id="wp-pass-toggle" class="absolute inset-y-0 right-1 my-1 rounded-md px-2 text-xs font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-800">Show</button>
+            <button type="button" id="wp-pass-toggle" class="absolute inset-y-0 right-1 my-1 rounded-lg px-2 text-xs font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-800">Show</button>
           </div>
         </div>
         <div class="grid gap-4 sm:col-span-2 sm:grid-cols-3">
@@ -286,12 +408,12 @@
             </select>
           </div>
           <div>
-            <label class="label" for="wp-lang">Language</label>
+            <label class="label" for="wp-lang">Languages</label>
             <select id="wp-lang" class="input">
-              <option value="current" selected>Currently shown</option>
-              <option value="de">German</option>
-              <option value="en">English</option>
-              <option value="both">Both (two drafts)</option>
+              <option value="all" selected>All generated</option>
+              <option value="current">Currently shown</option>
+              <option value="de">German only</option>
+              <option value="en">English only</option>
             </select>
           </div>
           <div>
@@ -302,16 +424,32 @@
             </select>
           </div>
         </div>
+        <div class="grid gap-2 sm:col-span-2 sm:grid-cols-2">
+          <label class="check-row"><input type="checkbox" id="wp-upload-files" class="mt-0.5 size-4 shrink-0" checked><span><span class="font-medium text-slate-800">Upload all selected files</span><span class="block text-xs text-slate-500" id="wp-upload-hint">Into the Media Library, all at once</span></span></label>
+          <label class="check-row"><input type="checkbox" id="wp-featured" class="mt-0.5 size-4 shrink-0" checked><span><span class="font-medium text-slate-800">Featured image</span><span class="block text-xs text-slate-500">The starred photo becomes the post's featured image</span></span></label>
+          <label class="check-row"><input type="checkbox" id="wp-gallery" class="mt-0.5 size-4 shrink-0" checked><span><span class="font-medium text-slate-800">Photo gallery</span><span class="block text-xs text-slate-500">Other photos and videos go into the post</span></span></label>
+          <label class="check-row"><input type="checkbox" id="wp-downloads" class="mt-0.5 size-4 shrink-0"><span><span class="font-medium text-slate-800">Download links</span><span class="block text-xs text-slate-500">Link uploaded documents at the end of the post</span></span></label>
+        </div>
         <label class="flex items-center gap-2 text-sm text-slate-600 sm:col-span-2">
-          <input type="checkbox" id="wp-remember" class="size-4 rounded border-slate-300 accent-brand-700">
+          <input type="checkbox" id="wp-remember" class="size-4 rounded border-slate-300">
           Remember site URL and username on this device <span class="text-slate-400">(the password is never stored)</span>
         </label>
         <div class="flex flex-wrap gap-2 sm:col-span-2">
-          <button type="submit" id="wp-export" class="btn btn-primary"><i data-icon="upload" class="size-4"></i>Export Draft to WordPress</button>
+          <button type="submit" id="wp-export" class="btn btn-primary"><span id="wp-export-icon" class="inline-flex"><i data-icon="upload" class="size-4"></i></span><span id="wp-export-label">Export to WordPress</span></button>
           <button type="button" id="wp-test" class="btn btn-secondary"><i data-icon="plug" class="size-4"></i>Test connection</button>
           <button type="button" id="wp-curl" class="btn btn-ghost"><i data-icon="terminal" class="size-4"></i>Copy as cURL</button>
         </div>
       </form>
+
+      <div id="wp-progress" class="border-t border-slate-100 px-5 py-4" hidden>
+        <div class="flex items-center justify-between gap-3 text-sm">
+          <p class="font-medium text-slate-800" id="wp-progress-text">Uploading…</p>
+          <span class="meta" id="wp-progress-pct">0%</span>
+        </div>
+        <div class="mt-2 h-2.5 overflow-hidden rounded-full bg-slate-100"><div id="wp-progress-bar" class="progress-fill h-full w-0 rounded-full"></div></div>
+        <ul id="wp-progress-list" class="mt-3 max-h-64 space-y-1.5 overflow-y-auto pr-1"></ul>
+      </div>
+
       <div id="wp-log" class="space-y-2 border-t border-slate-100 px-5 py-4" aria-live="polite">
         <p class="meta">Export results will be listed here.</p>
       </div>
@@ -321,8 +459,9 @@
         </summary>
         <ol class="mt-3 list-decimal space-y-1.5 pl-5 text-[13px] leading-relaxed">
           <li>In WordPress, open <strong>Users → Profile</strong> and scroll to <strong>Application Passwords</strong> (WordPress 5.6+).</li>
-          <li>Enter a name such as “Content Pipeline”, click <strong>Add New Application Password</strong> and paste the generated password above. Use your normal WordPress username.</li>
-          <li>The site must run on <strong>HTTPS</strong>, and the user needs at least the <em>Author</em> role to create posts.</li>
+          <li>Enter a name such as “Content Studio”, click <strong>Add New Application Password</strong> and paste the generated password above. Use your normal WordPress username.</li>
+          <li>The site must run on <strong>HTTPS</strong>, and the user needs at least the <em>Author</em> role to create posts and upload files.</li>
+          <li>Large videos can be bigger than the server's upload limit (often 8–64 MB). Those files will show an error and the rest still upload.</li>
           <li>If the test fails with a network error, a security plugin or firewall may be blocking the REST API or cross-origin requests. Use <strong>Copy as cURL</strong> to upload from a terminal instead.</li>
         </ol>
       </details>
@@ -331,46 +470,93 @@
 </main>
 
 <footer class="mx-auto max-w-7xl px-4 pb-10 pt-2 text-center text-xs text-slate-400 sm:px-6">
-  <span data-org-name>Padre Wasson Foundation</span> · Content Pipeline · Notes, outputs and settings are stored only in this browser.
+  <span data-org-name>Padre Wasson Foundation</span> · Content Studio · Notes, files and settings are stored only in this browser.
 </footer>
 
+<!-- ============================ Drop overlay ============================ -->
+<div id="drop-overlay" class="fixed inset-0 z-[70] place-items-center bg-brand-950/70 p-6 backdrop-blur-sm" hidden>
+  <div class="pointer-events-none w-full max-w-lg rounded-3xl border-2 border-dashed border-white/60 bg-white/10 px-8 py-14 text-center text-white">
+    <span class="float mx-auto grid size-16 place-items-center rounded-2xl bg-accent-500 text-on-accent shadow-xl"><i data-icon="upload" class="size-8"></i></span>
+    <p class="mt-5 text-xl font-semibold">Drop to add your files</p>
+    <p class="mt-1 text-sm text-white/75">Photos, PDFs, Word, text, video, whole folders. Everything gets selected automatically.</p>
+  </div>
+</div>
+
 <!-- ============================ Settings dialog ============================ -->
-<dialog id="settings-dialog" class="m-auto w-[min(640px,calc(100vw-2rem))] rounded-2xl bg-white p-0 text-slate-800 shadow-2xl ring-1 ring-slate-900/5" aria-labelledby="settings-title">
+<dialog id="settings-dialog" class="m-auto w-[min(680px,calc(100vw-2rem))] rounded-3xl bg-white p-0 text-slate-800 shadow-2xl ring-1 ring-slate-900/5" aria-labelledby="settings-title">
   <form method="dialog" class="flex max-h-[88vh] flex-col">
     <div class="flex items-start justify-between gap-4 border-b border-slate-100 px-6 py-4">
       <div>
         <h2 id="settings-title" class="text-base font-semibold text-slate-900">Settings</h2>
-        <p class="text-sm text-slate-500">Generation engine and organization details.</p>
+        <p class="text-sm text-slate-500">Brand look, generation engine and organization details.</p>
       </div>
       <button value="close" class="btn-icon -mr-2" aria-label="Close settings"><i data-icon="x" class="size-5"></i></button>
     </div>
-    <div class="space-y-6 overflow-y-auto px-6 py-5">
+    <div class="space-y-7 overflow-y-auto px-6 py-5">
+
+      <!-- Brand look -->
+      <section>
+        <h3 class="label flex items-center gap-1.5"><i data-icon="palette" class="size-4 text-brand-600"></i>Brand look</h3>
+        <div class="flex flex-wrap items-center gap-4 rounded-2xl border border-slate-200 p-4">
+          <div id="logo-drop" class="dropzone grid size-20 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 p-1.5 text-slate-400 transition hover:border-brand-400" role="button" tabindex="0" aria-label="Upload the foundation logo"></div>
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-semibold text-slate-900">Foundation logo</p>
+            <p class="text-xs leading-relaxed text-slate-500">Upload the Padre Wasson Foundation logo. It's used in the header and the app takes its colors automatically.</p>
+            <div class="mt-2 flex flex-wrap gap-2">
+              <button type="button" id="logo-choose" class="btn btn-secondary btn-xs"><i data-icon="upload" class="size-3.5"></i>Upload logo</button>
+              <button type="button" id="theme-from-logo" class="btn btn-ghost btn-xs" hidden><i data-icon="palette" class="size-3.5"></i>Use logo colors</button>
+              <button type="button" id="logo-remove" class="btn btn-ghost btn-xs text-slate-500 hover:text-red-600" hidden>Remove</button>
+            </div>
+            <input type="file" id="logo-input" accept="image/*" class="sr-only" tabindex="-1">
+          </div>
+        </div>
+        <p class="mb-2 mt-4 text-xs font-medium text-slate-500">Color themes</p>
+        <div id="theme-presets" class="flex flex-wrap gap-2.5"></div>
+        <div class="mt-4 grid gap-3 sm:grid-cols-2">
+          <div>
+            <label class="mb-1 block text-xs font-medium text-slate-500" for="brand-hex">Main color</label>
+            <div class="flex items-center gap-2">
+              <input type="color" id="brand-color" class="size-10 shrink-0 cursor-pointer rounded-xl border border-slate-300 bg-white p-1" aria-label="Pick the main color">
+              <input id="brand-hex" class="input font-mono uppercase" maxlength="7" spellcheck="false">
+            </div>
+          </div>
+          <div>
+            <label class="mb-1 block text-xs font-medium text-slate-500" for="accent-hex">Accent color</label>
+            <div class="flex items-center gap-2">
+              <input type="color" id="accent-color" class="size-10 shrink-0 cursor-pointer rounded-xl border border-slate-300 bg-white p-1" aria-label="Pick the accent color">
+              <input id="accent-hex" class="input font-mono uppercase" maxlength="7" spellcheck="false">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Engine -->
       <fieldset>
         <legend class="label">Generation engine</legend>
         <div class="grid gap-3 sm:grid-cols-2">
           <label class="cursor-pointer">
             <input type="radio" name="engine" value="simulated" class="peer sr-only">
-            <span class="block h-full rounded-xl border border-slate-200 p-4 transition hover:border-slate-300 peer-checked:border-brand-600 peer-checked:bg-brand-50/60 peer-checked:ring-2 peer-checked:ring-brand-600/20 peer-focus-visible:ring-4 peer-focus-visible:ring-brand-500/30">
+            <span class="block h-full rounded-2xl border border-slate-200 p-4 transition hover:border-slate-300 peer-checked:border-brand-600 peer-checked:bg-brand-50/60 peer-checked:ring-2 peer-checked:ring-brand-600/20 peer-focus-visible:ring-4 peer-focus-visible:ring-brand-500/30">
               <span class="flex items-center gap-2 text-sm font-semibold text-slate-900"><span class="dot bg-amber-400"></span>Simulated</span>
-              <span class="mt-1 block text-xs leading-relaxed text-slate-500">Offline and instant. Builds every output from your notes with localized templates. Good for demos and testing the workflow.</span>
+              <span class="mt-1 block text-xs leading-relaxed text-slate-500">Offline and instant. Reads your notes and documents and fills localized templates. Good for demos and testing the workflow.</span>
             </span>
           </label>
           <label class="cursor-pointer">
             <input type="radio" name="engine" value="claude" class="peer sr-only">
-            <span class="block h-full rounded-xl border border-slate-200 p-4 transition hover:border-slate-300 peer-checked:border-brand-600 peer-checked:bg-brand-50/60 peer-checked:ring-2 peer-checked:ring-brand-600/20 peer-focus-visible:ring-4 peer-focus-visible:ring-brand-500/30">
+            <span class="block h-full rounded-2xl border border-slate-200 p-4 transition hover:border-slate-300 peer-checked:border-brand-600 peer-checked:bg-brand-50/60 peer-checked:ring-2 peer-checked:ring-brand-600/20 peer-focus-visible:ring-4 peer-focus-visible:ring-brand-500/30">
               <span class="flex items-center gap-2 text-sm font-semibold text-slate-900"><span class="dot bg-emerald-500"></span>Claude API</span>
-              <span class="mt-1 block text-xs leading-relaxed text-slate-500">AI writing and real German ⇄ English translation using Anthropic's Claude models. Needs an API key.</span>
+              <span class="mt-1 block text-xs leading-relaxed text-slate-500">AI writing and real German ⇄ English translation. Claude also looks at your photos and PDFs and writes alt text. Needs an API key.</span>
             </span>
           </label>
         </div>
       </fieldset>
 
-      <div id="claude-settings" class="space-y-4 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
+      <div id="claude-settings" class="space-y-4 rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
         <div>
           <label class="label" for="api-key">Anthropic API key</label>
           <input id="api-key" type="password" class="input font-mono" placeholder="sk-ant-…" autocomplete="off" spellcheck="false">
           <label class="mt-2 flex items-center gap-2 text-sm text-slate-600">
-            <input type="checkbox" id="remember-key" class="size-4 rounded border-slate-300 accent-brand-700"> Remember the key in this browser
+            <input type="checkbox" id="remember-key" class="size-4 rounded border-slate-300"> Remember the key in this browser
           </label>
         </div>
         <div class="grid gap-4 sm:grid-cols-2">
@@ -395,7 +581,7 @@
           <input id="base-url" type="url" class="input" placeholder="https://api.anthropic.com" spellcheck="false">
           <p class="mt-1.5 text-xs leading-relaxed text-slate-500">Point this at your own server-side proxy in production so the API key never has to live in the browser. With a proxy, the key field can stay empty.</p>
         </div>
-        <p class="flex gap-2 rounded-lg bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-900 ring-1 ring-amber-200">
+        <p class="flex gap-2 rounded-xl bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-900 ring-1 ring-amber-200">
           <i data-icon="alert" class="mt-px size-4 shrink-0"></i>
           <span>Calling the API straight from the browser exposes the key to anyone who can open this page on this device. Only use it on trusted computers, or use a proxy.</span>
         </p>
@@ -415,7 +601,7 @@
       </fieldset>
 
       <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-5">
-        <p class="text-xs text-slate-500">Notes, outputs and settings are kept in this browser's local storage.</p>
+        <p class="text-xs text-slate-500">Notes, files, outputs and settings are kept in this browser only.</p>
         <button type="button" id="clear-data" class="btn btn-ghost btn-xs text-red-600 hover:bg-red-50 hover:text-red-700">Clear saved data</button>
       </div>
     </div>
@@ -425,20 +611,28 @@
   </form>
 </dialog>
 
-<div id="toasts" class="pointer-events-none fixed inset-x-4 bottom-4 z-50 flex flex-col items-end gap-2 sm:inset-x-auto sm:right-6" aria-live="polite" aria-atomic="false"></div>
+<div id="toasts" class="pointer-events-none fixed inset-x-4 bottom-4 z-[80] flex flex-col items-end gap-2 sm:inset-x-auto sm:right-6" aria-live="polite" aria-atomic="false"></div>
 
 <script type="module">
 /* =====================================================================
-   Padre Wasson Foundation · Content Pipeline
-   Single-file app: notes → blog post, social captions, newsletter (DE/EN)
-   → WordPress drafts. Engines: "simulated" (offline templates) or the
-   Claude API (official Anthropic TypeScript SDK, loaded on demand).
+   Padre Wasson Foundation · Content Studio
+   Single-file app: notes + photos + documents → blog post, social posts,
+   newsletter (DE/EN) → WordPress drafts and Media Library uploads.
+   Engines: "simulated" (offline templates) or the Claude API (official
+   Anthropic TypeScript SDK, loaded on demand).
    ===================================================================== */
 
-const SDK_URL = 'https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@0.128.0/+esm';
+const CDN = {
+  sdk: 'https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@0.128.0/+esm',
+  pdfjs: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs',
+  pdfWorker: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs',
+  mammoth: 'https://cdn.jsdelivr.net/npm/mammoth@1.12.3/mammoth.browser.min.js',
+};
 const LANG_NAMES = { de: 'German', en: 'English' };
 const LANG_NATIVE = { de: 'Deutsch', en: 'English' };
 const MODEL_LABELS = { 'claude-opus-5': 'Claude Opus 5', 'claude-sonnet-5': 'Claude Sonnet 5' };
+const MAX_API_IMAGES = 20;
+const UPLOAD_PARALLEL = 6;
 
 /* ---------------------------------------------------------------------
    Small utilities
@@ -450,14 +644,51 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
 const words = (s) => (String(s).trim().match(/\S+/g) || []).length;
 const fmt = (n) => Number(n).toLocaleString('en-US');
 const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
+const plural = (n, one, many = one + 's') => `${fmt(n)} ${n === 1 ? one : many}`;
+const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const uid = () => (crypto.randomUUID ? crypto.randomUUID() : `f${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`);
+function fmtBytes(n) {
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${Math.round(n / 1024)} KB`;
+  if (n < 1024 ** 3) return `${(n / 1024 / 1024).toFixed(n < 10 * 1024 * 1024 ? 1 : 0)} MB`;
+  return `${(n / 1024 ** 3).toFixed(1)} GB`;
+}
 
 const store = {
   get(key, fallback) {
     try { const v = localStorage.getItem('pwcp:' + key); return v === null ? fallback : JSON.parse(v); } catch { return fallback; }
   },
-  set(key, value) { try { localStorage.setItem('pwcp:' + key, JSON.stringify(value)); } catch { /* storage unavailable */ } },
+  set(key, value) { try { localStorage.setItem('pwcp:' + key, JSON.stringify(value)); return true; } catch { return false; } },
   del(key) { try { localStorage.removeItem('pwcp:' + key); } catch { /* ignore */ } },
   clear() { try { Object.keys(localStorage).filter((k) => k.startsWith('pwcp:')).forEach((k) => localStorage.removeItem(k)); } catch { /* ignore */ } },
+};
+
+/** IndexedDB keeps attached files (photos can be far too big for localStorage). */
+const idb = {
+  dbp: null,
+  open() {
+    this.dbp ??= new Promise((resolve, reject) => {
+      const req = indexedDB.open('pwcp', 1);
+      req.onupgradeneeded = () => req.result.createObjectStore('files', { keyPath: 'id' });
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+    return this.dbp;
+  },
+  async run(mode, fn) {
+    const db = await this.open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('files', mode);
+      const req = fn(tx.objectStore('files'));
+      tx.oncomplete = () => resolve(req?.result);
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error);
+    });
+  },
+  put(rec) { return this.run('readwrite', (s) => s.put(rec)); },
+  del(id) { return this.run('readwrite', (s) => s.delete(id)); },
+  all() { return this.run('readonly', (s) => s.getAll()); },
+  clear() { return this.run('readwrite', (s) => s.clear()); },
 };
 
 const ICONS = {
@@ -478,6 +709,17 @@ const ICONS = {
   external: '<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
   globe: '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
   minus: '<path d="M5 12h14"/>',
+  plus: '<path d="M5 12h14"/><path d="M12 5v14"/>',
+  image: '<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
+  folder: '<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/>',
+  star: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+  cloudCheck: '<path d="m17 15-5.5 5.5L9 18"/><path d="M5 17.743A7 7 0 1 1 15.71 10h1.79a4.5 4.5 0 0 1 1.5 8.742"/>',
+  film: '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/>',
+  music: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+  trash: '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>',
+  download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>',
+  palette: '<circle cx="13.5" cy="6.5" r="1.2" fill="currentColor"/><circle cx="17.5" cy="10.5" r="1.2" fill="currentColor"/><circle cx="8.5" cy="7.5" r="1.2" fill="currentColor"/><circle cx="6.5" cy="12.5" r="1.2" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>',
+  heart: '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
 };
 const icon = (name, cls = 'size-4') =>
   `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
@@ -489,17 +731,51 @@ function hydrateIcons(root = document) {
 
 function toast(message, type = 'info', ms = 3800) {
   const styles = {
-    success: ['check', 'text-emerald-600'],
-    error: ['alert', 'text-red-600'],
-    warn: ['alert', 'text-amber-600'],
-    info: ['info', 'text-brand-600'],
-  }[type] || ['info', 'text-brand-600'];
+    success: ['check', 'bg-emerald-500 text-white'],
+    error: ['alert', 'bg-red-500 text-white'],
+    warn: ['alert', 'bg-amber-400 text-white'],
+    info: ['info', 'bg-brand-600 text-on-brand'],
+  }[type] || ['info', 'bg-brand-600 text-on-brand'];
   const el = document.createElement('div');
-  el.className = 'toast-in pointer-events-auto flex w-full max-w-sm items-start gap-2.5 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 shadow-lg';
+  el.className = 'toast-in pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-2xl border border-slate-200 bg-white/95 px-4 py-3 text-sm text-slate-700 shadow-xl backdrop-blur';
   el.setAttribute('role', type === 'error' ? 'alert' : 'status');
-  el.innerHTML = `<span class="mt-px ${styles[1]}">${icon(styles[0])}</span><span class="min-w-0 flex-1 leading-snug">${esc(message)}</span>`;
+  el.innerHTML = `<span class="grid size-6 shrink-0 place-items-center rounded-full ${styles[1]}">${icon(styles[0], 'size-3.5')}</span><span class="min-w-0 flex-1 pt-0.5 leading-snug">${esc(message)}</span>`;
   $('#toasts').append(el);
-  setTimeout(() => { el.style.transition = 'opacity .25s'; el.style.opacity = '0'; setTimeout(() => el.remove(), 260); }, ms);
+  setTimeout(() => { el.style.transition = 'opacity .25s, transform .25s'; el.style.opacity = '0'; el.style.transform = 'translateY(6px)'; setTimeout(() => el.remove(), 260); }, ms);
+}
+
+/** A short burst of brand-colored confetti from an element. */
+function confetti(fromEl) {
+  if (reducedMotion()) return;
+  const canvas = document.createElement('canvas');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = innerWidth * dpr; canvas.height = innerHeight * dpr;
+  canvas.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:90';
+  document.body.append(canvas);
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const r = fromEl?.getBoundingClientRect() || { left: innerWidth / 2, top: innerHeight / 2, width: 0, height: 0 };
+  const ox = r.left + r.width / 2, oy = r.top + r.height / 2;
+  const { brand, accent } = state.theme;
+  const colors = [brand, accent, mixHex(brand, '#ffffff', 0.45), mixHex(accent, '#ffffff', 0.4), mixHex(brand, '#ffffff', 0.75), '#fcd34d'];
+  const parts = Array.from({ length: 140 }, () => {
+    const a = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.1;
+    const v = 6 + Math.random() * 9;
+    return { x: ox, y: oy, vx: Math.cos(a) * v, vy: Math.sin(a) * v, w: 5 + Math.random() * 6, h: 3 + Math.random() * 5, rot: Math.random() * 6, vr: (Math.random() - 0.5) * 0.4, c: colors[(Math.random() * colors.length) | 0], life: 0 };
+  });
+  const t0 = performance.now();
+  const tick = (t) => {
+    const dt = Math.min(2, (t - (tick.last || t)) / 16.7); tick.last = t;
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    for (const p of parts) {
+      p.vy += 0.32 * dt; p.vx *= 0.99; p.x += p.vx * dt; p.y += p.vy * dt; p.rot += p.vr * dt;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+      ctx.globalAlpha = Math.max(0, 1 - (t - t0) / 1900);
+      ctx.fillStyle = p.c; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore();
+    }
+    if (t - t0 < 1900) requestAnimationFrame(tick); else canvas.remove();
+  };
+  requestAnimationFrame(tick);
 }
 
 /* ---------------------------------------------------------------------
@@ -509,16 +785,31 @@ const DEFAULT_SETTINGS = {
   engine: 'simulated', apiKey: '', rememberKey: false, model: 'claude-opus-5', effort: 'high', baseURL: '',
   orgName: 'Padre Wasson Foundation', ctaUrl: '',
 };
+const PRESETS = [
+  { id: 'family', name: 'Family teal', brand: '#1f5d58', accent: '#e0712a' },
+  { id: 'sunrise', name: 'Warm sunrise', brand: '#7a2e24', accent: '#e39a2d' },
+  { id: 'ocean', name: 'Ocean & coral', brand: '#1d3f72', accent: '#e8604c' },
+  { id: 'forest', name: 'Forest & amber', brand: '#2d5a33', accent: '#d98a1f' },
+  { id: 'plum', name: 'Plum & rose', brand: '#57275b', accent: '#d9577e' },
+  { id: 'slate', name: 'Classic navy', brand: '#1e293b', accent: '#0ea5a4' },
+];
 const state = {
   settings: { ...DEFAULT_SETTINGS, ...store.get('settings', {}) },
+  theme: { preset: 'family', brand: PRESETS[0].brand, accent: PRESETS[0].accent, logo: '', ...store.get('theme', {}) },
   target: store.get('target', 'both'),
   outputs: { de: null, en: null },
   campaignNotes: '',
+  files: [],
   lang: 'de',
   tab: 'blog',
   busy: false,
+  exporting: false,
   abort: null,
   wpConnected: null,
+  wpPlain: {},
+  lastWpBase: store.get('lastWpBase', ''),
+  reviewed: false,
+  published: false,
 };
 if (state.settings.rememberKey) state.settings.apiKey = store.get('apiKey', '');
 const org = () => (state.settings.orgName || '').trim() || DEFAULT_SETTINGS.orgName;
@@ -533,7 +824,117 @@ function saveSettings() {
 }
 
 /* =====================================================================
-   1. NOTE ANALYSIS (used by the simulated engine and the live UI hints)
+   1. BRAND THEME – logo + two colors, shades derived in CSS
+   ===================================================================== */
+const hexRe = /^#[0-9a-f]{6}$/i;
+function hexToRgb(hex) { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+function rgbToHex(r, g, b) { return '#' + [r, g, b].map((v) => Math.round(Math.max(0, Math.min(255, v))).toString(16).padStart(2, '0')).join(''); }
+function rgbToHsl(r, g, b) {
+  r /= 255; g /= 255; b /= 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h = 0, s = 0;
+  const l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    h = max === r ? (g - b) / d + (g < b ? 6 : 0) : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+    h *= 60;
+  }
+  return [h, s, l];
+}
+function hslToHex(h, s, l) {
+  const k = (n) => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = (n) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  return rgbToHex(f(0) * 255, f(8) * 255, f(4) * 255);
+}
+function mixHex(a, b, t) { const x = hexToRgb(a), y = hexToRgb(b); return rgbToHex(...x.map((v, i) => v + (y[i] - v) * t)); }
+function luminance(hex) {
+  const [r, g, b] = hexToRgb(hex).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+/** White text when it has at least 3:1 contrast (bold UI text), otherwise near-black. */
+const onColor = (hex) => (1.05 / (luminance(hex) + 0.05) >= 3 ? '#ffffff' : '#111827');
+
+function applyTheme() {
+  const t = state.theme;
+  const root = document.documentElement.style;
+  root.setProperty('--brand', t.brand);
+  root.setProperty('--accent', t.accent);
+  root.setProperty('--on-brand', onColor(t.brand));
+  root.setProperty('--on-accent', onColor(t.accent));
+  $('meta[name="theme-color"]').content = t.brand;
+  const mark = `<svg viewBox="0 0 24 24" class="size-5" aria-hidden="true"><path fill="${t.accent}" d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`;
+  $$('[data-logo]').forEach((el) => {
+    el.innerHTML = t.logo ? `<img src="${t.logo}" alt="" class="size-full object-contain">` : mark;
+    el.classList.toggle('bg-brand-700', !t.logo);
+    el.classList.toggle('bg-white', Boolean(t.logo));
+    el.classList.toggle('p-1', Boolean(t.logo));
+  });
+  const fav = t.logo || `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="${t.brand}"/><path d="M22.5 17.5c1.6-1.6 3-3.4 3-5.8a5 5 0 0 0-5-5c-1.8 0-3 .6-4.5 2.1-1.5-1.5-2.7-2.1-4.5-2.1a5 5 0 0 0-5 5c0 2.4 1.4 4.2 3 5.8L16 24z" fill="${t.accent}"/></svg>`)}`;
+  $('#favicon').href = fav;
+  store.set('theme', t);
+}
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('This image format cannot be displayed in the browser.'));
+    img.src = src;
+  });
+}
+
+/** Finds a strong main color and a contrasting accent in a logo. */
+async function paletteFromLogo(src) {
+  const img = await loadImage(src);
+  const n = 80, scale = n / Math.max(img.naturalWidth, img.naturalHeight, 1);
+  const w = Math.max(1, Math.round(img.naturalWidth * scale)), h = Math.max(1, Math.round(img.naturalHeight * scale));
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const ctx = c.getContext('2d', { willReadFrequently: true });
+  ctx.drawImage(img, 0, 0, w, h);
+  const d = ctx.getImageData(0, 0, w, h).data;
+  const buckets = new Map();
+  for (let i = 0; i < d.length; i += 4) {
+    if (d[i + 3] < 200) continue;
+    const [hh, s, l] = rgbToHsl(d[i], d[i + 1], d[i + 2]);
+    if (s < 0.2 || l < 0.08 || l > 0.92) continue;
+    const key = `${Math.round(hh / 15)}|${Math.round(l * 5)}`;
+    const b = buckets.get(key) || { r: 0, g: 0, b: 0, n: 0 };
+    b.r += d[i]; b.g += d[i + 1]; b.b += d[i + 2]; b.n++;
+    buckets.set(key, b);
+  }
+  const cands = [...buckets.values()].filter((b) => b.n > 3).map((b) => {
+    const [hh, s, l] = rgbToHsl(b.r / b.n, b.g / b.n, b.b / b.n);
+    return { h: hh, s, l, n: b.n };
+  }).sort((a, b) => b.n - a.n).slice(0, 6);
+  if (!cands.length) return null;
+  const hueDist = (a, b) => { const x = Math.abs(a - b) % 360; return x > 180 ? 360 - x : x; };
+  const main = [...cands].sort((a, b) => b.n * (1.3 - b.l) - a.n * (1.3 - a.l))[0];
+  const acc = cands.filter((c2) => c2 !== main && hueDist(c2.h, main.h) > 30).sort((a, b) => b.n * b.s - a.n * a.s)[0];
+  return {
+    brand: hslToHex(main.h, Math.min(main.s, 0.78), Math.min(main.l, 0.36)),
+    accent: acc
+      ? hslToHex(acc.h, Math.max(acc.s, 0.55), Math.min(Math.max(acc.l, 0.46), 0.56))
+      : (hueDist(main.h, 25) < 45 ? '#1f8a80' : '#e0712a'),
+  };
+}
+
+async function logoFromFile(file) {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await loadImage(url);
+    const max = 320, scale = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight, 1));
+    const c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round((img.naturalWidth || max) * scale));
+    c.height = Math.max(1, Math.round((img.naturalHeight || max) * scale));
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    return c.toDataURL('image/png');
+  } finally { URL.revokeObjectURL(url); }
+}
+
+/* =====================================================================
+   2. NOTE ANALYSIS (simulated engine + live UI hints)
    ===================================================================== */
 const STOPWORDS = {
   de: new Set('und der die das wir mit für ist nicht ein eine einen auf den von zu im sich des dem haben hat wurde wurden sind auch es bei unsere unser unseren ihr sie aber oder noch nach wie durch über'.split(' ')),
@@ -707,12 +1108,12 @@ function analyzeNotes(raw) {
 }
 
 /* =====================================================================
-   2. SIMULATED ENGINE – localized templates filled with the notes
+   3. SIMULATED ENGINE – localized templates filled with the notes
    ===================================================================== */
 const PHRASES = {
   en: {
     titleHook: 'How Your Support Makes a Difference',
-    hHappened: 'What happened', hNumbers: 'The impact in numbers', hWhy: 'Why it matters', hThanks: 'Thank you', hNext: "What's next",
+    hHappened: 'What happened', hNumbers: 'The impact in numbers', hWhy: 'Why it matters', hThanks: 'Thank you', hNext: "What's next", hDownloads: 'Downloads',
     nextGeneric: 'We will keep you posted on how this work continues. If you would like to be part of the next chapter, we would love to hear from you.',
     thanksGeneric: 'None of this would be possible without our donors, partners and volunteers. Thank you for standing with us.',
     ctaHeading: 'Be part of it', ctaText: 'Your support creates lasting change for children and families. Every contribution counts.',
@@ -726,17 +1127,19 @@ const PHRASES = {
     fbStat: (s) => `Together we made it happen: ${s}! 🎉`,
     fbThanks: 'From the bottom of our hearts: THANK YOU to everyone who was part of this! 💛',
     fbCta: (u) => (u ? `👉 Share this post and help us spread the word: ${u}` : '👉 Share this post and help us spread the word!'),
+    fbPhotos: (n) => `📸 ${n} photos from the day below!`,
     gbLead: (o) => `News from the ${o}: `,
     gbCta: 'Learn more and support our work on our website.',
     previewStat: (s) => `${s} and more: see what your support made possible.`,
     previewGeneric: 'See what your support made possible, and what comes next.',
     highlights: 'A few highlights:',
     emailThanks: 'Thank you for being part of this journey. Your trust and generosity make every step possible.',
+    photo: 'Photo',
     notice: (from) => `Simulated engine: the templates are written in English, but facts from your ${LANG_NAMES[from]} notes are quoted as written. Switch to the Claude API in Settings for a full translation.`,
   },
   de: {
     titleHook: 'So wirkt Ihre Unterstützung',
-    hHappened: 'Was passiert ist', hNumbers: 'Die Wirkung in Zahlen', hWhy: 'Warum das wichtig ist', hThanks: 'Danke', hNext: 'Wie es weitergeht',
+    hHappened: 'Was passiert ist', hNumbers: 'Die Wirkung in Zahlen', hWhy: 'Warum das wichtig ist', hThanks: 'Danke', hNext: 'Wie es weitergeht', hDownloads: 'Downloads',
     nextGeneric: 'Wir halten Sie auf dem Laufenden, wie es weitergeht. Wenn Sie beim nächsten Kapitel dabei sein möchten, freuen wir uns sehr über Ihre Nachricht.',
     thanksGeneric: 'Nichts davon wäre möglich ohne unsere Spenderinnen und Spender, Partner und Ehrenamtlichen. Danke, dass Sie an unserer Seite stehen.',
     ctaHeading: 'Machen Sie mit', ctaText: 'Ihre Unterstützung schafft nachhaltige Veränderung für Kinder und Familien. Jeder Beitrag zählt.',
@@ -750,12 +1153,14 @@ const PHRASES = {
     fbStat: (s) => `Gemeinsam haben wir das geschafft: ${s}! 🎉`,
     fbThanks: 'Von Herzen: DANKE an alle, die dabei waren! 💛',
     fbCta: (u) => (u ? `👉 Teilt diesen Beitrag und helft uns, die Nachricht zu verbreiten: ${u}` : '👉 Teilt diesen Beitrag und helft uns, die Nachricht zu verbreiten!'),
+    fbPhotos: (n) => `📸 ${n} Fotos vom Tag findet ihr unten!`,
     gbLead: (o) => `Neues von der ${o}: `,
     gbCta: 'Mehr erfahren und unsere Arbeit unterstützen – auf unserer Website.',
     previewStat: (s) => `${s} und mehr: Sehen Sie, was Ihre Unterstützung bewirkt hat.`,
     previewGeneric: 'Sehen Sie, was Ihre Unterstützung bewirkt hat – und wie es weitergeht.',
     highlights: 'Einige Höhepunkte:',
     emailThanks: 'Danke, dass Sie diesen Weg mit uns gehen. Ihr Vertrauen und Ihre Großzügigkeit machen jeden Schritt möglich.',
+    photo: 'Foto',
     notice: (from) => `Simulierte Engine: Die Vorlagen sind auf Deutsch, Fakten aus Ihren Notizen (${LANG_NAMES[from]}) werden jedoch unverändert übernommen. Für eine vollständige Übersetzung in den Einstellungen die Claude API aktivieren.`,
   },
 };
@@ -768,7 +1173,7 @@ function formatQuote(q, lang) {
 }
 
 /** Returns the same structured shape the Claude API produces (see CAMPAIGN_SCHEMA). */
-function simulateCampaign(a, lang, o, url) {
+function simulateCampaign(a, lang, o, url, photoCount = 0) {
   const T = a.theme[lang];
   const P = PHRASES[lang];
   const title = a.title ? (a.title.length <= 48 ? `${a.title}: ${P.titleHook}` : a.title) : `${T.label}: ${P.titleHook}`;
@@ -797,6 +1202,7 @@ function simulateCampaign(a, lang, o, url) {
     a.story.slice(0, 2).join(' '),
     a.stat ? P.fbStat(a.stat) : '',
     P.fbThanks,
+    photoCount > 1 ? P.fbPhotos(photoCount) : '',
     P.fbCta(url),
   ].filter(Boolean);
 
@@ -836,7 +1242,350 @@ function simulateCampaign(a, lang, o, url) {
 }
 
 /* =====================================================================
-   3. CLAUDE ENGINE – official Anthropic TypeScript SDK in the browser
+   4. FILES & PHOTOS – add, read, select, persist
+   ===================================================================== */
+const KIND_LABEL = { image: 'Photo', video: 'Video', audio: 'Audio', pdf: 'PDF', docx: 'Word', text: 'Text', other: 'File' };
+const KIND_ICON = { image: 'image', video: 'film', audio: 'music', pdf: 'file', docx: 'file', text: 'file', other: 'file' };
+const objectUrls = new Map();
+const urlFor = (f) => { if (!objectUrls.has(f.id)) objectUrls.set(f.id, URL.createObjectURL(f.blob)); return objectUrls.get(f.id); };
+const selectedFiles = () => state.files.filter((f) => f.selected);
+const selectedImages = () => selectedFiles().filter((f) => f.kind === 'image');
+
+function fileKind(f) {
+  const n = f.name.toLowerCase(), t = (f.type || '').toLowerCase();
+  if (/\.(heic|heif)$/.test(n) || /heic|heif/.test(t)) return 'other'; // most browsers can't display these
+  if (t.startsWith('image/') || /\.(jpe?g|png|gif|webp|avif|bmp|svg)$/.test(n)) return 'image';
+  if (t.startsWith('video/') || /\.(mp4|mov|m4v|webm|ogv)$/.test(n)) return 'video';
+  if (t.startsWith('audio/') || /\.(mp3|wav|m4a|ogg|flac)$/.test(n)) return 'audio';
+  if (t === 'application/pdf' || n.endsWith('.pdf')) return 'pdf';
+  if (n.endsWith('.docx')) return 'docx';
+  if (t.startsWith('text/') || /\.(txt|md|markdown|csv|tsv|json|html?|xml|log|vtt|srt)$/.test(n)) return 'text';
+  return 'other';
+}
+const extOf = (name) => (name.match(/\.([a-z0-9]{1,5})$/i)?.[1] || KIND_LABEL.other).toUpperCase();
+
+let pdfjsPromise = null;
+function loadPdfjs() {
+  pdfjsPromise ??= import(CDN.pdfjs).then((m) => { m.GlobalWorkerOptions.workerSrc = CDN.pdfWorker; return m; })
+    .catch((e) => { pdfjsPromise = null; throw new Error(`Could not load the PDF reader (${e.message}).`); });
+  return pdfjsPromise;
+}
+let mammothPromise = null;
+function loadMammoth() {
+  mammothPromise ??= new Promise((resolve, reject) => {
+    if (window.mammoth) { resolve(window.mammoth); return; }
+    const s = document.createElement('script');
+    s.src = CDN.mammoth;
+    s.onload = () => resolve(window.mammoth);
+    s.onerror = () => { mammothPromise = null; reject(new Error('Could not load the Word reader.')); };
+    document.head.append(s);
+  });
+  return mammothPromise;
+}
+
+async function extractText(f) {
+  if (f.kind === 'text') {
+    let t = await f.blob.text();
+    if (/\.html?$/i.test(f.name) || f.type === 'text/html') t = new DOMParser().parseFromString(t, 'text/html').body.textContent || '';
+    return { text: t };
+  }
+  if (f.kind === 'docx') {
+    const m = await loadMammoth();
+    const r = await m.extractRawText({ arrayBuffer: await f.blob.arrayBuffer() });
+    return { text: r.value };
+  }
+  if (f.kind === 'pdf') {
+    const pdfjs = await loadPdfjs();
+    const doc = await pdfjs.getDocument({ data: new Uint8Array(await f.blob.arrayBuffer()) }).promise;
+    const pages = [];
+    for (let i = 1; i <= Math.min(doc.numPages, 50); i++) {
+      const tc = await (await doc.getPage(i)).getTextContent();
+      pages.push(tc.items.map((it) => it.str + (it.hasEOL ? '\n' : ' ')).join(''));
+    }
+    const numPages = doc.numPages;
+    await doc.destroy();
+    return { text: pages.join('\n\n'), pages: numPages };
+  }
+  return {};
+}
+
+async function processFile(f) {
+  try {
+    if (f.kind === 'image') {
+      try { const img = await loadImage(urlFor(f)); f.width = img.naturalWidth; f.height = img.naturalHeight; }
+      catch {
+        f.kind = 'other';
+        if (f.featured) { f.featured = false; autoFeature(); }
+        const el = tileEls.get(f.id);
+        if (el) el.innerHTML = tileMarkup(f);
+      }
+    }
+    const { text, pages } = await extractText(f);
+    if (text) {
+      f.text = text.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim().slice(0, 200000);
+      f.words = words(f.text);
+    }
+    if (pages) f.pages = pages;
+    f.status = 'ready';
+  } catch (err) {
+    f.status = 'error';
+    f.error = err.message;
+  }
+  updateTile(f);
+  renderFilesToolbar();
+  persistFile(f);
+}
+
+const persistFile = (f) => {
+  const { status, ready, progress, uploadState, uploadError, ...rec } = f;
+  return idb.put(rec).catch(() => {
+    if (!persistFile.warned) { persistFile.warned = true; toast('Some files are too large to keep after a reload. They work fine until then.', 'warn', 6000); }
+  });
+};
+const persistFileSoon = debounce((f) => persistFile(f), 400);
+
+async function filesFromDataTransfer(dt) {
+  // Resolve entries synchronously – DataTransfer items expire after the event.
+  const entries = [...(dt.items || [])].filter((i) => i.kind === 'file').map((i) => i.webkitGetAsEntry?.()).filter(Boolean);
+  const direct = [...(dt.files || [])];
+  if (!entries.length || !entries.some((e) => e.isDirectory)) return direct;
+  const out = [];
+  const walk = async (entry) => {
+    if (entry.isFile) out.push(await new Promise((res, rej) => entry.file(res, rej)));
+    else if (entry.isDirectory) {
+      const reader = entry.createReader();
+      let batch;
+      do {
+        batch = await new Promise((res, rej) => reader.readEntries(res, rej));
+        for (const e of batch) await walk(e);
+      } while (batch.length);
+    }
+  };
+  for (const e of entries) await walk(e);
+  return out;
+}
+
+function addFiles(list) {
+  const incoming = [...list].filter((f) => f && f.size > 0 && !/^\.|^(thumbs\.db|desktop\.ini)$/i.test(f.name));
+  const known = new Set(state.files.map((f) => `${f.name}|${f.size}|${f.lastModified}`));
+  const fresh = incoming.filter((f) => !known.has(`${f.name}|${f.size}|${f.lastModified}`));
+  const dupes = incoming.length - fresh.length;
+  if (!fresh.length) { if (dupes) toast('Those files are already attached.', 'info', 2500); return []; }
+  const base = Date.now();
+  const recs = fresh.map((file, i) => ({
+    id: uid(), name: file.name, type: file.type, size: file.size, lastModified: file.lastModified,
+    kind: fileKind(file), blob: file, selected: true, featured: false, featuredBy: '',
+    text: '', words: 0, pages: 0, width: 0, height: 0, alt: {}, caption: {}, wp: {}, addedAt: base + i,
+    status: 'reading',
+  }));
+  state.files.push(...recs);
+  recs.forEach((f, i) => { f.ready = processFile(f); f.enterDelay = Math.min(i, 12) * 45; });
+  if (!getFeatured() && recs.some((f) => f.kind === 'image')) { const img = recs.find((f) => f.kind === 'image'); img.featured = true; img.featuredBy = 'auto'; }
+  renderFiles();
+  updateJourney();
+  updateExportLabel();
+  const big = recs.filter((f) => f.size > 64 * 1024 * 1024);
+  const kinds = summarizeKinds(recs);
+  toast(`Added ${plural(recs.length, 'file')}${kinds ? ` (${kinds})` : ''} – all selected.${dupes ? ` ${plural(dupes, 'duplicate')} skipped.` : ''}`, 'success', 3000);
+  if (big.length) toast(`${plural(big.length, 'file')} over 64 MB may exceed your WordPress upload limit.`, 'warn', 6000);
+  if (hasOutputs()) renderOutputs();
+  return recs;
+}
+
+function removeFile(id) {
+  const i = state.files.findIndex((f) => f.id === id);
+  if (i < 0) return;
+  const [f] = state.files.splice(i, 1);
+  if (objectUrls.has(id)) { URL.revokeObjectURL(objectUrls.get(id)); objectUrls.delete(id); }
+  idb.del(id).catch(() => {});
+  if (f.featured) autoFeature();
+  const el = tileEls.get(id);
+  tileEls.delete(id);
+  if (el && !reducedMotion()) { el.style.transition = 'opacity .18s, transform .18s'; el.style.opacity = '0'; el.style.transform = 'scale(.85)'; setTimeout(() => { el.remove(); renderFiles(); }, 180); }
+  else { el?.remove(); renderFiles(); }
+  afterFileChange();
+}
+
+function setSelected(f, on) {
+  f.selected = on;
+  if (f.uploadState === 'error') f.uploadState = null;
+  if (!on && f.featured) { f.featured = false; autoFeature(); }
+  if (on && !getFeatured() && f.kind === 'image') { f.featured = true; f.featuredBy = 'auto'; }
+  persistFileSoon(f);
+}
+
+/** The starred photo, or the first selected photo. */
+function getFeatured() {
+  const imgs = selectedImages();
+  return imgs.find((f) => f.featured) || null;
+}
+function autoFeature() {
+  if (getFeatured()) return;
+  const first = selectedImages()[0];
+  if (first) { first.featured = true; first.featuredBy = 'auto'; persistFileSoon(first); }
+}
+function setFeatured(f, by = 'user') {
+  state.files.forEach((x) => { if (x.featured && x !== f) { x.featured = false; persistFileSoon(x); } });
+  f.featured = true; f.featuredBy = by; f.selected = true;
+  persistFileSoon(f);
+}
+const galleryItems = () => { const feat = getFeatured(); return selectedFiles().filter((f) => (f.kind === 'image' && f !== feat) || f.kind === 'video'); };
+
+function summarizeKinds(list) {
+  const c = {};
+  list.forEach((f) => { c[f.kind] = (c[f.kind] || 0) + 1; });
+  const names = { image: ['photo', 'photos'], video: ['video', 'videos'], audio: ['audio file', 'audio files'], pdf: ['PDF', 'PDFs'], docx: ['Word doc', 'Word docs'], text: ['text file', 'text files'], other: ['other file', 'other files'] };
+  return Object.entries(c).map(([k, n]) => plural(n, names[k][0], names[k][1])).join(' · ');
+}
+
+function autoAlt(f, lang) {
+  const P = PHRASES[lang];
+  const stem = f.name.replace(/\.[^.]+$/, '').replace(/[_\-.]+/g, ' ');
+  const rest = stem.replace(/\b(img|dsc[nf]?|pxl|mvimg|photo|image|pic|picture|screenshot|bildschirmfoto|foto|received|whatsapp|signal|copy|kopie|at|um|edited|bearbeitet|final)\b/gi, '').replace(/[\d:()\s]+/g, '');
+  if (rest.length >= 3) {
+    const clean = stem.replace(/\b\d{5,}\b/g, '').replace(/\s+/g, ' ').trim();
+    return clean[0].toLocaleUpperCase() + clean.slice(1);
+  }
+  const t = state.outputs[lang]?.blog.title?.split(':')[0] || org();
+  return `${P.photo}: ${t}`;
+}
+const altFor = (f, lang) => (f.alt?.[lang] || '').trim() || autoAlt(f, lang);
+const captionFor = (f, lang) => (f.caption?.[lang] || '').trim();
+
+/* ---------- File tiles (keyed rendering so progress updates don't flicker) ---------- */
+const tileEls = new Map();
+
+function tileMarkup(f) {
+  const visual = f.kind === 'image'
+    ? `<img src="${urlFor(f)}" alt="" draggable="false" class="absolute inset-0 size-full object-cover transition duration-500 group-hover:scale-105">`
+    : f.kind === 'video'
+      ? `<video src="${urlFor(f)}#t=0.5" muted playsinline preload="metadata" class="absolute inset-0 size-full object-cover"></video><span class="absolute inset-0 grid place-items-center"><span class="grid size-8 place-items-center rounded-full bg-black/45 text-white backdrop-blur">${icon('film', 'size-4')}</span></span>`
+      : `<div class="absolute inset-0 flex flex-col items-center justify-center bg-linear-to-br from-brand-50 to-white p-2 text-center">
+           <span class="rounded-md bg-brand-700 px-1.5 py-0.5 text-[10px] font-bold tracking-wide text-on-brand">${esc(extOf(f.name))}</span>
+           <p class="mt-1.5 line-clamp-2 w-full break-all text-[11px] font-medium leading-tight text-slate-700">${esc(f.name)}</p>
+           <p class="tile-meta mt-0.5 text-[10px] text-slate-500"></p>
+         </div>`;
+  const nameStrip = (f.kind === 'image' || f.kind === 'video')
+    ? `<div class="pointer-events-none absolute inset-x-0 bottom-0 bg-linear-to-t from-black/65 via-black/20 to-transparent px-2 pb-1.5 pt-6 text-[10px] leading-tight text-white"><p class="truncate font-medium">${esc(f.name)}</p><p class="tile-meta truncate opacity-80"></p></div>`
+    : '';
+  return `${visual}${nameStrip}
+    <span class="tile-check absolute left-1.5 top-1.5 grid size-6 place-items-center rounded-full shadow-sm transition"></span>
+    <span class="tile-done absolute right-1.5 top-1.5 grid size-6 place-items-center rounded-full bg-emerald-500 text-white shadow-sm" hidden title="Uploaded to WordPress">${icon('cloudCheck', 'size-3.5')}</span>
+    <button type="button" class="tile-remove absolute right-1.5 top-1.5 z-10 grid size-6 place-items-center rounded-full bg-white/90 text-slate-600 opacity-0 shadow-sm ring-1 ring-slate-200 transition hover:bg-red-500 hover:text-white group-hover:opacity-100 focus-visible:opacity-100" aria-label="Remove ${esc(f.name)}">${icon('x', 'size-3.5')}</button>
+    ${f.kind === 'image' ? `<button type="button" class="tile-star absolute bottom-1.5 right-1.5 z-10 grid size-6 place-items-center rounded-full shadow-sm transition" aria-label="Use ${esc(f.name)} as featured image"></button>` : ''}
+    <div class="tile-status absolute inset-0 grid place-items-center bg-white/75 text-brand-600 backdrop-blur-[1px]" hidden></div>
+    <div class="tile-progress absolute inset-x-0 bottom-0 h-1.5 bg-black/20" hidden><div class="progress-fill h-full w-0"></div></div>`;
+}
+
+function renderFiles() {
+  const grid = $('#files-grid');
+  const any = state.files.length > 0;
+  $('#dropzone').hidden = any;
+  $('#files-wrap').hidden = !any;
+  // remove stale tiles
+  for (const [id, el] of tileEls) if (!state.files.some((f) => f.id === id)) { el.remove(); tileEls.delete(id); }
+  // add new tiles in order
+  state.files.forEach((f) => {
+    let el = tileEls.get(f.id);
+    if (!el) {
+      el = document.createElement('div');
+      el.className = 'tile tile-in group relative aspect-square cursor-pointer select-none overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/40';
+      el.dataset.id = f.id;
+      el.setAttribute('role', 'checkbox');
+      el.tabIndex = 0;
+      el.title = `${f.name} · ${fmtBytes(f.size)}`;
+      el.style.animationDelay = `${f.enterDelay || 0}ms`;
+      el.innerHTML = tileMarkup(f);
+      el.addEventListener('animationend', (ev) => { if (ev.target === el) el.classList.remove('tile-in'); });
+      tileEls.set(f.id, el);
+    }
+    if (el.parentNode !== grid) grid.append(el);
+    updateTile(f);
+  });
+  let add = $('#files-add-tile');
+  if (!add) {
+    add = document.createElement('button');
+    add.type = 'button';
+    add.id = 'files-add-tile';
+    add.className = 'grid aspect-square place-items-center rounded-xl border-2 border-dashed border-slate-300 text-slate-400 transition hover:border-brand-400 hover:bg-brand-50 hover:text-brand-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/30 active:scale-95';
+    add.setAttribute('aria-label', 'Add more files');
+    add.innerHTML = `<span class="text-center">${icon('plus', 'mx-auto size-6')}<span class="mt-1 block text-[11px] font-medium">Add more</span></span>`;
+  }
+  if (grid.lastElementChild !== add) grid.append(add);
+  renderFilesToolbar();
+}
+
+function updateTile(f) {
+  const el = tileEls.get(f.id);
+  if (!el) return;
+  const featured = getFeatured() === f;
+  el.setAttribute('aria-checked', String(f.selected));
+  el.setAttribute('aria-label', `${f.name}, ${KIND_LABEL[f.kind]}, ${f.selected ? 'selected' : 'not selected'}${featured ? ', featured image' : ''}`);
+  el.classList.toggle('is-off', !f.selected);
+  const check = el.querySelector('.tile-check');
+  check.className = `tile-check absolute left-1.5 top-1.5 grid size-6 place-items-center rounded-full shadow-sm transition ${f.selected ? 'bg-brand-600 text-on-brand' : 'bg-white/90 text-transparent ring-1 ring-slate-300'}`;
+  check.innerHTML = icon('check', 'size-3.5');
+  const star = el.querySelector('.tile-star');
+  if (star) {
+    star.className = `tile-star absolute bottom-1.5 right-1.5 z-10 grid size-6 place-items-center rounded-full shadow-sm transition ${featured ? 'bg-accent-500 text-on-accent' : 'bg-white/90 text-slate-500 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 hover:text-accent-600'}`;
+    star.innerHTML = `<svg class="size-3.5" viewBox="0 0 24 24" fill="${featured ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">${ICONS.star}</svg>`;
+    star.setAttribute('aria-pressed', String(featured));
+  }
+  const meta = [];
+  if (f.pages) meta.push(plural(f.pages, 'page'));
+  if (f.words) meta.push(plural(f.words, 'word'));
+  if (f.width) meta.push(`${f.width}×${f.height}`);
+  meta.push(fmtBytes(f.size));
+  $$('.tile-meta', el).forEach((m) => { m.textContent = meta.slice(0, 2).join(' · '); });
+  const status = el.querySelector('.tile-status');
+  if (f.status === 'reading') { status.hidden = false; status.innerHTML = spinner('size-5'); }
+  else if (f.status === 'error') { status.hidden = false; status.className = 'tile-status absolute inset-0 grid place-items-center bg-red-50/85 p-2 text-center text-red-600'; status.innerHTML = `<span>${icon('alert', 'mx-auto size-5')}<span class="mt-1 block text-[10px] leading-tight">${esc(f.error || 'Could not read')}</span></span>`; }
+  else if (f.uploadState === 'error') { status.hidden = false; status.className = 'tile-status absolute inset-0 grid place-items-center bg-red-50/85 p-2 text-center text-red-600'; status.innerHTML = `<span>${icon('alert', 'mx-auto size-5')}<span class="mt-1 block text-[10px] leading-tight">Upload failed</span></span>`; }
+  else status.hidden = true;
+  const prog = el.querySelector('.tile-progress');
+  prog.hidden = f.progress == null;
+  if (f.progress != null) prog.firstElementChild.style.width = `${Math.round(f.progress * 100)}%`;
+  const base = currentWpBase();
+  el.querySelector('.tile-done').hidden = !(base && f.wp?.[base]) || f.progress != null;
+}
+
+function renderFilesToolbar() {
+  const n = state.files.length;
+  const sel = selectedFiles();
+  const all = $('#files-all');
+  all.checked = n > 0 && sel.length === n;
+  all.indeterminate = sel.length > 0 && sel.length < n;
+  const bytes = sel.reduce((s, f) => s + f.size, 0);
+  $('#files-summary').textContent = sel.length === n ? `All ${plural(n, 'file')} selected · ${fmtBytes(bytes)}` : `${sel.length} of ${n} selected · ${fmtBytes(bytes)}`;
+  const reading = state.files.filter((f) => f.status === 'reading').length;
+  $('#files-count-chip').innerHTML = n ? (reading ? `<span class="inline-flex items-center gap-1.5 text-brand-700">${spinner('size-3')}Reading ${reading}…</span>` : esc(summarizeKinds(sel) || 'None selected')) : '';
+  const hint = $('#wp-upload-hint');
+  if (hint) hint.textContent = sel.length ? `${plural(sel.length, 'file')} · ${fmtBytes(bytes)} into the Media Library, all at once` : 'Into the Media Library, all at once';
+  updateEngineHint();
+}
+
+function afterFileChange() {
+  state.files.forEach(updateTile);
+  renderFilesToolbar();
+  updateJourney();
+  updateExportLabel();
+  if (hasOutputs()) renderOutputs();
+}
+
+async function restoreFiles() {
+  try {
+    const recs = await idb.all();
+    if (!recs?.length) return;
+    state.files = recs.sort((a, b) => a.addedAt - b.addedAt).map((r) => ({ ...r, status: 'ready', ready: Promise.resolve() }));
+    renderFiles();
+    updateJourney();
+    updateExportLabel();
+    if (hasOutputs()) renderOutputs();
+  } catch { /* IndexedDB unavailable – files simply won't survive a reload */ }
+}
+
+/* =====================================================================
+   5. CLAUDE ENGINE – official Anthropic TypeScript SDK in the browser
    ===================================================================== */
 const SECTION_SCHEMA = {
   type: 'object', additionalProperties: false, required: ['heading', 'paragraphs', 'bullets', 'quote'],
@@ -890,27 +1639,52 @@ const CAMPAIGN_SCHEMA = {
     },
   },
 };
-function schemaFor(langs) {
+function mediaSchema(langs) {
+  const perLang = (description) => ({
+    type: 'object', additionalProperties: false, required: langs, description,
+    properties: Object.fromEntries(langs.map((l) => [l, { type: 'string' }])),
+  });
   return {
-    type: 'object', additionalProperties: false, required: langs,
-    properties: Object.fromEntries(langs.map((l) => [l, CAMPAIGN_SCHEMA])),
+    type: 'object', additionalProperties: false, required: ['featured_index', 'images'],
+    properties: {
+      featured_index: { type: 'integer', description: 'Number of the photo that works best as the featured image' },
+      images: {
+        type: 'array',
+        items: {
+          type: 'object', additionalProperties: false, required: ['index', 'alt_text', 'caption'],
+          properties: {
+            index: { type: 'integer', description: 'The photo number as labeled' },
+            alt_text: perLang('Factual alt text, max 125 characters, describing only what is visible'),
+            caption: perLang('Short caption for the blog gallery, or an empty string'),
+          },
+        },
+      },
+    },
   };
+}
+function schemaFor(langs, withMedia = false) {
+  const properties = Object.fromEntries(langs.map((l) => [l, CAMPAIGN_SCHEMA]));
+  const required = [...langs];
+  if (withMedia) { properties.media = mediaSchema(langs); required.push('media'); }
+  return { type: 'object', additionalProperties: false, required, properties };
 }
 
 function systemPrompt(o, url) {
-  return `You are the communications writer for the ${o}, a non-profit foundation. You turn raw notes, bullet points or meeting transcripts into a ready-to-publish content campaign for the foundation's website, social channels and newsletter.
+  return `You are the communications writer for the ${o}, a non-profit foundation. You turn raw notes, bullet points, meeting transcripts, documents and photos into a ready-to-publish content campaign for the foundation's website, social channels and newsletter.
 
 Facts
-- Use only facts contained in the notes. Never invent numbers, names, dates, places, quotes or outcomes. If a detail is missing, write around it.
+- Use only facts contained in the notes and attached documents. Never invent numbers, names, dates, places, quotes or outcomes. If a detail is missing, write around it.
+- Photos are labeled "Photo 0", "Photo 1" and so on. Describe only what is visible. Never guess the names or identities of people in photos.
 - Protect the dignity and privacy of the children and families you write about: no pity language, no identifying details about minors beyond what the notes state.
 - Tone: warm, hopeful, credible and impact-focused. Show what support made possible and invite readers to take part.
 
 Channels
-- WordPress blog post: an engaging, SEO-friendly title (max ~65 characters), an excerpt of max 160 characters, an opening paragraph, then 3-5 sections with H2 headings and short, readable paragraphs (2-4 sentences). Use bullets only where they help (e.g. figures). Use "quote" only for a quote that appears in the notes. End with a call to action (heading, one or two sentences, short button text).
+- WordPress blog post: an engaging, SEO-friendly title (max ~65 characters), an excerpt of max 160 characters, an opening paragraph, then 3-5 sections with H2 headings and short, readable paragraphs (2-4 sentences). Use bullets only where they help (e.g. figures). Use "quote" only for a quote that appears in the notes or documents. End with a call to action (heading, one or two sentences, short button text).
 - LinkedIn: professional and impact-focused, 120-220 words, short paragraphs separated by blank lines, ends with a call to action. Put exactly 3 relevant hashtags in "hashtags" (without the # sign) and none in the text.
-- Facebook: warm, personal and community-oriented, 60-140 words, a few emoji are fine, thank the community and invite people to share or comment.
+- Facebook: warm, personal and community-oriented, 60-140 words, a few emoji are fine, thank the community and invite people to share or comment. If photos are attached, you may refer to them.
 - Google Business Profile update: exactly 2 sentences, max 300 characters, no hashtags, no emoji.
 - Mailchimp newsletter: a catchy subject line (max 50 characters, one emoji allowed), preview text of 40-90 characters that complements rather than repeats the subject, a greeting, 3-5 short body paragraphs, button text of 2-4 words, and a sign-off from the foundation's team (use a line break between the closing phrase and the sender).
+- Photos (when attached): alt text and an optional short caption for every photo, and the number of the photo best suited as the featured image.
 
 Languages
 - German ("de"): natural, idiomatic German. Address readers formally with "Sie" in the blog, LinkedIn, Google and newsletter; Facebook may use the informal plural "ihr". Use typographic quotes („…“).
@@ -925,7 +1699,7 @@ Write plain text only: no Markdown, no HTML.`;
 
 let sdkPromise = null;
 function loadSdk() {
-  sdkPromise ??= import(SDK_URL).then((m) => m.default || m.Anthropic).catch((err) => {
+  sdkPromise ??= import(CDN.sdk).then((m) => m.default || m.Anthropic).catch((err) => {
     sdkPromise = null;
     throw new Error(`Could not load the Anthropic SDK (${err.message}). Check your internet connection.`);
   });
@@ -950,7 +1724,7 @@ function describeApiError(err, Anthropic) {
  * Streams one structured-output request and returns the parsed JSON.
  * onText receives the accumulated JSON text so the pipeline can show progress.
  */
-async function claudeRequest(userContent, langs, onText) {
+async function claudeRequest(userContent, langs, onText, withMedia = false) {
   const s = state.settings;
   if (!s.apiKey && !s.baseURL) throw new Error('Add your Anthropic API key in Settings (or an API base URL for your proxy).');
   const Anthropic = await loadSdk();
@@ -963,7 +1737,7 @@ async function claudeRequest(userContent, langs, onText) {
     model: s.model,
     max_tokens: 64000,
     thinking: { type: 'adaptive' },
-    output_config: { effort: s.effort, format: { type: 'json_schema', schema: schemaFor(langs) } },
+    output_config: { effort: s.effort, format: { type: 'json_schema', schema: schemaFor(langs, withMedia) } },
     system: systemPrompt(org(), ctaUrl()),
     messages: [{ role: 'user', content: userContent }],
   };
@@ -994,8 +1768,86 @@ async function claudeRequest(userContent, langs, onText) {
   }
 }
 
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result).split(',')[1] || '');
+    r.onerror = () => reject(r.error);
+    r.readAsDataURL(blob);
+  });
+}
+/** Downscales a photo to the size Claude works best with (long edge 1568 px) and returns JPEG base64. */
+async function imageForApi(f) {
+  const img = await loadImage(urlFor(f));
+  const scale = Math.min(1, 1568 / Math.max(img.naturalWidth, img.naturalHeight, 1));
+  const c = document.createElement('canvas');
+  c.width = Math.max(1, Math.round((img.naturalWidth || 800) * scale));
+  c.height = Math.max(1, Math.round((img.naturalHeight || 600) * scale));
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, c.width, c.height);
+  ctx.drawImage(img, 0, 0, c.width, c.height);
+  const blob = await new Promise((res) => c.toBlob(res, 'image/jpeg', 0.85));
+  return { media_type: 'image/jpeg', data: await blobToBase64(blob) };
+}
+
+/** Builds the content blocks for the selected files: photos, PDFs (native) and extracted text. */
+async function attachmentBlocks() {
+  const files = selectedFiles();
+  const blocks = [];
+  const photos = [];
+  const docs = [];
+  const other = [];
+  let budget = 22 * 1024 * 1024; // stay well below the 32 MB request limit
+  for (const f of files) {
+    if (f.kind === 'image' && photos.length < MAX_API_IMAGES) {
+      try {
+        const { data, media_type } = await imageForApi(f);
+        if (data.length > budget) { other.push(f.name); continue; }
+        budget -= data.length;
+        blocks.push({ type: 'text', text: `Photo ${photos.length}: ${f.name}` }, { type: 'image', source: { type: 'base64', media_type, data } });
+        photos.push(f);
+      } catch { other.push(f.name); }
+    } else if (f.kind === 'pdf' && f.size < 20 * 1024 * 1024) {
+      const data = await blobToBase64(f.blob);
+      if (data.length <= budget) {
+        budget -= data.length;
+        blocks.push({ type: 'document', source: { type: 'base64', media_type: 'application/pdf', data }, title: f.name });
+        docs.push(f);
+      } else if (f.text) { blocks.push(textDocument(f)); docs.push(f); }
+      else other.push(f.name);
+    } else if (f.text) {
+      const doc = textDocument(f);
+      budget -= doc.source.data.length;
+      blocks.push(doc);
+      docs.push(f);
+    } else {
+      other.push(f.name);
+    }
+  }
+  return { blocks, photos, docs, other };
+}
+const textDocument = (f) => ({ type: 'document', source: { type: 'text', media_type: 'text/plain', data: f.text.slice(0, 120000) }, title: f.name });
+
+/** Stores Claude's alt text, captions and featured-photo pick on the attached photos. */
+function applyMedia(media, photos, langs) {
+  if (!media || !photos.length) return;
+  for (const m of media.images || []) {
+    const f = photos[m.index];
+    if (!f) continue;
+    for (const l of langs) {
+      if (m.alt_text?.[l]) f.alt = { ...f.alt, [l]: m.alt_text[l] };
+      if (typeof m.caption?.[l] === 'string') f.caption = { ...f.caption, [l]: m.caption[l] };
+    }
+    persistFileSoon(f);
+  }
+  const pick = photos[media.featured_index];
+  const current = getFeatured();
+  if (pick && (!current || current.featuredBy !== 'user')) setFeatured(pick, 'auto');
+}
+
 /* =====================================================================
-   4. NORMALIZATION – structured campaign → editable outputs
+   6. NORMALIZATION – structured campaign → editable outputs
    ===================================================================== */
 function blogHtml(b, url) {
   let h = b.intro ? `<p class="pw-lead">${esc(b.intro)}</p>` : '';
@@ -1035,7 +1887,7 @@ function normalize(c, meta) {
 }
 
 /* =====================================================================
-   5. HTML HELPERS – clean inline HTML, Gutenberg blocks, plain text
+   7. HTML HELPERS – clean inline HTML, Gutenberg blocks, plain text
    ===================================================================== */
 const INLINE_TAGS = new Set(['STRONG', 'B', 'EM', 'I', 'U', 'S', 'CODE', 'SUB', 'SUP']);
 function inlineHtml(el) {
@@ -1052,14 +1904,19 @@ function inlineHtml(el) {
       else out += inner;
     }
   }
-  return out.replace(/\u00a0/g, ' ').trim();
+  return out.replace(/ /g, ' ').trim();
 }
 
-/** Converts the (possibly edited) preview HTML into WordPress content. mode: 'blocks' | 'classic' */
-function toWordPress(html, mode = 'blocks') {
+/**
+ * Converts the (possibly edited) preview HTML into WordPress content.
+ * mode: 'blocks' | 'classic'. mediaMarkup is inserted before the call to action.
+ */
+function toWordPress(html, mode = 'blocks', mediaMarkup = []) {
   const tpl = document.createElement('template');
   tpl.innerHTML = html;
   const out = [];
+  let mediaPlaced = !mediaMarkup.length;
+  const placeMedia = () => { if (!mediaPlaced) { out.push(...mediaMarkup); mediaPlaced = true; } };
   const blk = (name, markup, attrs) => (mode === 'blocks'
     ? `<!-- wp:${name}${attrs ? ' ' + JSON.stringify(attrs) : ''} -->\n${markup}\n<!-- /wp:${name} -->`
     : markup);
@@ -1069,6 +1926,7 @@ function toWordPress(html, mode = 'blocks') {
       if (n.nodeType === Node.TEXT_NODE) { const t = n.textContent.trim(); if (t) out.push(para(esc(t))); continue; }
       if (n.nodeType !== Node.ELEMENT_NODE || !n.textContent.trim()) continue;
       const tag = n.tagName;
+      if (n.classList.contains('pw-cta')) placeMedia();
       if (/^H[1-6]$/.test(tag)) {
         const level = Math.max(2, Number(tag[1]));
         const cls = mode === 'blocks' ? ' class="wp-block-heading"' : '';
@@ -1102,6 +1960,7 @@ function toWordPress(html, mode = 'blocks') {
     }
   };
   walk(tpl.content.childNodes);
+  placeMedia();
   return out.join('\n\n');
 }
 
@@ -1150,12 +2009,26 @@ function outputsForTranslation(o) {
   };
 }
 
+function uploadedUrl(f) {
+  if (!f?.wp) return '';
+  const hit = f.wp[state.lastWpBase] || Object.values(f.wp)[0];
+  return hit ? (hit.large || hit.url) : '';
+}
+
 function emailHtml(e, lang) {
   const tpl = document.createElement('template');
   tpl.innerHTML = e.bodyHtml;
   const paras = [...tpl.content.childNodes].map((n) => (n.nodeType === Node.ELEMENT_NODE ? inlineHtml(n) : esc(n.textContent.trim()))).filter(Boolean);
   const url = ctaUrl() || '#';
   const p = 'margin:0 0 16px;';
+  const { brand, accent } = state.theme;
+  const feat = getFeatured();
+  const featUrl = uploadedUrl(feat);
+  const hero = feat
+    ? (featUrl
+      ? `<tr><td style="padding:0;"><img src="${esc(featUrl)}" width="600" alt="${esc(altFor(feat, lang))}" style="display:block;width:100%;max-width:600px;height:auto;border:0;"></td></tr>`
+      : `<!-- Featured photo "${esc(feat.name)}": upload it in Mailchimp (Content Studio) or export to WordPress first, then place it here. -->`)
+    : '';
   const footer = lang === 'de'
     ? { prefs: 'Einstellungen ändern', unsub: 'Abmelden' }
     : { prefs: 'Update preferences', unsub: 'Unsubscribe' };
@@ -1171,12 +2044,13 @@ function emailHtml(e, lang) {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f1f5f4;">
 <tr><td align="center" style="padding:24px 12px;">
 <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background:#ffffff;border-radius:12px;overflow:hidden;">
-<tr><td style="background:#1f5d58;padding:20px 32px;font-family:Arial,Helvetica,sans-serif;font-size:18px;font-weight:bold;color:#ffffff;">${esc(org())}</td></tr>
+<tr><td style="background:${brand};padding:20px 32px;font-family:Arial,Helvetica,sans-serif;font-size:18px;font-weight:bold;color:${onColor(brand)};">${esc(org())}</td></tr>
+${hero}
 <tr><td style="padding:32px;font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.6;color:#1f2937;">
 <p style="${p}">${esc(e.greeting)}</p>
 ${paras.map((x) => `<p style="${p}">${x}</p>`).join('\n')}
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:28px auto;">
-<tr><td align="center" style="border-radius:999px;background:#ec7f33;"><a href="${esc(url)}" target="_blank" style="display:inline-block;padding:14px 30px;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:999px;">${esc(e.button)}</a></td></tr>
+<tr><td align="center" style="border-radius:999px;background:${accent};"><a href="${esc(url)}" target="_blank" style="display:inline-block;padding:14px 30px;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:bold;color:${onColor(accent)};text-decoration:none;border-radius:999px;">${esc(e.button)}</a></td></tr>
 </table>
 <p style="margin:0;">${esc(e.signoff).replace(/\n/g, '<br>')}</p>
 </td></tr>
@@ -1192,7 +2066,7 @@ ${esc(org())} · *|LIST:ADDRESSLINE|*<br>
 }
 
 /* =====================================================================
-   6. CLIPBOARD
+   8. CLIPBOARD
    ===================================================================== */
 async function copyToClipboard(text, html) {
   try {
@@ -1242,15 +2116,56 @@ document.addEventListener('click', async (ev) => {
   if (!ok) { toast('Copy failed – your browser blocked clipboard access.', 'error'); return; }
   const original = btn.innerHTML;
   btn.classList.add('copied');
-  btn.innerHTML = `${icon('check', 'size-3.5')}Copied`;
+  btn.innerHTML = `${icon('check', 'size-3.5 pop')}Copied`;
   setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = original; }, 1500);
   toast(`${src.label} copied to clipboard.`, 'success', 2200);
+  markReviewed();
 });
 
 /* =====================================================================
-   7. PIPELINE STATUS
+   9. JOURNEY + PIPELINE STATUS
    ===================================================================== */
+const JOURNEY = [
+  { id: 'notes', label: 'Notes & files', short: 'Notes' },
+  { id: 'generate', label: 'Generate' },
+  { id: 'review', label: 'Review' },
+  { id: 'publish', label: 'Publish' },
+];
+function updateJourney() {
+  const notesDone = words($('#notes').value) >= 5 || selectedFiles().length > 0;
+  const gen = hasOutputs();
+  const done = { notes: notesDone, generate: gen, review: gen && state.reviewed, publish: state.published };
+  const firstOpen = JOURNEY.find((s) => !done[s.id])?.id;
+  const el = $('#journey');
+  if (!el.children.length) {
+    el.innerHTML = JOURNEY.map((s, i) => `<li class="min-w-0" data-j="${s.id}">
+      <div class="h-1.5 overflow-hidden rounded-full bg-white/15"><div class="j-fill relative h-full w-0 overflow-hidden rounded-full bg-accent-400 transition-all duration-700"><span class="j-shine shimmer absolute inset-0" hidden></span></div></div>
+      <p class="mt-2 flex items-center gap-1.5 text-xs font-medium sm:text-sm"><span class="j-num grid size-5 shrink-0 place-items-center rounded-full text-[10px] font-bold transition">${i + 1}</span><span class="j-label truncate transition"></span></p>
+    </li>`).join('');
+  }
+  JOURNEY.forEach((s, i) => {
+    const li = $(`[data-j="${s.id}"]`, el);
+    const isDone = done[s.id];
+    const isCurrent = s.id === firstOpen;
+    const fill = $('.j-fill', li);
+    fill.style.width = isDone ? '100%' : isCurrent ? '35%' : '0';
+    $('.j-shine', li).hidden = !(isCurrent && !isDone);
+    const num = $('.j-num', li);
+    const wasDone = num.dataset.done === '1';
+    num.className = `j-num grid size-5 shrink-0 place-items-center rounded-full text-[10px] font-bold transition ${isDone ? 'bg-accent-500 text-on-accent' : isCurrent ? 'bg-white text-brand-800' : 'bg-white/15 text-white/70'}`;
+    num.innerHTML = isDone ? icon('check', 'size-3') : String(i + 1);
+    num.dataset.done = isDone ? '1' : '';
+    if (isDone && !wasDone) { num.classList.remove('pop'); void num.offsetWidth; num.classList.add('pop'); }
+    const label = $('.j-label', li);
+    label.innerHTML = s.short ? `<span class="sm:hidden">${esc(s.short)}</span><span class="hidden sm:inline">${esc(s.label)}</span>` : esc(s.label);
+    label.className = `j-label truncate transition ${isDone || isCurrent ? 'text-white' : 'text-white/55'}`;
+    li.setAttribute('aria-current', isCurrent ? 'step' : 'false');
+  });
+}
+function markReviewed() { if (!state.reviewed && hasOutputs()) { state.reviewed = true; updateJourney(); } }
+
 const STEPS = [
+  { id: 'files', name: 'Read files & photos', desc: 'Text from documents, photos for the post' },
   { id: 'analyze', name: 'Analyze notes', desc: 'Key facts, figures, tone and theme' },
   { id: 'blog', name: 'WordPress blog post', desc: 'Title, headings, paragraphs, call to action' },
   { id: 'social', name: 'Social media captions', desc: 'LinkedIn · Facebook · Google Business' },
@@ -1268,6 +2183,7 @@ const pipe = {
     if (!s) return;
     if (status === 'running' && s.status !== 'running') s.t0 = performance.now();
     if ((status === 'done' || status === 'error') && s.t0) s.ms = performance.now() - s.t0;
+    s.pop = status === 'done' && s.status !== 'done';
     s.status = status;
     if (detail !== undefined) s.detail = detail;
     this.render();
@@ -1275,9 +2191,9 @@ const pipe = {
   finishRunning(status = 'done') { for (const id of Object.keys(this.steps)) if (this.steps[id].status === 'running') this.set(id, status); },
   render() {
     const badge = {
-      idle: `<span class="grid size-7 place-items-center rounded-full border border-slate-200 bg-white text-xs font-semibold text-slate-400">·</span>`,
-      running: `<span class="grid size-7 place-items-center rounded-full bg-brand-50 text-brand-600 ring-1 ring-brand-200">${spinner('size-4')}</span>`,
-      done: `<span class="grid size-7 place-items-center rounded-full bg-emerald-500 text-white">${icon('check', 'size-4')}</span>`,
+      idle: `<span class="grid size-7 place-items-center rounded-full border border-slate-200 bg-white text-xs font-semibold text-slate-300">·</span>`,
+      running: `<span class="grid size-7 place-items-center rounded-full bg-brand-50 text-brand-600 ring-2 ring-brand-200">${spinner('size-4')}</span>`,
+      done: `<span class="grid size-7 place-items-center rounded-full bg-emerald-500 text-white shadow-sm shadow-emerald-600/30">${icon('check', 'size-4')}</span>`,
       skipped: `<span class="grid size-7 place-items-center rounded-full bg-slate-100 text-slate-400">${icon('minus', 'size-4')}</span>`,
       error: `<span class="grid size-7 place-items-center rounded-full bg-red-500 text-white">${icon('x', 'size-4')}</span>`,
     };
@@ -1287,15 +2203,20 @@ const pipe = {
     }[s.status]);
     $('#pipeline').innerHTML = STEPS.map((step) => {
       const s = this.steps[step.id];
-      return `<li class="flex items-start gap-3 ${s.status === 'skipped' ? 'opacity-60' : ''}">
-        ${badge[s.status]}
+      return `<li class="flex items-start gap-3 transition ${s.status === 'skipped' ? 'opacity-55' : ''} ${s.status === 'running' ? 'fade-up' : ''}">
+        <span class="${s.pop ? 'pop' : ''}">${badge[s.status]}</span>
         <div class="min-w-0 flex-1 pt-0.5">
-          <p class="text-sm font-medium text-slate-900">${esc(step.name)}</p>
+          <p class="text-sm font-medium ${s.status === 'running' ? 'text-brand-800' : 'text-slate-900'}">${esc(step.name)}</p>
           <p class="truncate text-xs text-slate-500" title="${esc(s.detail || step.desc)}">${esc(s.detail || step.desc)}</p>
         </div>
         <span class="shrink-0 pt-1 meta">${right(s)}</span>
       </li>`;
     }).join('');
+    for (const s of Object.values(this.steps)) s.pop = false;
+    const vals = Object.values(this.steps);
+    const finished = vals.filter((s) => ['done', 'skipped'].includes(s.status)).length;
+    const running = vals.some((s) => s.status === 'running') ? 0.5 : 0;
+    $('#run-bar').style.width = `${Math.round(((finished + running) / vals.length) * 100)}%`;
   },
 };
 
@@ -1312,7 +2233,7 @@ function setRunStatus(kind, text) {
 }
 
 /* =====================================================================
-   8. GENERATION FLOW
+   10. GENERATION FLOW
    ===================================================================== */
 function selectedLangs() { return state.target === 'both' ? ['de', 'en'] : [state.target]; }
 
@@ -1321,9 +2242,10 @@ function setBusy(busy, label = 'Generating…') {
   $('#generate').disabled = busy;
   $('#generate-label').textContent = busy ? label : 'Generate Campaign';
   $('#generate-icon').innerHTML = busy ? spinner('size-5') : icon('sparkles', 'size-5');
+  $('#generate-shine').hidden = !busy;
   $('#cancel-run').hidden = !(busy && state.settings.engine === 'claude');
   $$('#lang-toggle .lang-btn').forEach((b) => { b.disabled = busy || !hasOutputs(); });
-  $('#wp-export').disabled = busy || !hasOutputs();
+  updateExportLabel();
 }
 
 /** Marks the content steps as done once a run has finished, even if a progress marker was missed. */
@@ -1331,17 +2253,39 @@ function completeContentSteps() {
   for (const id of ['blog', 'social', 'email']) if (pipe.steps[id].status !== 'done') pipe.set(id, 'done');
 }
 
+function documentText(files) {
+  // The simulated engine reads the first part of each document like extra notes,
+  // skipping a heading-like first line ("Annual report 2026") so it doesn't become a sentence.
+  return files.filter((f) => f.text).map((f) => {
+    const lines = f.text.split('\n').map((l) => l.trim()).filter(Boolean);
+    if (lines.length > 1 && words(lines[0]) <= 8 && !/[.!?:]$/.test(lines[0])) lines.shift();
+    return lines.slice(0, 30).join('\n');
+  }).join('\n');
+}
+
 async function runSimulated(notes, langs) {
+  const files = selectedFiles();
+  if (files.length) {
+    pipe.set('files', 'running', `Reading ${plural(files.length, 'file')}…`);
+    await Promise.all(files.map((f) => f.ready));
+    await sleep(300);
+    const wordsRead = files.reduce((s, f) => s + (f.words || 0), 0);
+    pipe.set('files', 'done', `${summarizeKinds(files)}${wordsRead ? ` · ${fmt(wordsRead)} words read` : ''}`);
+  } else pipe.set('files', 'skipped', 'No files attached');
+
   pipe.set('analyze', 'running', 'Reading notes…');
-  await sleep(450);
-  const a = analyzeNotes(notes);
-  pipe.set('analyze', 'done', `${a.points.length + a.next.length + a.thanks.length} facts · ${LANG_NAMES[a.lang]} notes · theme: ${a.theme.en.label}`);
+  await sleep(420);
+  const source = [notes, documentText(files)].filter(Boolean).join('\n');
+  if (words(source) < 5) throw new Error('The simulated engine needs some text: add notes or a document. (With the Claude API, photos alone are enough.)');
+  const a = analyzeNotes(source);
+  pipe.set('analyze', 'done', `${a.points.length + a.next.length + a.thanks.length} facts · ${LANG_NAMES[a.lang]} · theme: ${a.theme.en.label}`);
+  const photoCount = selectedImages().length;
   const result = {};
-  for (const l of langs) result[l] = simulateCampaign(a, l, org(), ctaUrl());
+  for (const l of langs) result[l] = simulateCampaign(a, l, org(), ctaUrl(), photoCount);
   for (const id of ['blog', 'social', 'email']) {
     pipe.set(id, 'running');
-    await sleep(320 + Math.random() * 200);
-    pipe.set(id, 'done', { blog: `“${truncate(result[langs[0]].blog.title, 52)}”`, social: 'LinkedIn · Facebook · Google Business', email: `Subject: ${result[langs[0]].newsletter.subject}` }[id]);
+    await sleep(300 + Math.random() * 200);
+    pipe.set(id, 'done', { blog: `“${truncate(result[langs[0]].blog.title, 52)}”${photoCount ? ` · ${plural(photoCount, 'photo')}` : ''}`, social: 'LinkedIn · Facebook · Google Business', email: `Subject: ${result[langs[0]].newsletter.subject}` }[id]);
   }
   if (langs.length > 1) {
     pipe.set('translate', 'running');
@@ -1350,6 +2294,8 @@ async function runSimulated(notes, langs) {
   } else {
     pipe.set('translate', 'skipped', `Only ${LANG_NATIVE[langs[0]]} requested`);
   }
+  autoFeature();
+  state.campaignNotes = source;
   const meta = { engine: 'simulated', sourceLang: a.lang };
   return Object.fromEntries(langs.map((l) => [l, normalize(result[l], { ...meta, crossLang: a.lang !== l })]));
 }
@@ -1376,21 +2322,37 @@ function progressTracker(langs, { translationOnly = false } = {}) {
 }
 
 async function runClaude(notes, langs) {
-  pipe.set('analyze', 'running', `Sending notes to ${MODEL_LABELS[state.settings.model] || state.settings.model}…`);
+  const files = selectedFiles();
+  let att = { blocks: [], photos: [], docs: [], other: [] };
+  if (files.length) {
+    pipe.set('files', 'running', `Preparing ${plural(files.length, 'file')} for Claude…`);
+    await Promise.all(files.map((f) => f.ready));
+    att = await attachmentBlocks();
+    const parts = [];
+    if (att.photos.length) parts.push(plural(att.photos.length, 'photo'));
+    if (att.docs.length) parts.push(plural(att.docs.length, 'document'));
+    if (att.other.length) parts.push(`${fmt(att.other.length)} for publishing only`);
+    pipe.set('files', 'done', parts.join(' · ') || 'Nothing readable');
+  } else pipe.set('files', 'skipped', 'No files attached');
+
+  pipe.set('analyze', 'running', `Sending to ${MODEL_LABELS[state.settings.model] || state.settings.model}…`);
   if (langs.length === 1) pipe.set('translate', 'skipped', `Only ${LANG_NATIVE[langs[0]]} requested`);
   const langList = langs.map((l) => `${LANG_NAMES[l]} (key "${l}")`).join(' and ');
-  const user = `Create the complete content campaign in ${langList}.
+  const lines = [`Create the complete content campaign in ${langList}.`, `Today's date: ${new Date().toISOString().slice(0, 10)}`];
+  if (att.photos.length) lines.push(`${plural(att.photos.length, 'photo')} attached above (Photo 0 to Photo ${att.photos.length - 1}). Fill in "media" for every photo.`);
+  if (att.docs.length) lines.push(`${plural(att.docs.length, 'document')} attached above: use their facts like the notes.`);
+  if (att.other.length) lines.push(`Also attached for publishing only (not readable): ${att.other.join(', ')}.`);
+  lines.push(notes ? `<notes>\n${notes}\n</notes>` : 'No written notes were provided. Build the campaign from the attached files.');
+  const content = [...att.blocks, { type: 'text', text: lines.join('\n\n') }];
 
-Today's date: ${new Date().toISOString().slice(0, 10)}
-
-<notes>
-${notes}
-</notes>`;
   const t0 = performance.now();
-  const { data, usage, model } = await claudeRequest(user, langs, progressTracker(langs));
+  const { data, usage, model } = await claudeRequest(content, langs, progressTracker(langs), att.photos.length > 0);
   pipe.finishRunning('done');
   completeContentSteps();
   if (langs.length > 1) pipe.set('translate', 'done', 'Deutsch + English versions ready');
+  applyMedia(data.media, att.photos, langs);
+  autoFeature();
+  state.campaignNotes = notes;
   const meta = { engine: 'claude', model, usage, seconds: (performance.now() - t0) / 1000 };
   return Object.fromEntries(langs.map((l) => [l, normalize(data[l], meta)]));
 }
@@ -1398,13 +2360,15 @@ ${notes}
 async function generate() {
   if (state.busy) return;
   const notes = $('#notes').value.trim();
-  if (words(notes) < 5) {
-    toast('Paste a few notes first – at least a sentence or two.', 'warn');
+  const files = selectedFiles();
+  if (words(notes) < 5 && !files.length) {
+    toast('Add a few notes or some files first.', 'warn');
     $('#notes').focus();
     return;
   }
   const langs = selectedLangs();
   setBusy(true);
+  state.restored = false;
   pipe.reset();
   setRunStatus('running', 'Running');
   $('#pipeline-sub').textContent = state.settings.engine === 'claude' ? `Claude · ${MODEL_LABELS[state.settings.model] || state.settings.model}` : 'Simulated engine';
@@ -1412,13 +2376,16 @@ async function generate() {
   try {
     const out = state.settings.engine === 'claude' ? await runClaude(notes, langs) : await runSimulated(notes, langs);
     state.outputs = { de: null, en: null, ...out };
-    state.campaignNotes = notes;
+    state.reviewed = false;
     if (!state.outputs[state.lang]) state.lang = langs[0];
     saveCampaign();
+    state.files.forEach(updateTile);
     renderOutputs();
     setRunStatus('done', 'Complete');
     updateRunMeta(performance.now() - t0);
+    updateJourney();
     toast('Campaign ready – review and copy your content.', 'success');
+    confetti($('#generate'));
     if (window.matchMedia('(max-width: 1023px)').matches) $('#outputs-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch (err) {
     pipe.finishRunning('error');
@@ -1435,7 +2402,9 @@ async function translateTo(lang) {
   const source = state.outputs[from];
   if (!source || state.busy) return;
   setBusy(true, 'Translating…');
+  state.restored = false;
   pipe.reset();
+  pipe.set('files', 'skipped', 'Using the existing campaign');
   pipe.set('analyze', 'skipped', 'Using the existing campaign');
   setRunStatus('running', 'Translating');
   const t0 = performance.now();
@@ -1443,21 +2412,25 @@ async function translateTo(lang) {
     let output;
     if (state.settings.engine === 'claude') {
       pipe.set('translate', 'running', `Translating into ${LANG_NAMES[lang]}…`);
-      const user = `Translate and localize this campaign into ${LANG_NAMES[lang]} (key "${lang}"). Keep the facts, structure, links and intent identical, follow the channel rules, and write natural ${LANG_NAMES[lang]} rather than a literal translation. The blog body is given as Markdown; return it in the schema's structure.
+      const photos = selectedImages().slice(0, MAX_API_IMAGES);
+      const campaign = outputsForTranslation(source);
+      if (photos.length) campaign.media = photos.map((f, index) => ({ index, alt_text: altFor(f, from), caption: captionFor(f, from) }));
+      const user = `Translate and localize this campaign into ${LANG_NAMES[lang]} (key "${lang}"). Keep the facts, structure, links and intent identical, follow the channel rules, and write natural ${LANG_NAMES[lang]} rather than a literal translation. The blog body is given as Markdown; return it in the schema's structure.${photos.length ? ' Translate the photo alt texts and captions in "media" too, keeping each index.' : ''}
 
 <campaign lang="${from}">
-${JSON.stringify(outputsForTranslation(source), null, 2)}
+${JSON.stringify(campaign, null, 2)}
 </campaign>`;
-      const { data, usage, model } = await claudeRequest(user, [lang], progressTracker([lang], { translationOnly: true }));
+      const { data, usage, model } = await claudeRequest(user, [lang], progressTracker([lang], { translationOnly: true }), photos.length > 0);
       pipe.finishRunning('done');
       completeContentSteps();
       pipe.set('translate', 'done', `${LANG_NATIVE[lang]} version ready`);
+      if (data.media) { const keep = getFeatured(); applyMedia({ ...data.media, featured_index: -1 }, photos, [lang]); if (keep) setFeatured(keep, keep.featuredBy || 'auto'); }
       output = normalize(data[lang], { engine: 'claude', model, usage, seconds: (performance.now() - t0) / 1000 });
     } else {
       pipe.set('translate', 'running', `Building the ${LANG_NAMES[lang]} version…`);
       await sleep(500);
       const a = analyzeNotes(state.campaignNotes);
-      output = normalize(simulateCampaign(a, lang, org(), ctaUrl()), { engine: 'simulated', sourceLang: a.lang, crossLang: a.lang !== lang });
+      output = normalize(simulateCampaign(a, lang, org(), ctaUrl(), selectedImages().length), { engine: 'simulated', sourceLang: a.lang, crossLang: a.lang !== lang });
       ['blog', 'social', 'email'].forEach((id) => pipe.set(id, 'done'));
       pipe.set('translate', 'done', `${LANG_NATIVE[lang]} version ready`);
     }
@@ -1485,11 +2458,12 @@ function updateRunMeta(ms) {
   const parts = [o.meta.engine === 'claude' ? `Claude · ${o.meta.model || ''}` : 'Simulated engine', when];
   if (ms) parts.push(`${(ms / 1000).toFixed(1)} s`);
   if (o.meta.usage) parts.push(`${fmt(o.meta.usage.input_tokens)} in / ${fmt(o.meta.usage.output_tokens)} out tokens`);
+  if (state.restored) parts.unshift('Restored from your last session');
   $('#run-meta').textContent = parts.join(' · ');
 }
 
 /* =====================================================================
-   9. OUTPUT RENDERING + INLINE EDITING
+   11. OUTPUT RENDERING + INLINE EDITING
    ===================================================================== */
 const copyBtn = (key, label = 'Copy', ic = 'copy') => `<button type="button" class="copy-btn" data-copy="${key}">${icon(ic, 'size-3.5')}${esc(label)}</button>`;
 const counter = (id) => `<span class="meta whitespace-nowrap" id="${id}"></span>`;
@@ -1507,8 +2481,8 @@ function renderOutputs() {
     b.title = exists ? `Show ${LANG_NAMES[l]} version` : any ? `Create the ${LANG_NAMES[l]} version` : '';
     b.disabled = !any || state.busy;
   });
-  $('#wp-export').disabled = !any || state.busy;
-  if (!any) { $$('[role="tabpanel"]').forEach((p) => { p.hidden = true; }); $('#output-notice').hidden = true; return; }
+  updateExportLabel();
+  if (!any) { $$('[role="tabpanel"]').forEach((p) => { p.hidden = true; }); $('#output-notice').hidden = true; positionInk(); return; }
 
   const o = cur();
   const notice = $('#output-notice');
@@ -1524,11 +2498,21 @@ function renderOutputs() {
   updateRunMeta();
 }
 
+function photoThumb(f, cls = '') {
+  return f.kind === 'video'
+    ? `<div class="relative overflow-hidden rounded-lg bg-slate-900 ${cls}"><video src="${urlFor(f)}#t=0.5" muted preload="metadata" class="size-full object-cover"></video><span class="absolute inset-0 grid place-items-center text-white">${icon('film', 'size-5')}</span></div>`
+    : `<img src="${urlFor(f)}" alt="${esc(altFor(f, state.lang))}" title="${esc(altFor(f, state.lang))}" class="rounded-lg object-cover ${cls}">`;
+}
+
 function renderBlog(o) {
   const panel = $('#panel-blog');
   panel.lang = state.lang;
+  const feat = getFeatured();
+  const gallery = galleryItems();
+  const photos = selectedImages();
+  const wasOpen = $('#photo-details')?.open;
   panel.innerHTML = `
-    <div class="space-y-5">
+    <div class="fade-up space-y-5">
       <div>
         <div class="mb-1.5 flex items-center justify-between gap-2">
           <label class="text-sm font-medium text-slate-700" for="blog-title">Post title</label>
@@ -1543,13 +2527,38 @@ function renderBlog(o) {
         </div>
         <textarea id="blog-excerpt" rows="2" class="input autosize">${esc(o.blog.excerpt)}</textarea>
       </div>
-      <div class="overflow-hidden rounded-xl border border-slate-200">
+      <div class="overflow-hidden rounded-2xl border border-slate-200">
         <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-slate-50 px-4 py-2.5">
           <span class="meta" id="blog-stats"></span>
           <div class="flex flex-wrap gap-1.5">${copyBtn('blog-rich', 'Copy post')}${copyBtn('blog-html', 'Copy HTML', 'code')}${copyBtn('blog-blocks', 'Copy blocks', 'code')}</div>
         </div>
+        ${feat ? `<figure class="relative mx-4 mt-4 overflow-hidden rounded-xl sm:mx-7">
+          <img src="${urlFor(feat)}" alt="${esc(altFor(feat, state.lang))}" class="aspect-[16/9] w-full object-cover">
+          <figcaption class="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-semibold text-brand-800 shadow-sm backdrop-blur"><svg class="size-3.5 text-accent-500" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${ICONS.star}</svg>Featured image</figcaption>
+        </figure>` : ''}
         <article id="blog-body" class="pw-article" contenteditable="true" spellcheck="true" aria-label="Blog post body (editable)">${o.blog.html}</article>
+        ${gallery.length ? `<div class="border-t border-slate-100 px-4 py-5 sm:px-7">
+          <p class="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-500">${icon('image', 'size-3.5')}Photo gallery · ${gallery.length}</p>
+          <div class="grid grid-cols-3 gap-2 sm:grid-cols-4">${gallery.map((f) => photoThumb(f, 'aspect-square w-full')).join('')}</div>
+          <p class="meta mt-2">Added to the post before the call to action when you export.</p>
+        </div>` : ''}
       </div>
+      ${photos.length ? `<details id="photo-details" class="group rounded-2xl border border-slate-200" ${wasOpen ? 'open' : ''}>
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3 text-sm font-medium text-slate-700 hover:text-slate-900">
+          <span class="inline-flex items-center gap-2">${icon('image', 'size-4 text-brand-600')}Alt text &amp; captions · ${plural(photos.length, 'photo')}</span>
+          <span class="meta group-open:hidden">Edit</span>
+        </summary>
+        <div class="space-y-3 border-t border-slate-100 px-4 py-4">
+          ${photos.map((f) => `<div class="flex gap-3">
+            <div class="relative shrink-0">${photoThumb(f, 'size-16')}${getFeatured() === f ? `<span class="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-accent-500 text-on-accent shadow"><svg class="size-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">${ICONS.star}</svg></span>` : ''}</div>
+            <div class="min-w-0 flex-1 space-y-1.5">
+              <input class="input py-1.5 text-xs" data-alt="${f.id}" value="${esc(altFor(f, state.lang))}" aria-label="Alt text for ${esc(f.name)}" placeholder="Alt text: what's in the photo?">
+              <input class="input py-1.5 text-xs" data-cap="${f.id}" value="${esc(captionFor(f, state.lang))}" aria-label="Caption for ${esc(f.name)}" placeholder="Caption (optional)">
+            </div>
+          </div>`).join('')}
+          <p class="meta">Alt text is sent to WordPress with each photo, which helps accessibility and search.</p>
+        </div>
+      </details>` : `<p class="flex items-center gap-2 rounded-xl bg-brand-50/60 px-3 py-2.5 text-xs text-brand-900 ring-1 ring-brand-100">${icon('image', 'size-4 shrink-0 text-brand-600')}Add photos in step 1 to get a featured image and a photo gallery in the post.</p>`}
       <p class="flex items-center gap-1.5 text-xs text-slate-500">${icon('info', 'size-3.5')}Click into any text to edit it. Changes are saved automatically and used for copying and the WordPress export.</p>
     </div>`;
   const update = () => {
@@ -1558,20 +2567,44 @@ function renderBlog(o) {
     const e = $('#blog-excerpt').value;
     $('#blog-excerpt-count').innerHTML = e.length <= 160 ? `${e.length} / 160` : `<span class="warn">${e.length} / 160</span>`;
     const w = words($('#blog-body').innerText);
-    $('#blog-stats').textContent = `${fmt(w)} words · ${Math.max(1, Math.round(w / 200))} min read · editable preview`;
+    $('#blog-stats').textContent = `${fmt(w)} words · ${Math.max(1, Math.round(w / 200))} min read${photos.length ? ` · ${plural(photos.length, 'photo')}` : ''} · editable`;
   };
-  $('#blog-title').addEventListener('input', (ev) => { o.blog.title = ev.target.value.replace(/\s*\n\s*/g, ' '); update(); saveCampaign(); });
+  $('#blog-title').addEventListener('input', (ev) => { o.blog.title = ev.target.value.replace(/\s*\n\s*/g, ' '); update(); saveCampaign(); markReviewed(); });
   $('#blog-title').addEventListener('keydown', (ev) => { if (ev.key === 'Enter') ev.preventDefault(); });
-  $('#blog-excerpt').addEventListener('input', (ev) => { o.blog.excerpt = ev.target.value; update(); saveCampaign(); });
-  $('#blog-body').addEventListener('input', (ev) => { o.blog.html = ev.target.innerHTML; update(); saveCampaign(); });
+  $('#blog-excerpt').addEventListener('input', (ev) => { o.blog.excerpt = ev.target.value; update(); saveCampaign(); markReviewed(); });
+  $('#blog-body').addEventListener('input', (ev) => { o.blog.html = ev.target.innerHTML; update(); saveCampaign(); markReviewed(); });
   update();
+}
+
+function onPhotoTextInput(ev) {
+  const id = ev.target.dataset?.alt || ev.target.dataset?.cap;
+  const f = id && state.files.find((x) => x.id === id);
+  if (!f) return;
+  if (ev.target.dataset.alt) f.alt = { ...f.alt, [state.lang]: ev.target.value };
+  else f.caption = { ...f.caption, [state.lang]: ev.target.value };
+  persistFileSoon(f);
+  markReviewed();
+}
+
+function socialPhoto(key) {
+  const feat = getFeatured();
+  if (!feat) return '';
+  const more = selectedImages().length - 1;
+  return `<div class="mt-3 flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/60 p-2">
+    <img src="${urlFor(feat)}" alt="" class="size-14 shrink-0 rounded-lg object-cover">
+    <div class="min-w-0 flex-1 text-xs">
+      <p class="truncate font-medium text-slate-800">Suggested photo · ${esc(feat.name)}</p>
+      <p class="text-slate-500">${more > 0 ? `+${plural(more, 'more photo')} selected` : 'The starred photo from step 1'}</p>
+    </div>
+    <a class="copy-btn" href="${urlFor(feat)}" download="${esc(feat.name)}" data-dl="${key}">${icon('download', 'size-3.5')}Photo</a>
+  </div>`;
 }
 
 function renderSocial(o) {
   const panel = $('#panel-social');
   panel.lang = state.lang;
   const card = (key, name, sub, badge, textId) => `
-    <article class="rounded-xl border border-slate-200 p-4">
+    <article class="rounded-2xl border border-slate-200 p-4 transition hover:border-brand-200 hover:shadow-sm">
       <header class="mb-3 flex items-center justify-between gap-3">
         <div class="flex min-w-0 items-center gap-3">
           ${badge}
@@ -1585,8 +2618,9 @@ function renderSocial(o) {
       <label class="sr-only" for="${textId}">${name} caption</label>
       <textarea id="${textId}" class="input autosize leading-relaxed" rows="4">${esc(o.social[key])}</textarea>
       <div class="mt-2 flex flex-wrap items-center justify-between gap-2 meta" id="${textId}-meta"></div>
+      ${socialPhoto(key)}
     </article>`;
-  panel.innerHTML = `<div class="space-y-4">
+  panel.innerHTML = `<div class="fade-up space-y-4">
     ${card('linkedin', 'LinkedIn', 'Professional · impact-focused · 3 hashtags', '<span class="grid size-9 shrink-0 place-items-center rounded-lg bg-[#0a66c2] text-sm font-bold text-white">in</span>', 'li-text')}
     ${card('facebook', 'Facebook', 'Warm · community-oriented', '<span class="grid size-9 shrink-0 place-items-center rounded-full bg-[#1877f2] text-lg font-bold text-white">f</span>', 'fb-text')}
     ${card('google', 'Google Business Profile', 'Short 2-sentence update', '<span class="grid size-9 shrink-0 place-items-center rounded-lg border border-slate-200 bg-white text-base font-bold text-[#4285f4]">G</span>', 'gb-text')}
@@ -1599,7 +2633,7 @@ function renderSocial(o) {
   [['linkedin', 'li-text'], ['facebook', 'fb-text'], ['google', 'gb-text']].forEach(([key, id]) => {
     const ta = $('#' + id);
     const update = () => { $(`#${id}-meta`).innerHTML = metas[key](ta.value); };
-    ta.addEventListener('input', () => { o.social[key] = ta.value; update(); saveCampaign(); });
+    ta.addEventListener('input', () => { o.social[key] = ta.value; update(); saveCampaign(); markReviewed(); });
     update();
   });
 }
@@ -1608,8 +2642,9 @@ function renderEmail(o) {
   const panel = $('#panel-email');
   panel.lang = state.lang;
   const e = o.email;
+  const feat = getFeatured();
   panel.innerHTML = `
-    <div class="space-y-5">
+    <div class="fade-up space-y-5">
       <div class="grid gap-4 sm:grid-cols-2">
         <div>
           <div class="mb-1.5 flex items-center justify-between gap-2">
@@ -1627,17 +2662,18 @@ function renderEmail(o) {
         </div>
       </div>
 
-      <div class="rounded-xl border border-slate-200 bg-slate-100/70 p-3 sm:p-5">
-        <div class="mx-auto mb-3 flex max-w-[560px] items-center gap-3 rounded-lg bg-white px-3 py-2.5 text-sm shadow-sm ring-1 ring-slate-200" aria-label="Inbox preview">
-          <span class="grid size-8 shrink-0 place-items-center rounded-full bg-brand-700 text-xs font-bold text-white">${esc(initials(org()))}</span>
+      <div class="rounded-2xl border border-slate-200 bg-linear-to-b from-slate-100/80 to-slate-50 p-3 sm:p-5">
+        <div class="mx-auto mb-3 flex max-w-[560px] items-center gap-3 rounded-xl bg-white px-3 py-2.5 text-sm shadow-sm ring-1 ring-slate-200" aria-label="Inbox preview">
+          <span class="grid size-8 shrink-0 place-items-center overflow-hidden rounded-full bg-brand-700 text-xs font-bold text-on-brand" data-logo-small>${state.theme.logo ? `<img src="${state.theme.logo}" alt="" class="size-full bg-white object-contain p-0.5">` : esc(initials(org()))}</span>
           <div class="min-w-0 flex-1">
             <p class="truncate text-xs text-slate-500">${esc(org())}</p>
             <p class="truncate"><strong class="font-semibold text-slate-900" id="inbox-subject"></strong> <span class="text-slate-500" id="inbox-preview"></span></p>
           </div>
-          <span class="meta">Inbox preview</span>
+          <span class="meta hidden sm:inline">Inbox preview</span>
         </div>
-        <div class="mx-auto max-w-[560px] overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
-          <div class="bg-brand-700 px-6 py-4 text-[15px] font-semibold text-white">${esc(org())}</div>
+        <div class="mx-auto max-w-[560px] overflow-hidden rounded-xl bg-white shadow-md ring-1 ring-slate-200">
+          <div class="bg-brand-700 px-6 py-4 text-[15px] font-semibold text-on-brand">${esc(org())}</div>
+          ${feat ? `<img src="${urlFor(feat)}" alt="${esc(altFor(feat, state.lang))}" class="aspect-[2/1] w-full object-cover">` : ''}
           <div class="pw-email space-y-4 px-6 py-6">
             <p id="email-greeting" contenteditable="true" spellcheck="true" aria-label="Greeting (editable)">${esc(e.greeting)}</p>
             <div id="email-body" contenteditable="true" spellcheck="true" aria-label="Email body (editable)">${e.bodyHtml}</div>
@@ -1652,7 +2688,7 @@ function renderEmail(o) {
         <span class="meta" id="email-stats"></span>
         <div class="flex flex-wrap gap-1.5">${copyBtn('email-body', 'Copy body')}${copyBtn('email-button', 'Copy button text')}${copyBtn('email-html', 'Copy email HTML', 'code')}</div>
       </div>
-      <p class="flex items-start gap-1.5 text-xs leading-relaxed text-slate-500">${icon('info', 'mt-px size-3.5 shrink-0')}<span>“Copy email HTML” gives you a responsive, inline-styled template with Mailchimp merge tags (unsubscribe, address). Paste it into a <em>Code your own</em> template or a Code block.</span></p>
+      <p class="flex items-start gap-1.5 text-xs leading-relaxed text-slate-500">${icon('info', 'mt-px size-3.5 shrink-0')}<span>“Copy email HTML” gives you a responsive template in your brand colors, with Mailchimp merge tags (unsubscribe, address). Paste it into a <em>Code your own</em> template or a Code block.${feat ? ' The featured photo is included once it has been uploaded to WordPress.' : ''}</span></p>
     </div>`;
   const update = () => {
     const s = $('#email-subject').value, p = $('#email-preview').value;
@@ -1662,7 +2698,7 @@ function renderEmail(o) {
     $('#inbox-preview').textContent = `– ${p}`;
     $('#email-stats').textContent = `${fmt(words($('#email-body').innerText))} words in the body · button: “${$('#email-button').innerText.trim()}”`;
   };
-  const bind = (id, fn) => $('#' + id).addEventListener('input', (ev) => { fn(ev.target); update(); saveCampaign(); });
+  const bind = (id, fn) => $('#' + id).addEventListener('input', (ev) => { fn(ev.target); update(); saveCampaign(); markReviewed(); });
   bind('email-subject', (t) => { e.subject = t.value; });
   bind('email-preview', (t) => { e.preview = t.value; });
   bind('email-greeting', (t) => { e.greeting = t.innerText.trim(); });
@@ -1678,13 +2714,13 @@ function initials(name) { return name.split(/\s+/).filter((w) => /^\p{Lu}/u.test
 function autosize(ta) { ta.style.height = 'auto'; ta.style.height = `${ta.scrollHeight + 2}px`; }
 document.addEventListener('input', (ev) => { if (ev.target.matches?.('textarea.autosize')) autosize(ev.target); });
 
-// Paste as plain text into editable previews, so formatting from other apps doesn't leak into WordPress.
-document.addEventListener('paste', (ev) => {
-  const el = ev.target.closest?.('[contenteditable="true"]');
-  if (!el) return;
-  ev.preventDefault();
-  document.execCommand('insertText', false, ev.clipboardData.getData('text/plain'));
-});
+function positionInk() {
+  const tab = $(`#tab-${state.tab}`);
+  const ink = $('#tab-ink');
+  if (!tab || !ink) return;
+  ink.style.left = `${tab.offsetLeft + 8}px`;
+  ink.style.width = `${Math.max(0, tab.offsetWidth - 16)}px`;
+}
 
 function showTab(tab, focus = true) {
   state.tab = tab;
@@ -1694,22 +2730,29 @@ function showTab(tab, focus = true) {
     t.tabIndex = on ? 0 : -1;
     if (on && focus) t.focus();
   });
+  positionInk();
+  store.set('tab', tab);
   if (!hasOutputs()) return;
   $$('[role="tabpanel"]').forEach((p) => { p.hidden = p.id !== `panel-${tab}`; });
   $$(`#panel-${tab} textarea.autosize`).forEach(autosize);
-  store.set('tab', tab);
 }
 
 /* =====================================================================
-   10. WORDPRESS REST API
+   12. WORDPRESS REST API – files + drafts, all at once
    ===================================================================== */
+function normalizeBase(raw) {
+  let base = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+  base = new URL(base).href.replace(/\/+$/, '').replace(/\/wp-admin.*$/, '').replace(/\/wp-json.*$/, '');
+  return base;
+}
+function currentWpBase() { try { const raw = $('#wp-url').value.trim(); return raw ? normalizeBase(raw) : ''; } catch { return ''; } }
 function wpCreds() {
   const raw = $('#wp-url').value.trim();
   const user = $('#wp-user').value.trim();
   const pass = $('#wp-pass').value.trim();
   if (!raw) throw new Error('Enter your WordPress site URL.');
-  let base = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
-  try { base = new URL(base).href.replace(/\/+$/, '').replace(/\/wp-admin.*$/, '').replace(/\/wp-json.*$/, ''); } catch { throw new Error('The site URL does not look valid.'); }
+  let base;
+  try { base = normalizeBase(raw); } catch { throw new Error('The site URL does not look valid.'); }
   if (!user) throw new Error('Enter your WordPress username.');
   if (!pass) throw new Error('Enter an application password (Users → Profile → Application Passwords).');
   return { base, user, pass };
@@ -1720,24 +2763,29 @@ function basicAuth(user, pass) {
   bytes.forEach((b) => { bin += String.fromCharCode(b); });
   return `Basic ${btoa(bin)}`;
 }
+const restUrl = (base, path, qs = '') => (state.wpPlain[base]
+  ? `${base}/?rest_route=${path}${qs ? `&${qs}` : ''}`
+  : `${base}/wp-json${path}${qs ? `?${qs}` : ''}`);
+const unreachable = (base) => (location.protocol === 'https:' && base.startsWith('http:')
+  ? 'This page runs on HTTPS, so it cannot call an http:// site. Use the https:// address of your WordPress site.'
+  : `Could not reach ${base}. Check the URL, and that the REST API is not blocked by a security plugin, firewall or CORS policy. “Copy as cURL” works as an alternative.`);
 
 /** Calls the REST API, falling back to ?rest_route= for sites without pretty permalinks. */
 async function wpFetch(path, { method = 'GET', query = {}, body } = {}) {
   const { base, user, pass } = wpCreds();
   const qs = new URLSearchParams(query).toString();
-  const urls = [`${base}/wp-json${path}${qs ? `?${qs}` : ''}`, `${base}/?rest_route=${path}${qs ? `&${qs}` : ''}`];
   const headers = { Authorization: basicAuth(user, pass), Accept: 'application/json' };
   if (body) headers['Content-Type'] = 'application/json';
+  const styles = state.wpPlain[base] ? [true] : [false, true];
   let lastError;
-  for (const url of urls) {
+  for (const plain of styles) {
+    state.wpPlain[base] = plain;
     let res;
     try {
-      res = await fetch(url, { method, headers, body: body ? JSON.stringify(body) : undefined, credentials: 'omit' });
+      res = await fetch(restUrl(base, path, qs), { method, headers, body: body ? JSON.stringify(body) : undefined, credentials: 'omit' });
     } catch {
-      const mixed = location.protocol === 'https:' && base.startsWith('http:');
-      throw new Error(mixed
-        ? 'This page runs on HTTPS, so it cannot call an http:// site. Use the https:// address of your WordPress site.'
-        : `Could not reach ${base}. Check the URL, and that the REST API is not blocked by a security plugin, firewall or CORS policy. “Copy as cURL” works as an alternative.`);
+      state.wpPlain[base] = false;
+      throw new Error(unreachable(base));
     }
     const text = await res.text();
     let data = null;
@@ -1745,12 +2793,51 @@ async function wpFetch(path, { method = 'GET', query = {}, body } = {}) {
     if (res.ok && data) return { data, base };
     if (res.status === 404 && !data?.code) { lastError = new Error('No WordPress REST API found at this address (404). Check the site URL.'); continue; }
     if (res.ok && !data) { lastError = new Error('The site answered, but not with WordPress REST API data. Check the site URL.'); continue; }
-    const wpMsg = data?.message ? data.message.replace(/<[^>]+>/g, '') : res.statusText;
-    if (res.status === 401) throw new Error(`WordPress rejected the login (401): ${wpMsg}. Check the username and application password.`);
-    if (res.status === 403) throw new Error(`Permission denied (403): ${wpMsg}. The user needs at least the Author role.`);
-    throw new Error(`WordPress error ${res.status}: ${wpMsg}`);
+    throw wpError(res.status, data, res.statusText);
   }
+  state.wpPlain[base] = false;
   throw lastError;
+}
+function wpError(status, data, statusText = '') {
+  const wpMsg = data?.message ? String(data.message).replace(/<[^>]+>/g, '') : statusText || 'Unknown error';
+  if (status === 401) return new Error(`WordPress rejected the login (401): ${wpMsg}. Check the username and application password.`);
+  if (status === 403) return new Error(`Permission denied (403): ${wpMsg}. The user needs at least the Author role.`);
+  if (status === 413) return new Error('The file is larger than the server allows (413).');
+  return new Error(`WordPress error ${status}: ${wpMsg}`);
+}
+
+/** Uploads one file to the Media Library with progress (XHR gives upload progress events). */
+function wpUpload(f, { base, user, pass }, lang, onProgress) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', restUrl(base, '/wp/v2/media'));
+    xhr.setRequestHeader('Authorization', basicAuth(user, pass));
+    xhr.setRequestHeader('Accept', 'application/json');
+    xhr.upload.onprogress = (e) => { if (e.lengthComputable) onProgress(e.loaded / e.total); };
+    xhr.onload = () => {
+      let data = null;
+      try { data = JSON.parse(xhr.responseText); } catch { data = null; }
+      if (xhr.status >= 200 && xhr.status < 300 && data?.id) resolve(data);
+      else reject(wpError(xhr.status, data, xhr.statusText));
+    };
+    xhr.onerror = () => reject(new Error(unreachable(base)));
+    const fd = new FormData();
+    fd.append('file', f.blob, f.name);
+    fd.append('title', f.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' '));
+    if (f.kind === 'image') fd.append('alt_text', altFor(f, lang));
+    const cap = captionFor(f, lang);
+    if (cap) fd.append('caption', cap);
+    xhr.send(fd);
+  });
+}
+const mapMedia = (d) => ({ id: d.id, url: d.source_url, large: d.media_details?.sizes?.large?.source_url || '', mime: d.mime_type || '', link: d.link || '' });
+
+async function runPool(items, limit, worker) {
+  let next = 0;
+  const lanes = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (next < items.length) { const i = next++; await worker(items[i], i); }
+  });
+  await Promise.all(lanes);
 }
 
 function setWpState(kind, text) {
@@ -1773,7 +2860,7 @@ function wpLog(kind, html) {
   const tone = { ok: 'border-emerald-200 bg-emerald-50/60 text-emerald-900', error: 'border-red-200 bg-red-50/70 text-red-900', info: 'border-slate-200 bg-slate-50 text-slate-700' }[kind];
   const ic = { ok: 'check', error: 'alert', info: 'info' }[kind];
   const row = document.createElement('div');
-  row.className = `flex items-start gap-2 rounded-lg border px-3 py-2 text-sm ${tone}`;
+  row.className = `fade-up flex items-start gap-2 rounded-xl border px-3 py-2 text-sm ${tone}`;
   row.innerHTML = `${icon(ic, 'mt-0.5 size-4 shrink-0')}<div class="min-w-0 flex-1">${html}<p class="mt-0.5 text-[11px] opacity-60">${new Date().toLocaleTimeString()}</p></div>`;
   log.prepend(row);
 }
@@ -1782,6 +2869,7 @@ function saveWpPrefs() {
   if ($('#wp-remember').checked) store.set('wp', { url: $('#wp-url').value.trim(), user: $('#wp-user').value.trim(), remember: true });
   else store.del('wp');
 }
+function rememberBase(base) { state.lastWpBase = base; store.set('lastWpBase', base); }
 
 async function wpTest() {
   const btn = $('#wp-test');
@@ -1789,10 +2877,13 @@ async function wpTest() {
   setWpState('busy', 'Testing…');
   try {
     const { data, base } = await wpFetch('/wp/v2/users/me', { query: { context: 'edit' } });
-    const canWrite = data.capabilities ? Boolean(data.capabilities.edit_posts) : true;
+    const caps = data.capabilities || {};
+    const canWrite = data.capabilities ? Boolean(caps.edit_posts) : true;
     setWpState(canWrite ? 'ok' : 'error', canWrite ? 'Connected' : 'No permission');
-    wpLog(canWrite ? 'ok' : 'error', `${canWrite ? 'Connected to' : 'Connected, but this user cannot create posts on'} <strong>${esc(new URL(base).host)}</strong> as <strong>${esc(data.name || data.slug || 'user')}</strong>${data.roles?.length ? ` (${esc(data.roles.join(', '))})` : ''}.`);
+    wpLog(canWrite ? 'ok' : 'error', `${canWrite ? 'Connected to' : 'Connected, but this user cannot create posts on'} <strong>${esc(new URL(base).host)}</strong> as <strong>${esc(data.name || data.slug || 'user')}</strong>${data.roles?.length ? ` (${esc(data.roles.join(', '))})` : ''}.${data.capabilities && !caps.upload_files ? ' This user cannot upload files.' : ''}`);
+    rememberBase(base);
     saveWpPrefs();
+    state.files.forEach(updateTile);
   } catch (err) {
     setWpState('error', 'Failed');
     wpLog('error', esc(err.message));
@@ -1803,70 +2894,250 @@ async function wpTest() {
 
 function wpTargets() {
   const choice = $('#wp-lang').value;
-  const langs = choice === 'current' ? [state.lang] : choice === 'both' ? ['de', 'en'] : [choice];
+  const langs = choice === 'current' ? [state.lang] : choice === 'all' ? ['de', 'en'] : [choice];
   return langs.filter((l) => state.outputs[l]);
 }
-function wpPayload(lang) {
+function filesToUpload() { return $('#wp-upload-files').checked ? selectedFiles() : []; }
+
+/** Image, gallery, video and download blocks for the uploaded files. */
+function mediaMarkup(lang, base, mode) {
+  const P = PHRASES[lang];
+  const up = (f) => f.wp?.[base];
+  const out = [];
+  const imageBlock = (f) => {
+    const m = up(f);
+    const size = m.large ? 'large' : 'full';
+    const cap = captionFor(f, lang);
+    const img = `<img src="${esc(m.large || m.url)}" alt="${esc(altFor(f, lang))}" class="wp-image-${m.id}"/>`;
+    return mode === 'blocks'
+      ? `<!-- wp:image {"id":${m.id},"sizeSlug":"${size}","linkDestination":"none"} -->\n<figure class="wp-block-image size-${size}">${img}${cap ? `<figcaption class="wp-element-caption">${esc(cap)}</figcaption>` : ''}</figure>\n<!-- /wp:image -->`
+      : `<figure>${img.replace('/>', '>')}${cap ? `<figcaption>${esc(cap)}</figcaption>` : ''}</figure>`;
+  };
+  if ($('#wp-gallery').checked) {
+    const items = galleryItems().filter(up);
+    const images = items.filter((f) => f.kind === 'image');
+    const videos = items.filter((f) => f.kind === 'video');
+    if (images.length === 1) out.push(imageBlock(images[0]));
+    else if (images.length > 1) {
+      out.push(mode === 'blocks'
+        ? `<!-- wp:gallery {"linkTo":"none"} -->\n<figure class="wp-block-gallery has-nested-images columns-default is-cropped">${images.map(imageBlock).join('\n\n')}</figure>\n<!-- /wp:gallery -->`
+        : `[gallery ids="${images.map((f) => up(f).id).join(',')}" size="large"]`);
+    }
+    videos.forEach((v) => {
+      const m = up(v);
+      out.push(mode === 'blocks'
+        ? `<!-- wp:video {"id":${m.id}} -->\n<figure class="wp-block-video"><video controls src="${esc(m.url)}"></video></figure>\n<!-- /wp:video -->`
+        : `[video src="${esc(m.url)}"]`);
+    });
+  }
+  if ($('#wp-downloads').checked) {
+    const docs = selectedFiles().filter((f) => !['image', 'video'].includes(f.kind) && up(f));
+    if (docs.length) {
+      const h = mode === 'blocks' ? `<!-- wp:heading {"level":3} -->\n<h3 class="wp-block-heading">${P.hDownloads}</h3>\n<!-- /wp:heading -->` : `<h3>${P.hDownloads}</h3>`;
+      const items = docs.map((f) => { const li = `<li><a href="${esc(up(f).url)}">${esc(f.name)}</a> (${esc(extOf(f.name))}, ${esc(fmtBytes(f.size))})</li>`; return mode === 'blocks' ? `<!-- wp:list-item -->\n${li}\n<!-- /wp:list-item -->` : li; }).join('\n');
+      out.push(h, mode === 'blocks' ? `<!-- wp:list -->\n<ul class="wp-block-list">${items}</ul>\n<!-- /wp:list -->` : `<ul>${items}</ul>`);
+    }
+  }
+  return out;
+}
+
+function wpPayload(lang, base = currentWpBase()) {
   const o = state.outputs[lang];
-  return {
+  const mode = $('#wp-format').value;
+  const payload = {
     title: o.blog.title,
-    content: toWordPress(o.blog.html, $('#wp-format').value),
+    content: toWordPress(o.blog.html, mode, base ? mediaMarkup(lang, base, mode) : []),
     excerpt: o.blog.excerpt,
     status: $('#wp-post-status').value,
   };
+  const feat = getFeatured();
+  if ($('#wp-featured').checked && feat?.wp?.[base]) payload.featured_media = feat.wp[base].id;
+  return payload;
+}
+
+function updateExportLabel() {
+  const btn = $('#wp-export');
+  if (!btn) return;
+  const drafts = hasOutputs() ? wpTargets().length : 0;
+  const files = filesToUpload().length;
+  const parts = [];
+  if (drafts) parts.push(plural(drafts, 'draft'));
+  if (files) parts.push(plural(files, 'file'));
+  $('#wp-export-label').textContent = !parts.length ? 'Export to WordPress' : drafts ? `Export ${parts.join(' + ')}` : `Upload ${parts[0]} to WordPress`;
+  btn.disabled = state.busy || state.exporting || (!drafts && !files);
+}
+
+function progressRow(f) {
+  return `<li class="flex items-center gap-2.5 text-xs" data-row="${f.id}">
+    ${f.kind === 'image' ? `<img src="${urlFor(f)}" alt="" class="size-8 shrink-0 rounded-md object-cover">` : `<span class="grid size-8 shrink-0 place-items-center rounded-md bg-brand-50 text-brand-700">${icon(KIND_ICON[f.kind], 'size-4')}</span>`}
+    <div class="min-w-0 flex-1">
+      <div class="flex items-center justify-between gap-2"><span class="truncate font-medium text-slate-700">${esc(f.name)}</span><span class="row-status shrink-0 meta">Queued</span></div>
+      <div class="mt-1 h-1.5 overflow-hidden rounded-full bg-slate-100"><div class="row-bar progress-fill h-full w-0 rounded-full"></div></div>
+    </div>
+  </li>`;
+}
+function updateRow(f, base) {
+  const row = $(`[data-row="${f.id}"]`);
+  if (!row) return;
+  const bar = $('.row-bar', row), st = $('.row-status', row);
+  if (f.uploadState === 'uploading') { bar.style.width = `${Math.round((f.progress || 0) * 100)}%`; st.textContent = `${Math.round((f.progress || 0) * 100)}%`; }
+  else if (f.uploadState === 'done' || f.wp?.[base]) { bar.style.width = '100%'; st.innerHTML = `<span class="ok">${icon('check', 'inline size-3')} ${f.uploadState === 'done' ? 'Uploaded' : 'Already uploaded'}</span>`; }
+  else if (f.uploadState === 'error') { bar.style.width = '100%'; bar.style.background = '#ef4444'; st.innerHTML = `<span class="text-red-600" title="${esc(f.uploadError)}">Failed</span>`; }
 }
 
 async function wpExport(ev) {
   ev.preventDefault();
-  if (!hasOutputs()) { toast('Generate a campaign first.', 'warn'); return; }
-  const targets = wpTargets();
-  if (!targets.length) { toast('The selected language has not been generated yet.', 'warn'); return; }
+  if (state.exporting) return;
+  let creds;
+  try { creds = wpCreds(); } catch (err) { toast(err.message, 'warn'); return; }
+  const langs = hasOutputs() ? wpTargets() : [];
+  const files = filesToUpload();
+  if (!langs.length && !files.length) { toast('Generate a campaign or add files first.', 'warn'); return; }
+  const { base } = creds;
   const btn = $('#wp-export');
+  state.exporting = true;
   btn.disabled = true;
-  btn.innerHTML = `${spinner()}Uploading…`;
-  setWpState('busy', 'Uploading…');
-  let okCount = 0;
-  for (const lang of targets) {
+  $('#wp-export-icon').innerHTML = spinner();
+  setWpState('busy', files.length ? 'Uploading…' : 'Creating…');
+  await Promise.all(files.map((f) => f.ready));
+
+  // Phase 1 – every selected file, uploaded in parallel
+  const todo = files.filter((f) => !f.wp?.[base]);
+  const panel = $('#wp-progress');
+  if (files.length) {
+    panel.hidden = false;
+    $('#wp-progress-list').innerHTML = files.map(progressRow).join('');
+    files.forEach((f) => updateRow(f, base));
+  }
+  const totalBytes = todo.reduce((s, f) => s + f.size, 0) || 1;
+  const overall = () => {
+    const done = todo.reduce((s, f) => s + f.size * (f.uploadState === 'done' || f.uploadState === 'error' ? 1 : (f.progress || 0)), 0);
+    const pct = Math.round((done / totalBytes) * 100);
+    $('#wp-progress-bar').style.width = `${todo.length ? pct : 100}%`;
+    $('#wp-progress-pct').textContent = `${todo.length ? pct : 100}%`;
+    const finished = todo.filter((f) => ['done', 'error'].includes(f.uploadState)).length;
+    $('#wp-progress-text').textContent = todo.length
+      ? `Uploading ${plural(todo.length, 'file')} at once · ${finished} of ${todo.length} done`
+      : `All ${plural(files.length, 'file')} already in the Media Library`;
+  };
+  overall();
+  const lang0 = langs[0] || state.lang;
+  todo.forEach((f) => { f.uploadState = 'queued'; });
+  await runPool(todo, UPLOAD_PARALLEL, async (f) => {
+    f.uploadState = 'uploading';
+    f.progress = 0;
+    updateTile(f); updateRow(f, base);
     try {
-      const payload = wpPayload(lang);
-      const { data, base } = await wpFetch('/wp/v2/posts', { method: 'POST', body: payload });
-      okCount++;
-      const edit = `${base}/wp-admin/post.php?post=${data.id}&action=edit`;
-      wpLog('ok', `<strong>${LANG_NAMES[lang]}</strong> ${payload.status === 'draft' ? 'draft' : 'post'} created (ID ${esc(data.id)}): “${esc(data.title?.raw || payload.title)}”
-        <span class="mt-1 flex flex-wrap gap-x-3 gap-y-1">
-          <a class="inline-flex items-center gap-1 font-medium underline underline-offset-2" href="${esc(edit)}" target="_blank" rel="noopener">Edit in WordPress ${icon('external', 'size-3.5')}</a>
-          ${data.link ? `<a class="inline-flex items-center gap-1 font-medium underline underline-offset-2" href="${esc(data.link)}" target="_blank" rel="noopener">Preview ${icon('external', 'size-3.5')}</a>` : ''}
-        </span>`);
+      const data = await wpUpload(f, creds, lang0, (p) => { f.progress = p; updateTile(f); updateRow(f, base); overall(); });
+      f.wp = { ...f.wp, [base]: mapMedia(data) };
+      f.uploadState = 'done';
+      persistFile(f);
     } catch (err) {
-      wpLog('error', `<strong>${LANG_NAMES[lang]}</strong>: ${esc(err.message)}`);
+      f.uploadState = 'error';
+      f.uploadError = err.message;
+    }
+    f.progress = null;
+    updateTile(f); updateRow(f, base); overall();
+  });
+  const failed = todo.filter((f) => f.uploadState === 'error');
+  const uploaded = todo.length - failed.length;
+  if (todo.length) {
+    if (uploaded) wpLog('ok', `<strong>${plural(uploaded, 'file')}</strong> uploaded to the Media Library${files.length > todo.length ? ` (${files.length - todo.length} were already there)` : ''}. <a class="font-medium underline underline-offset-2" href="${esc(base)}/wp-admin/upload.php" target="_blank" rel="noopener">Open Media Library</a>`);
+    if (failed.length) wpLog('error', `<strong>${plural(failed.length, 'file')}</strong> could not be uploaded: ${failed.map((f) => `${esc(f.name)} – ${esc(f.uploadError)}`).join('<br>')}`);
+  }
+  if (uploaded || files.length) rememberBase(base);
+
+  // Phase 2 – one draft per language, with featured image and gallery
+  let okPosts = 0;
+  const fatal = failed.length && failed.length === todo.length && /401|403|reach/.test(failed[0].uploadError || '');
+  if (!fatal) {
+    for (const lang of langs) {
+      try {
+        const payload = wpPayload(lang, base);
+        const { data } = await wpFetch('/wp/v2/posts', { method: 'POST', body: payload });
+        okPosts++;
+        const edit = `${base}/wp-admin/post.php?post=${data.id}&action=edit`;
+        wpLog('ok', `<strong>${LANG_NAMES[lang]}</strong> ${payload.status === 'draft' ? 'draft' : 'post'} created (ID ${esc(data.id)}): “${esc(data.title?.raw || payload.title)}”${payload.featured_media ? ' · with featured image' : ''}
+          <span class="mt-1 flex flex-wrap gap-x-3 gap-y-1">
+            <a class="inline-flex items-center gap-1 font-medium underline underline-offset-2" href="${esc(edit)}" target="_blank" rel="noopener">Edit in WordPress ${icon('external', 'size-3.5')}</a>
+            ${data.link ? `<a class="inline-flex items-center gap-1 font-medium underline underline-offset-2" href="${esc(data.link)}" target="_blank" rel="noopener">Preview ${icon('external', 'size-3.5')}</a>` : ''}
+          </span>`);
+      } catch (err) {
+        wpLog('error', `<strong>${LANG_NAMES[lang]}</strong>: ${esc(err.message)}`);
+      }
     }
   }
-  if (okCount) { setWpState('ok', 'Connected'); saveWpPrefs(); toast(`${okCount} ${okCount === 1 ? 'draft' : 'drafts'} sent to WordPress.`, 'success'); }
-  else setWpState('error', 'Failed');
-  btn.innerHTML = `${icon('upload')}Export Draft to WordPress`;
-  btn.disabled = false;
+  todo.forEach((f) => { if (f.uploadState === 'done') f.uploadState = null; });
+  const allOk = okPosts === langs.length && !failed.length;
+  if (okPosts || uploaded) {
+    setWpState(allOk ? 'ok' : 'error', allOk ? 'Connected' : 'Partly done');
+    saveWpPrefs();
+    const bits = [okPosts ? plural(okPosts, 'draft') : '', uploaded ? plural(uploaded, 'file') : ''].filter(Boolean).join(' and ');
+    toast(`${bits} sent to WordPress${failed.length ? `, ${failed.length} failed` : ''}.`, allOk ? 'success' : 'warn');
+    if (allOk) { state.published = true; updateJourney(); confetti(btn); }
+  } else {
+    setWpState('error', 'Failed');
+  }
+  $('#wp-progress-text').textContent = failed.length ? `Finished with ${plural(failed.length, 'error')}` : (files.length ? 'All files uploaded' : 'Done');
+  state.exporting = false;
+  $('#wp-export-icon').innerHTML = icon('upload');
+  state.files.forEach(updateTile);
+  updateExportLabel();
+  if (hasOutputs()) renderEmail(cur());
 }
 
+const sq = (s) => `'${String(s).replace(/'/g, "'\\''")}'`;
 async function wpCurl() {
-  if (!hasOutputs()) { toast('Generate a campaign first.', 'warn'); return; }
+  const langs = hasOutputs() ? wpTargets() : [];
+  const files = filesToUpload();
+  if (!langs.length && !files.length) { toast('Generate a campaign or add files first.', 'warn'); return; }
   const raw = $('#wp-url').value.trim() || 'https://your-site.org';
-  const base = (/^https?:\/\//i.test(raw) ? raw : `https://${raw}`).replace(/\/+$/, '');
+  let base;
+  try { base = normalizeBase(raw); } catch { base = 'https://your-site.org'; }
   const user = $('#wp-user').value.trim() || 'USERNAME';
-  const cmds = wpTargets().map((lang) => `# ${LANG_NAMES[lang]} draft – set WP_APP_PASSWORD first: export WP_APP_PASSWORD='xxxx xxxx xxxx xxxx xxxx xxxx'
-curl -X POST '${base.replace(/'/g, "'\\''")}/wp-json/wp/v2/posts' \\
-  -u '${user.replace(/'/g, "'\\''")}':"$WP_APP_PASSWORD" \\
-  -H 'Content-Type: application/json' \\
-  --data-binary @- <<'JSON'
-${JSON.stringify(wpPayload(lang), null, 2)}
-JSON`);
-  if (!cmds.length) { toast('The selected language has not been generated yet.', 'warn'); return; }
-  const ok = await copyToClipboard(cmds.join('\n\n'));
-  toast(ok ? 'cURL command copied. Paste it into a terminal.' : 'Copy failed – your browser blocked clipboard access.', ok ? 'success' : 'error');
+  const auth = `-u ${sq(user)}:"$WP_APP_PASSWORD"`;
+  const out = ["# Set your application password first:  export WP_APP_PASSWORD='xxxx xxxx xxxx xxxx xxxx xxxx'"];
+  const pending = files.filter((f) => !f.wp?.[base]);
+  if (pending.length) {
+    out.push(`# 1) Upload ${plural(pending.length, 'file')} (run this in the folder that contains them)`);
+    pending.forEach((f) => out.push(`curl -X POST ${sq(`${base}/wp-json/wp/v2/media`)} ${auth} -F ${sq(`file=@"${f.name.replace(/"/g, '\\"')}"`)}${f.kind === 'image' ? ` -F ${sq(`alt_text=${altFor(f, langs[0] || state.lang)}`)}` : ''}`));
+    if (langs.length) out.push('# Uploads made here are not linked into the drafts below. Use "Export" in the app to add the featured image and gallery automatically.');
+  }
+  langs.forEach((lang, i) => {
+    out.push(`# ${pending.length ? '2' : String(i + 1)}) ${LANG_NAMES[lang]} draft`);
+    out.push(`curl -X POST ${sq(`${base}/wp-json/wp/v2/posts`)} \\\n  ${auth} \\\n  -H 'Content-Type: application/json' \\\n  --data-binary @- <<'JSON'\n${JSON.stringify(wpPayload(lang, base), null, 2)}\nJSON`);
+  });
+  const ok = await copyToClipboard(out.join('\n\n'));
+  toast(ok ? 'cURL commands copied. Paste them into a terminal.' : 'Copy failed – your browser blocked clipboard access.', ok ? 'success' : 'error');
 }
 
 /* =====================================================================
-   11. SETTINGS + HEADER STATUS
+   13. SETTINGS + HEADER STATUS
    ===================================================================== */
+function updateEngineHint() {
+  const s = state.settings;
+  const claude = s.engine === 'claude';
+  const ready = !claude || Boolean(s.apiKey || s.baseURL);
+  const nFiles = selectedFiles().length;
+  const files = nFiles ? ` with your notes and ${plural(nFiles, 'file')}` : '';
+  $('#engine-hint').innerHTML = !claude
+    ? `Using the offline <strong class="font-medium text-slate-700">simulated engine</strong>${files}. <button type="button" class="font-medium text-brand-700 underline underline-offset-2 hover:text-brand-900" data-open-settings>Connect the Claude API</button> for AI writing, photo descriptions and translation.`
+    : ready
+      ? `Writing with <strong class="font-medium text-slate-700">${esc(MODEL_LABELS[s.model] || s.model)}</strong>${files}. <button type="button" class="font-medium text-brand-700 underline underline-offset-2 hover:text-brand-900" data-open-settings>Change</button>`
+      : '<span class="text-red-600">Claude API selected, but no API key is set.</span> <button type="button" class="font-medium text-brand-700 underline underline-offset-2" data-open-settings>Add key</button>';
+}
+
+function renderEngineStatus() {
+  const s = state.settings;
+  const claude = s.engine === 'claude';
+  const ready = !claude || Boolean(s.apiKey || s.baseURL);
+  $('#engine-dot').className = `dot ${!claude ? 'bg-amber-400' : ready ? 'bg-emerald-500' : 'bg-red-500'}`;
+  $('#engine-label').textContent = !claude ? 'Simulated engine' : ready ? `Claude · ${(MODEL_LABELS[s.model] || s.model).replace('Claude ', '')}` : 'Claude · key missing';
+  updateEngineHint();
+  $('#claude-settings').hidden = !claude;
+  $$('[data-org-name]').forEach((el) => { el.textContent = org(); });
+}
+
 /** Keeps the blog button link in sync when the donation link changes in Settings. */
 function applyCtaUrl() {
   for (const o of [state.outputs.de, state.outputs.en]) {
@@ -1879,19 +3150,39 @@ function applyCtaUrl() {
   saveCampaign();
 }
 
-function renderEngineStatus() {
-  const s = state.settings;
-  const claude = s.engine === 'claude';
-  const ready = !claude || Boolean(s.apiKey || s.baseURL);
-  $('#engine-dot').className = `dot ${!claude ? 'bg-amber-400' : ready ? 'bg-emerald-500' : 'bg-red-500'}`;
-  $('#engine-label').textContent = !claude ? 'Simulated engine' : ready ? `Claude · ${(MODEL_LABELS[s.model] || s.model).replace('Claude ', '')}` : 'Claude · key missing';
-  $('#engine-hint').innerHTML = !claude
-    ? 'Using the offline <strong class="font-medium text-slate-700">simulated engine</strong>. <button type="button" class="font-medium text-brand-700 underline underline-offset-2 hover:text-brand-900" data-open-settings>Connect the Claude API</button> for AI writing and translation.'
-    : ready
-      ? `Writing with <strong class="font-medium text-slate-700">${esc(MODEL_LABELS[s.model] || s.model)}</strong> via the Claude API. <button type="button" class="font-medium text-brand-700 underline underline-offset-2 hover:text-brand-900" data-open-settings>Change</button>`
-      : '<span class="text-red-600">Claude API selected, but no API key is set.</span> <button type="button" class="font-medium text-brand-700 underline underline-offset-2" data-open-settings>Add key</button>';
-  $('#claude-settings').hidden = !claude;
-  $$('[data-org-name]').forEach((el) => { el.textContent = org(); });
+function renderThemeControls() {
+  const t = state.theme;
+  $('#theme-presets').innerHTML = PRESETS.map((p) => `<button type="button" data-preset="${p.id}" title="${esc(p.name)}" aria-label="${esc(p.name)}" aria-pressed="${t.preset === p.id}"
+      class="group flex items-center gap-2 rounded-full border py-1 pl-1 pr-3 text-xs font-medium transition active:scale-95 ${t.preset === p.id ? 'border-brand-500 bg-brand-50 text-brand-800 ring-2 ring-brand-500/20' : 'border-slate-200 text-slate-600 hover:border-slate-300'}">
+      <span class="size-6 rounded-full shadow-inner ring-1 ring-black/10" style="background:linear-gradient(135deg, ${p.brand} 50%, ${p.accent} 50%)"></span>${esc(p.name)}</button>`).join('')
+    + (t.preset === 'logo' || t.preset === 'custom' ? `<span class="flex items-center gap-2 rounded-full border border-brand-500 bg-brand-50 py-1 pl-1 pr-3 text-xs font-medium text-brand-800 ring-2 ring-brand-500/20"><span class="size-6 rounded-full ring-1 ring-black/10" style="background:linear-gradient(135deg, ${t.brand} 50%, ${t.accent} 50%)"></span>${t.preset === 'logo' ? 'From your logo' : 'Custom'}</span>` : '');
+  $('#brand-color').value = t.brand;
+  $('#accent-color').value = t.accent;
+  if (document.activeElement !== $('#brand-hex')) $('#brand-hex').value = t.brand.toUpperCase();
+  if (document.activeElement !== $('#accent-hex')) $('#accent-hex').value = t.accent.toUpperCase();
+  $('#logo-drop').innerHTML = t.logo ? `<img src="${t.logo}" alt="Foundation logo" class="size-full object-contain">` : `<span class="text-center">${icon('upload', 'mx-auto size-5')}<span class="mt-1 block text-[10px] font-medium">Logo</span></span>`;
+  $('#logo-remove').hidden = !t.logo;
+  $('#theme-from-logo').hidden = !t.logo || t.preset === 'logo';
+}
+
+function setTheme(patch) {
+  Object.assign(state.theme, patch);
+  applyTheme();
+  renderThemeControls();
+  if (hasOutputs()) renderEmail(cur());
+  updateJourney();
+}
+
+async function useLogo(file) {
+  if (!file || fileKind(file) !== 'image') { toast('Please choose an image file (PNG, JPG, SVG or WebP).', 'warn'); return; }
+  try {
+    const logo = await logoFromFile(file);
+    const pal = await paletteFromLogo(logo);
+    setTheme(pal ? { logo, ...pal, preset: 'logo' } : { logo });
+    toast(pal ? 'Logo added – colors taken from your logo.' : 'Logo added. It has no strong colors, so the current theme stays.', 'success');
+  } catch (err) {
+    toast(err.message, 'error');
+  }
 }
 
 function initSettings() {
@@ -1905,8 +3196,10 @@ function initSettings() {
   $('#base-url').value = s.baseURL;
   $('#org-name').value = s.orgName;
   $('#cta-url').value = s.ctaUrl;
+  renderThemeControls();
 
-  const apply = () => {
+  const apply = (ev) => {
+    if (ev?.target?.closest('#theme-presets, #logo-input') || ['brand-color', 'accent-color', 'brand-hex', 'accent-hex'].includes(ev?.target?.id)) return;
     s.engine = $('input[name="engine"]:checked')?.value || 'simulated';
     s.apiKey = $('#api-key').value.trim();
     s.rememberKey = $('#remember-key').checked;
@@ -1921,20 +3214,47 @@ function initSettings() {
   dlg.addEventListener('input', apply);
   dlg.addEventListener('change', apply);
   dlg.addEventListener('close', () => { if (hasOutputs()) { applyCtaUrl(); renderOutputs(); } });
-  document.addEventListener('click', (ev) => {
-    if (ev.target.closest('[data-open-settings]')) { dlg.showModal(); }
-  });
+  document.addEventListener('click', (ev) => { if (ev.target.closest('[data-open-settings]')) dlg.showModal(); });
   dlg.addEventListener('click', (ev) => { if (ev.target === dlg) dlg.close(); });
-  $('#clear-data').addEventListener('click', () => {
-    if (!confirm('Clear saved notes, generated outputs and settings from this browser?')) return;
+
+  // Theme controls
+  $('#theme-presets').addEventListener('click', (ev) => {
+    const b = ev.target.closest('[data-preset]');
+    if (!b) return;
+    const p = PRESETS.find((x) => x.id === b.dataset.preset);
+    setTheme({ preset: p.id, brand: p.brand, accent: p.accent });
+  });
+  const colorInput = (key) => (ev) => {
+    const v = ev.target.value.trim();
+    const hex = v.startsWith('#') ? v : `#${v}`;
+    if (hexRe.test(hex)) setTheme({ [key]: hex.toLowerCase(), preset: 'custom' });
+  };
+  $('#brand-color').addEventListener('input', colorInput('brand'));
+  $('#accent-color').addEventListener('input', colorInput('accent'));
+  $('#brand-hex').addEventListener('input', colorInput('brand'));
+  $('#accent-hex').addEventListener('input', colorInput('accent'));
+  const pickLogo = () => $('#logo-input').click();
+  $('#logo-choose').addEventListener('click', pickLogo);
+  $('#logo-drop').addEventListener('click', pickLogo);
+  $('#logo-drop').addEventListener('keydown', (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); pickLogo(); } });
+  $('#logo-input').addEventListener('change', (ev) => { useLogo(ev.target.files[0]); ev.target.value = ''; });
+  $('#logo-drop').addEventListener('dragover', (ev) => { ev.preventDefault(); ev.stopPropagation(); $('#logo-drop').classList.add('is-over'); });
+  $('#logo-drop').addEventListener('dragleave', () => $('#logo-drop').classList.remove('is-over'));
+  $('#logo-drop').addEventListener('drop', (ev) => { ev.preventDefault(); ev.stopPropagation(); $('#logo-drop').classList.remove('is-over'); useLogo(ev.dataTransfer.files[0]); });
+  $('#logo-remove').addEventListener('click', () => { const p = PRESETS[0]; setTheme({ logo: '', preset: p.id, brand: p.brand, accent: p.accent }); });
+  $('#theme-from-logo').addEventListener('click', async () => { const pal = await paletteFromLogo(state.theme.logo).catch(() => null); if (pal) setTheme({ ...pal, preset: 'logo' }); });
+
+  $('#clear-data').addEventListener('click', async () => {
+    if (!confirm('Clear saved notes, files, generated outputs and settings from this browser?')) return;
     store.clear();
+    await idb.clear().catch(() => {});
     location.reload();
   });
   renderEngineStatus();
 }
 
 /* =====================================================================
-   12. EXAMPLES, INPUT HINTS, BOOT
+   14. EXAMPLES, INPUT, DRAG & DROP, BOOT
    ===================================================================== */
 const EXAMPLES = {
   de: `Spendenlauf 2026 – Zusammenfassung Team-Meeting
@@ -1964,10 +3284,104 @@ function updateNotesInfo() {
   if (lang) chip.innerHTML = `${icon('globe', 'size-3')}Notes in ${LANG_NAMES[lang]}`;
 }
 
+function greet() {
+  const h = new Date().getHours();
+  $('#greeting').textContent = `${h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'} · ${new Date().toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })}`;
+}
+
+function initFiles() {
+  const input = $('#file-input'), folder = $('#folder-input');
+  const pick = () => input.click();
+  input.addEventListener('change', () => { addFiles(input.files); input.value = ''; });
+  folder.addEventListener('change', () => { addFiles(folder.files); folder.value = ''; });
+  $('#dropzone').addEventListener('click', (ev) => { if (ev.target.closest('#dz-folder')) { folder.click(); return; } pick(); });
+  $('#dropzone').addEventListener('keydown', (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); pick(); } });
+  $('#files-add').addEventListener('click', pick);
+  $('#files-folder').addEventListener('click', () => folder.click());
+  $('#files-clear').addEventListener('click', () => {
+    if (!state.files.length || !confirm(`Remove all ${plural(state.files.length, 'file')}?`)) return;
+    state.files.forEach((f) => { if (objectUrls.has(f.id)) URL.revokeObjectURL(objectUrls.get(f.id)); idb.del(f.id).catch(() => {}); });
+    objectUrls.clear();
+    state.files = [];
+    renderFiles();
+    afterFileChange();
+  });
+  $('#files-all').addEventListener('change', (ev) => {
+    state.files.forEach((f) => setSelected(f, ev.target.checked));
+    if (ev.target.checked) autoFeature();
+    afterFileChange();
+    if (ev.target.checked) $$('.tile-check').forEach((c) => { c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop'); });
+  });
+
+  const grid = $('#files-grid');
+  grid.addEventListener('click', (ev) => {
+    if (ev.target.closest('#files-add-tile')) { pick(); return; }
+    const tile = ev.target.closest('.tile');
+    if (!tile) return;
+    const f = state.files.find((x) => x.id === tile.dataset.id);
+    if (!f) return;
+    if (ev.target.closest('.tile-remove')) { removeFile(f.id); return; }
+    if (ev.target.closest('.tile-star')) {
+      setFeatured(f);
+      afterFileChange();
+      const star = tile.querySelector('.tile-star');
+      star.classList.remove('pop'); void star.offsetWidth; star.classList.add('pop');
+      toast(`“${f.name}” is now the featured image.`, 'info', 2000);
+      return;
+    }
+    setSelected(f, !f.selected);
+    afterFileChange();
+    if (f.selected) { const c = tile.querySelector('.tile-check'); c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop'); }
+  });
+  grid.addEventListener('keydown', (ev) => {
+    const tile = ev.target.closest('.tile');
+    if (!tile || ev.target !== tile) return;
+    const f = state.files.find((x) => x.id === tile.dataset.id);
+    if (ev.key === ' ' || ev.key === 'Enter') { ev.preventDefault(); setSelected(f, !f.selected); afterFileChange(); }
+    if (ev.key === 'Delete' || ev.key === 'Backspace') { ev.preventDefault(); removeFile(f.id); }
+  });
+
+  // Whole-window drag & drop with an overlay
+  let depth = 0;
+  const overlay = $('#drop-overlay');
+  const hasFiles = (ev) => [...(ev.dataTransfer?.types || [])].includes('Files');
+  const show = (on) => { overlay.hidden = !on; overlay.classList.toggle('grid', on); $('#dropzone').classList.toggle('is-over', on); };
+  window.addEventListener('dragenter', (ev) => { if (!hasFiles(ev) || $('#settings-dialog').open) return; ev.preventDefault(); depth++; show(true); });
+  window.addEventListener('dragover', (ev) => { if (hasFiles(ev)) ev.preventDefault(); });
+  window.addEventListener('dragleave', (ev) => { if (!hasFiles(ev)) return; depth = Math.max(0, depth - 1); if (!depth) show(false); });
+  window.addEventListener('drop', async (ev) => {
+    if (!hasFiles(ev) || $('#settings-dialog').open) return;
+    ev.preventDefault();
+    depth = 0; show(false);
+    const list = await filesFromDataTransfer(ev.dataTransfer);
+    addFiles(list);
+  });
+
+  // Paste photos / files straight from the clipboard
+  document.addEventListener('paste', (ev) => {
+    const files = [...(ev.clipboardData?.files || [])];
+    const editable = ev.target.closest?.('[contenteditable="true"]');
+    if (files.length && !editable && !$('#settings-dialog').open) {
+      ev.preventDefault();
+      const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+      addFiles(files.map((f, i) => (f.name && f.name !== 'image.png' ? f : new File([f], `pasted-${stamp}${i ? `-${i}` : ''}.${(f.type.split('/')[1] || 'png').replace('jpeg', 'jpg')}`, { type: f.type, lastModified: Date.now() + i }))));
+      return;
+    }
+    if (editable) {
+      // Paste as plain text into editable previews, so formatting from other apps doesn't leak into WordPress.
+      ev.preventDefault();
+      document.execCommand('insertText', false, ev.clipboardData.getData('text/plain'));
+    }
+  });
+}
+
 function boot() {
   hydrateIcons();
+  applyTheme();
+  greet();
   pipe.reset();
   initSettings();
+  initFiles();
 
   // Restore
   const saved = store.get('campaign', null);
@@ -1976,32 +3390,37 @@ function boot() {
     state.lang = state.outputs[saved.lang] ? saved.lang : (state.outputs.de ? 'de' : 'en');
     state.campaignNotes = saved.notes || '';
   }
-  $('#notes').value = store.get('notes', '') || state.campaignNotes || '';
+  $('#notes').value = store.get('notes', '') || '';
   state.tab = store.get('tab', 'blog');
   $$('input[name="target-lang"]').forEach((r) => { r.checked = r.value === state.target; });
   const wp = store.get('wp', null);
   if (wp?.remember) { $('#wp-url').value = wp.url || ''; $('#wp-user').value = wp.user || ''; $('#wp-remember').checked = true; }
   setWpState('idle', 'Not connected');
   updateNotesInfo();
+  renderFiles();
   renderOutputs();
   if (hasOutputs()) {
     STEPS.forEach((s) => pipe.set(s.id, 'done', s.desc));
     if (!(state.outputs.de && state.outputs.en)) pipe.set('translate', 'skipped');
     setRunStatus('done', 'Restored');
-    $('#run-meta').textContent = `Restored from your last session · ${$('#run-meta').textContent}`;
+    state.restored = true;
+    updateRunMeta();
   }
+  updateJourney();
+  restoreFiles();
 
   // Input
   const persistNotes = debounce(() => store.set('notes', $('#notes').value), 300);
-  $('#notes').addEventListener('input', () => { updateNotesInfo(); persistNotes(); });
+  $('#notes').addEventListener('input', () => { updateNotesInfo(); persistNotes(); updateJourney(); });
   $('#notes').addEventListener('keydown', (ev) => { if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey)) { ev.preventDefault(); generate(); } });
-  $('#clear-notes').addEventListener('click', () => { $('#notes').value = ''; updateNotesInfo(); store.set('notes', ''); $('#notes').focus(); });
+  $('#clear-notes').addEventListener('click', () => { $('#notes').value = ''; updateNotesInfo(); store.set('notes', ''); updateJourney(); $('#notes').focus(); });
   document.addEventListener('click', (ev) => {
     const ex = ev.target.closest('[data-example]');
     if (!ex) return;
     $('#notes').value = EXAMPLES[ex.dataset.example];
     updateNotesInfo();
     store.set('notes', $('#notes').value);
+    updateJourney();
     $('#notes').focus();
     toast(ex.dataset.example === 'de' ? 'German example notes loaded.' : 'English example notes loaded.', 'info', 2000);
   });
@@ -2023,19 +3442,29 @@ function boot() {
       if (d) { ev.preventDefault(); showTab(tabs[(i + d + tabs.length) % tabs.length].dataset.tab); }
     });
   });
+  window.addEventListener('resize', debounce(positionInk, 100));
+  document.fonts?.ready.then(positionInk);
+  positionInk();
+
+  $('#panel-blog').addEventListener('input', onPhotoTextInput);
 
   // WordPress
   $('#wp-form').addEventListener('submit', wpExport);
   $('#wp-test').addEventListener('click', wpTest);
   $('#wp-curl').addEventListener('click', wpCurl);
   $('#wp-remember').addEventListener('change', saveWpPrefs);
-  ['#wp-url', '#wp-user', '#wp-pass'].forEach((sel) => $(sel).addEventListener('input', () => { if (state.wpConnected !== null) setWpState('idle', 'Not connected'); }));
+  ['#wp-lang', '#wp-upload-files'].forEach((sel) => $(sel).addEventListener('change', updateExportLabel));
+  ['#wp-url', '#wp-user', '#wp-pass'].forEach((sel) => $(sel).addEventListener('input', () => {
+    if (state.wpConnected !== null) setWpState('idle', 'Not connected');
+    if (sel === '#wp-url') state.files.forEach(updateTile);
+  }));
   $('#wp-pass-toggle').addEventListener('click', (ev) => {
     const input = $('#wp-pass');
     const show = input.type === 'password';
     input.type = show ? 'text' : 'password';
     ev.currentTarget.textContent = show ? 'Hide' : 'Show';
   });
+  updateExportLabel();
 
   // Make Enter in editable previews create paragraphs rather than <div>s.
   try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch { /* not supported */ }
