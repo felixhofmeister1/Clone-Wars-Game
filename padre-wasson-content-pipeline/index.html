@@ -1,0 +1,2047 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Content Pipeline · Padre Wasson Foundation</title>
+<meta name="description" content="Turn raw notes into a bilingual WordPress blog post, social captions and a Mailchimp newsletter, then push drafts to WordPress.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231f5d58'/%3E%3Cpath d='M22.5 17.5c1.6-1.6 3-3.4 3-5.8a5 5 0 0 0-5-5c-1.8 0-3 .6-4.5 2.1-1.5-1.5-2.7-2.1-4.5-2.1a5 5 0 0 0-5 5c0 2.4 1.4 4.2 3 5.8L16 24z' fill='%23f7a256'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<style type="text/tailwindcss">
+  @theme {
+    --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-serif: "Source Serif 4", ui-serif, Georgia, "Times New Roman", serif;
+    --color-brand-50: #eef8f6;
+    --color-brand-100: #d5eee9;
+    --color-brand-200: #acdcd3;
+    --color-brand-300: #7cc3b8;
+    --color-brand-400: #4fa69a;
+    --color-brand-500: #338a7f;
+    --color-brand-600: #266f67;
+    --color-brand-700: #1f5d58;
+    --color-brand-800: #1b4a46;
+    --color-brand-900: #173d3a;
+    --color-brand-950: #0b2523;
+    --color-accent-50: #fff6ed;
+    --color-accent-100: #ffe9d3;
+    --color-accent-200: #fdcfa5;
+    --color-accent-300: #fbb070;
+    --color-accent-400: #f7a256;
+    --color-accent-500: #ec7f33;
+    --color-accent-600: #d4661c;
+    --color-accent-700: #b04f18;
+  }
+  @layer components {
+    .card { @apply rounded-2xl border border-slate-200/80 bg-white shadow-[0_1px_2px_rgba(15,23,42,.04),0_12px_32px_-18px_rgba(15,23,42,.18)]; }
+    .card-head { @apply flex flex-wrap items-start justify-between gap-3 border-b border-slate-100 px-5 py-4; }
+    .step { @apply text-[11px] font-semibold uppercase tracking-[.14em] text-brand-600; }
+    .card-title { @apply mt-0.5 text-base font-semibold text-slate-900; }
+    .card-sub { @apply mt-0.5 text-sm text-slate-500; }
+    .label { @apply mb-1.5 block text-sm font-medium text-slate-700; }
+    .input { @apply block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/15 disabled:bg-slate-50 disabled:text-slate-500; }
+    .btn { @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold whitespace-nowrap transition select-none focus-visible:outline-none focus-visible:ring-4 disabled:cursor-not-allowed disabled:opacity-50; }
+    .btn-primary { @apply bg-brand-700 text-white shadow-sm hover:bg-brand-800 focus-visible:ring-brand-500/30; }
+    .btn-accent { @apply bg-accent-500 text-white shadow-sm hover:bg-accent-600 focus-visible:ring-accent-500/30; }
+    .btn-secondary { @apply border border-slate-300 bg-white text-slate-700 shadow-sm hover:border-slate-400 hover:bg-slate-50 focus-visible:ring-brand-500/20; }
+    .btn-ghost { @apply text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus-visible:ring-brand-500/20; }
+    .btn-xs { @apply gap-1.5 rounded-md px-2 py-1 text-xs; }
+    .btn-icon { @apply inline-grid size-9 place-items-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/20; }
+    .pill { @apply inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 shadow-sm; }
+    .dot { @apply inline-block size-2 shrink-0 rounded-full bg-slate-300; }
+    .chip { @apply inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600; }
+    .copy-btn { @apply inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-medium text-slate-600 shadow-sm transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-800 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-500/20; }
+    .copy-btn.copied { @apply border-emerald-300 bg-emerald-50 text-emerald-700; }
+    .tab { @apply relative -mb-px inline-flex items-center gap-2 border-b-2 border-transparent px-3 py-3 text-sm font-medium whitespace-nowrap text-slate-500 transition hover:text-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/30; }
+    .tab[aria-selected="true"] { @apply border-brand-600 text-brand-800; }
+    .count { @apply rounded-full bg-slate-100 px-1.5 py-px text-[11px] font-semibold text-slate-500; }
+    .tab[aria-selected="true"] .count { @apply bg-brand-100 text-brand-800; }
+    .seg { @apply grid gap-1 rounded-xl bg-slate-100 p-1; }
+    .seg-item { @apply block cursor-pointer rounded-lg px-3 py-2 text-center text-sm font-medium text-slate-600 transition hover:text-slate-900 peer-checked:bg-white peer-checked:text-brand-800 peer-checked:shadow-sm peer-focus-visible:ring-2 peer-focus-visible:ring-brand-500/40; }
+    .lang-btn { @apply rounded-md px-2.5 py-1 text-xs font-semibold text-slate-500 transition hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40 disabled:cursor-not-allowed disabled:opacity-40; }
+    .lang-btn[aria-pressed="true"] { @apply bg-white text-brand-800 shadow-sm; }
+    .meta { @apply text-xs text-slate-500 tabular-nums; }
+    .ok { @apply text-emerald-700; }
+    .warn { @apply text-amber-700; }
+  }
+</style>
+<style>
+  [hidden] { display: none !important; }
+  :root {
+    --pw-brand-50: #eef8f6; --pw-brand-100: #d5eee9; --pw-brand-300: #7cc3b8; --pw-brand-600: #266f67;
+    --pw-brand-700: #1f5d58; --pw-brand-800: #1b4a46; --pw-accent-400: #f7a256; --pw-accent-500: #ec7f33;
+  }
+  html { -webkit-text-size-adjust: 100%; }
+  body { background: #f5f7f6; }
+  body { background-image: radial-gradient(1200px 400px at 85% -120px, rgba(51,138,127,.10), transparent 70%), radial-gradient(900px 360px at -10% -80px, rgba(236,127,51,.07), transparent 70%); background-repeat: no-repeat; }
+  ::selection { background: #acdcd3; }
+
+  /* Blog preview (mirrors typical WordPress theme typography) */
+  .pw-article { font-family: "Source Serif 4", ui-serif, Georgia, serif; font-size: 1.075rem; line-height: 1.75; color: #1e293b; padding: 1.5rem 1.75rem 1.75rem; min-height: 14rem; outline: none; overflow-wrap: anywhere; }
+  .pw-article > * + * { margin-top: 1em; }
+  .pw-article h2 { font-family: "Inter", ui-sans-serif, system-ui, sans-serif; font-size: 1.28rem; line-height: 1.3; font-weight: 700; color: #102f2c; letter-spacing: -.01em; margin-top: 1.8em; }
+  .pw-article h3 { font-family: "Inter", ui-sans-serif, system-ui, sans-serif; font-size: 1.08rem; line-height: 1.35; font-weight: 700; color: #102f2c; }
+  .pw-article .pw-lead { font-size: 1.18rem; color: #334155; }
+  .pw-article ul, .pw-article ol { padding-left: 1.4em; }
+  .pw-article ul { list-style: disc; }
+  .pw-article ol { list-style: decimal; }
+  .pw-article li + li { margin-top: .35em; }
+  .pw-article li::marker { color: var(--pw-brand-600); }
+  .pw-article blockquote { border-left: 4px solid var(--pw-accent-400); padding: .2em 0 .2em 1.1em; font-style: italic; color: #334155; }
+  .pw-article a { color: var(--pw-brand-700); text-decoration: underline; text-underline-offset: 3px; }
+  .pw-article .pw-cta { margin-top: 2em; border-radius: 1rem; background: var(--pw-brand-50); border: 1px solid var(--pw-brand-100); padding: 1.25rem 1.5rem; }
+  .pw-article .pw-cta > * + * { margin-top: .5em; }
+  .pw-article .pw-cta h3 { margin-top: 0; color: var(--pw-brand-800); }
+  .pw-article .pw-cta-btn { margin-top: 1em !important; }
+  .pw-article .pw-cta-btn a { display: inline-block; background: var(--pw-accent-500); color: #fff; font-family: "Inter", ui-sans-serif, system-ui, sans-serif; font-weight: 600; font-size: .95rem; padding: .6em 1.35em; border-radius: 999px; text-decoration: none; }
+
+  /* Email preview */
+  .pw-email { font-family: "Source Serif 4", Georgia, serif; font-size: 1.02rem; line-height: 1.7; color: #1f2937; }
+  .pw-email p + p { margin-top: 1em; }
+  .pw-email-btn { display: inline-block; background: var(--pw-accent-500); color: #fff; font-family: "Inter", Arial, sans-serif; font-weight: 700; font-size: .95rem; padding: .75em 1.6em; border-radius: 999px; min-width: 6rem; outline: none; }
+
+  [contenteditable] { outline: none; }
+  [contenteditable]:hover { box-shadow: inset 0 0 0 1px #e2e8f0; }
+  [contenteditable]:focus { box-shadow: inset 0 0 0 2px var(--pw-brand-300); border-radius: .5rem; }
+  .pw-email-btn[contenteditable]:focus { box-shadow: 0 0 0 3px var(--pw-brand-300); border-radius: 999px; }
+
+  .spin { animation: pwspin .8s linear infinite; }
+  @keyframes pwspin { to { transform: rotate(360deg); } }
+  .pulse-dot { animation: pwpulse 1.4s ease-in-out infinite; }
+  @keyframes pwpulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+  .toast-in { animation: pwtoast .22s ease-out; }
+  @keyframes pwtoast { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+  textarea.autosize { resize: vertical; overflow: hidden; }
+  dialog::backdrop { background: rgba(15, 23, 42, .45); backdrop-filter: blur(2px); }
+  @media (prefers-reduced-motion: reduce) { .spin, .pulse-dot, .toast-in { animation: none; } }
+</style>
+</head>
+<body class="min-h-screen font-sans text-slate-800 antialiased">
+
+<!-- ============================ Header ============================ -->
+<header class="sticky top-0 z-30 border-b border-slate-200/80 bg-white/85 backdrop-blur">
+  <div class="mx-auto flex h-16 max-w-7xl items-center justify-between gap-3 px-4 sm:px-6">
+    <div class="flex min-w-0 items-center gap-3">
+      <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-brand-700 shadow-sm ring-1 ring-brand-900/10">
+        <svg viewBox="0 0 24 24" class="size-5" aria-hidden="true"><path fill="#f7a256" d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+      </span>
+      <div class="min-w-0">
+        <p class="truncate text-[15px] font-semibold leading-tight text-slate-900" data-org-name>Padre Wasson Foundation</p>
+        <p class="truncate text-xs text-slate-500">Content Pipeline · Campaign Studio</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <button type="button" id="engine-pill" class="pill whitespace-nowrap hover:border-slate-300" data-open-settings title="Generation engine – click to change">
+        <span class="dot" id="engine-dot"></span><span id="engine-label" class="max-w-[8.5rem] truncate sm:max-w-none">Simulated engine</span>
+      </button>
+      <span id="wp-pill" class="pill hidden sm:inline-flex" title="WordPress connection">
+        <span class="dot" id="wp-dot"></span><span id="wp-label">WordPress · not connected</span>
+      </span>
+      <button type="button" class="btn-icon" data-open-settings aria-label="Settings"><i data-icon="settings" class="size-5"></i></button>
+    </div>
+  </div>
+</header>
+
+<main class="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-12 lg:py-8">
+
+  <!-- ============================ Left column ============================ -->
+  <div class="min-w-0 space-y-6 lg:col-span-5">
+
+    <!-- Step 1 · Input -->
+    <section class="card" aria-labelledby="input-title">
+      <div class="card-head">
+        <div>
+          <p class="step">Step 1</p>
+          <h2 id="input-title" class="card-title">Raw input</h2>
+          <p class="card-sub">Paste notes, bullet points or a meeting transcript.</p>
+        </div>
+        <div class="flex items-center gap-1">
+          <button type="button" class="btn btn-ghost btn-xs" data-example="de" title="Load German example notes">Beispiel DE</button>
+          <button type="button" class="btn btn-ghost btn-xs" data-example="en" title="Load English example notes">Example EN</button>
+        </div>
+      </div>
+      <div class="space-y-4 p-5">
+        <div>
+          <label for="notes" class="sr-only">Raw notes</label>
+          <textarea id="notes" rows="13" spellcheck="true" class="input min-h-[220px] resize-y leading-relaxed" placeholder="e.g.&#10;Charity run 2026 – team meeting notes&#10;- 230 runners, 3 school classes joined&#10;- €18,400 raised for school supplies&#10;- 40 volunteers at the stations&#10;- Next year: second run in Hamburg"></textarea>
+          <div class="mt-2 flex flex-wrap items-center justify-between gap-2">
+            <span id="notes-stats" class="meta">0 words · 0 characters</span>
+            <div class="flex items-center gap-2">
+              <span id="notes-lang" class="chip" hidden></span>
+              <button type="button" id="clear-notes" class="btn btn-ghost btn-xs">Clear</button>
+            </div>
+          </div>
+        </div>
+
+        <fieldset>
+          <legend class="label">Target language</legend>
+          <div class="seg grid-cols-3" id="target-lang">
+            <label><input type="radio" name="target-lang" value="de" class="peer sr-only"><span class="seg-item">Deutsch</span></label>
+            <label><input type="radio" name="target-lang" value="en" class="peer sr-only"><span class="seg-item">English</span></label>
+            <label><input type="radio" name="target-lang" value="both" class="peer sr-only" checked><span class="seg-item"><span class="sm:hidden">Both</span><span class="hidden sm:inline">Both · DE + EN</span></span></label>
+          </div>
+        </fieldset>
+
+        <button type="button" id="generate" class="btn btn-accent w-full py-3 text-base">
+          <span id="generate-icon" class="inline-flex"><i data-icon="sparkles" class="size-5"></i></span><span id="generate-label">Generate Campaign</span>
+          <kbd class="ml-1 hidden rounded bg-white/20 px-1.5 py-0.5 font-sans text-[11px] font-medium sm:inline">Ctrl ↵</kbd>
+        </button>
+        <p id="engine-hint" class="text-center text-xs text-slate-500"></p>
+      </div>
+    </section>
+
+    <!-- Step 2 · Pipeline -->
+    <section class="card" aria-labelledby="pipeline-title">
+      <div class="card-head">
+        <div>
+          <p class="step">Step 2</p>
+          <h2 id="pipeline-title" class="card-title">Pipeline</h2>
+          <p class="card-sub" id="pipeline-sub">Four outputs, one run.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" id="cancel-run" class="btn btn-ghost btn-xs" hidden>Cancel</button>
+          <span id="run-status" class="chip"><span class="dot"></span>Idle</span>
+        </div>
+      </div>
+      <ol id="pipeline" class="space-y-3.5 px-5 py-4" aria-live="polite"></ol>
+      <p id="run-meta" class="border-t border-slate-100 px-5 py-3 meta">No campaign generated yet.</p>
+    </section>
+  </div>
+
+  <!-- ============================ Right column ============================ -->
+  <div class="min-w-0 space-y-6 lg:col-span-7">
+
+    <!-- Step 3 · Outputs -->
+    <section class="card" id="outputs-card" aria-labelledby="outputs-title">
+      <div class="card-head">
+        <div>
+          <p class="step">Step 3</p>
+          <h2 id="outputs-title" class="card-title">Campaign outputs</h2>
+          <p class="card-sub">Review, edit inline, copy — or send the blog post to WordPress.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="hidden text-xs font-medium text-slate-500 sm:inline" id="lang-toggle-label">Language</span>
+          <div class="flex gap-1 rounded-lg bg-slate-100 p-1" id="lang-toggle" role="group" aria-labelledby="lang-toggle-label">
+            <button type="button" class="lang-btn" data-lang="de" aria-pressed="true">DE</button>
+            <button type="button" class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-1 overflow-x-auto border-b border-slate-200 px-3 sm:px-5" role="tablist" aria-label="Output type">
+        <button type="button" class="tab" role="tab" id="tab-blog" data-tab="blog" aria-controls="panel-blog" aria-selected="true"><i data-icon="file" class="size-4"></i>Blog post</button>
+        <button type="button" class="tab" role="tab" id="tab-social" data-tab="social" aria-controls="panel-social" aria-selected="false" tabindex="-1"><i data-icon="message" class="size-4"></i>Social posts <span class="count">3</span></button>
+        <button type="button" class="tab" role="tab" id="tab-email" data-tab="email" aria-controls="panel-email" aria-selected="false" tabindex="-1"><i data-icon="mail" class="size-4"></i>Newsletter</button>
+      </div>
+
+      <div id="output-notice" class="mx-5 mt-4 flex gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-900" hidden></div>
+
+      <div id="empty-state" class="px-6 py-14 text-center">
+        <div class="mx-auto grid size-14 place-items-center rounded-2xl bg-brand-50 text-brand-600 ring-1 ring-brand-100"><i data-icon="sparkles" class="size-7"></i></div>
+        <h3 class="mt-4 text-sm font-semibold text-slate-900">Your campaign will appear here</h3>
+        <p class="mx-auto mt-1 max-w-sm text-sm text-slate-500">Paste your notes, choose a language and press <strong class="font-semibold text-slate-700">Generate Campaign</strong>. You'll get a blog post, three social captions and a newsletter.</p>
+        <button type="button" class="btn btn-secondary mt-5" data-example="de">Try it with example notes</button>
+      </div>
+
+      <div id="panel-blog" role="tabpanel" aria-labelledby="tab-blog" class="p-5" hidden></div>
+      <div id="panel-social" role="tabpanel" aria-labelledby="tab-social" class="p-5" hidden></div>
+      <div id="panel-email" role="tabpanel" aria-labelledby="tab-email" class="p-5" hidden></div>
+    </section>
+
+    <!-- Step 4 · WordPress -->
+    <section class="card" id="wp-card" aria-labelledby="wp-title">
+      <div class="card-head">
+        <div>
+          <p class="step">Step 4</p>
+          <h2 id="wp-title" class="card-title">Export draft to WordPress</h2>
+          <p class="card-sub">Uploads the blog post via the REST API (<code class="rounded bg-slate-100 px-1 text-[12px]">/wp-json/wp/v2/posts</code>).</p>
+        </div>
+        <span id="wp-status" class="chip"><span class="dot"></span>Not connected</span>
+      </div>
+      <form id="wp-form" class="grid gap-4 p-5 sm:grid-cols-2" autocomplete="on" novalidate>
+        <div class="sm:col-span-2">
+          <label class="label" for="wp-url">WordPress site URL</label>
+          <input id="wp-url" name="url" type="url" inputmode="url" class="input" placeholder="https://www.your-foundation.org" autocomplete="url">
+        </div>
+        <div>
+          <label class="label" for="wp-user">Username</label>
+          <input id="wp-user" name="username" type="text" class="input" placeholder="editor" autocomplete="username" autocapitalize="off" spellcheck="false">
+        </div>
+        <div>
+          <label class="label" for="wp-pass">Application password</label>
+          <div class="relative">
+            <input id="wp-pass" name="password" type="password" class="input pr-16 font-mono" placeholder="xxxx xxxx xxxx xxxx xxxx xxxx" autocomplete="current-password" spellcheck="false">
+            <button type="button" id="wp-pass-toggle" class="absolute inset-y-0 right-1 my-1 rounded-md px-2 text-xs font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-800">Show</button>
+          </div>
+        </div>
+        <div class="grid gap-4 sm:col-span-2 sm:grid-cols-3">
+          <div>
+            <label class="label" for="wp-post-status">Post status</label>
+            <select id="wp-post-status" class="input">
+              <option value="draft" selected>Draft</option>
+              <option value="pending">Pending review</option>
+              <option value="private">Private</option>
+            </select>
+          </div>
+          <div>
+            <label class="label" for="wp-lang">Language</label>
+            <select id="wp-lang" class="input">
+              <option value="current" selected>Currently shown</option>
+              <option value="de">German</option>
+              <option value="en">English</option>
+              <option value="both">Both (two drafts)</option>
+            </select>
+          </div>
+          <div>
+            <label class="label" for="wp-format">Content format</label>
+            <select id="wp-format" class="input">
+              <option value="blocks" selected>Gutenberg blocks</option>
+              <option value="classic">Classic HTML</option>
+            </select>
+          </div>
+        </div>
+        <label class="flex items-center gap-2 text-sm text-slate-600 sm:col-span-2">
+          <input type="checkbox" id="wp-remember" class="size-4 rounded border-slate-300 accent-brand-700">
+          Remember site URL and username on this device <span class="text-slate-400">(the password is never stored)</span>
+        </label>
+        <div class="flex flex-wrap gap-2 sm:col-span-2">
+          <button type="submit" id="wp-export" class="btn btn-primary"><i data-icon="upload" class="size-4"></i>Export Draft to WordPress</button>
+          <button type="button" id="wp-test" class="btn btn-secondary"><i data-icon="plug" class="size-4"></i>Test connection</button>
+          <button type="button" id="wp-curl" class="btn btn-ghost"><i data-icon="terminal" class="size-4"></i>Copy as cURL</button>
+        </div>
+      </form>
+      <div id="wp-log" class="space-y-2 border-t border-slate-100 px-5 py-4" aria-live="polite">
+        <p class="meta">Export results will be listed here.</p>
+      </div>
+      <details class="group border-t border-slate-100 px-5 py-3 text-sm text-slate-600">
+        <summary class="cursor-pointer list-none font-medium text-slate-700 hover:text-slate-900">
+          <span class="inline-flex items-center gap-1.5"><i data-icon="info" class="size-4 text-slate-400"></i>How to set up WordPress access</span>
+        </summary>
+        <ol class="mt-3 list-decimal space-y-1.5 pl-5 text-[13px] leading-relaxed">
+          <li>In WordPress, open <strong>Users → Profile</strong> and scroll to <strong>Application Passwords</strong> (WordPress 5.6+).</li>
+          <li>Enter a name such as “Content Pipeline”, click <strong>Add New Application Password</strong> and paste the generated password above. Use your normal WordPress username.</li>
+          <li>The site must run on <strong>HTTPS</strong>, and the user needs at least the <em>Author</em> role to create posts.</li>
+          <li>If the test fails with a network error, a security plugin or firewall may be blocking the REST API or cross-origin requests. Use <strong>Copy as cURL</strong> to upload from a terminal instead.</li>
+        </ol>
+      </details>
+    </section>
+  </div>
+</main>
+
+<footer class="mx-auto max-w-7xl px-4 pb-10 pt-2 text-center text-xs text-slate-400 sm:px-6">
+  <span data-org-name>Padre Wasson Foundation</span> · Content Pipeline · Notes, outputs and settings are stored only in this browser.
+</footer>
+
+<!-- ============================ Settings dialog ============================ -->
+<dialog id="settings-dialog" class="m-auto w-[min(640px,calc(100vw-2rem))] rounded-2xl bg-white p-0 text-slate-800 shadow-2xl ring-1 ring-slate-900/5" aria-labelledby="settings-title">
+  <form method="dialog" class="flex max-h-[88vh] flex-col">
+    <div class="flex items-start justify-between gap-4 border-b border-slate-100 px-6 py-4">
+      <div>
+        <h2 id="settings-title" class="text-base font-semibold text-slate-900">Settings</h2>
+        <p class="text-sm text-slate-500">Generation engine and organization details.</p>
+      </div>
+      <button value="close" class="btn-icon -mr-2" aria-label="Close settings"><i data-icon="x" class="size-5"></i></button>
+    </div>
+    <div class="space-y-6 overflow-y-auto px-6 py-5">
+      <fieldset>
+        <legend class="label">Generation engine</legend>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <label class="cursor-pointer">
+            <input type="radio" name="engine" value="simulated" class="peer sr-only">
+            <span class="block h-full rounded-xl border border-slate-200 p-4 transition hover:border-slate-300 peer-checked:border-brand-600 peer-checked:bg-brand-50/60 peer-checked:ring-2 peer-checked:ring-brand-600/20 peer-focus-visible:ring-4 peer-focus-visible:ring-brand-500/30">
+              <span class="flex items-center gap-2 text-sm font-semibold text-slate-900"><span class="dot bg-amber-400"></span>Simulated</span>
+              <span class="mt-1 block text-xs leading-relaxed text-slate-500">Offline and instant. Builds every output from your notes with localized templates. Good for demos and testing the workflow.</span>
+            </span>
+          </label>
+          <label class="cursor-pointer">
+            <input type="radio" name="engine" value="claude" class="peer sr-only">
+            <span class="block h-full rounded-xl border border-slate-200 p-4 transition hover:border-slate-300 peer-checked:border-brand-600 peer-checked:bg-brand-50/60 peer-checked:ring-2 peer-checked:ring-brand-600/20 peer-focus-visible:ring-4 peer-focus-visible:ring-brand-500/30">
+              <span class="flex items-center gap-2 text-sm font-semibold text-slate-900"><span class="dot bg-emerald-500"></span>Claude API</span>
+              <span class="mt-1 block text-xs leading-relaxed text-slate-500">AI writing and real German ⇄ English translation using Anthropic's Claude models. Needs an API key.</span>
+            </span>
+          </label>
+        </div>
+      </fieldset>
+
+      <div id="claude-settings" class="space-y-4 rounded-xl border border-slate-200 bg-slate-50/70 p-4">
+        <div>
+          <label class="label" for="api-key">Anthropic API key</label>
+          <input id="api-key" type="password" class="input font-mono" placeholder="sk-ant-…" autocomplete="off" spellcheck="false">
+          <label class="mt-2 flex items-center gap-2 text-sm text-slate-600">
+            <input type="checkbox" id="remember-key" class="size-4 rounded border-slate-300 accent-brand-700"> Remember the key in this browser
+          </label>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label class="label" for="model">Model</label>
+            <select id="model" class="input">
+              <option value="claude-opus-5">Claude Opus 5 (recommended)</option>
+              <option value="claude-sonnet-5">Claude Sonnet 5 (faster)</option>
+            </select>
+          </div>
+          <div>
+            <label class="label" for="effort">Effort</label>
+            <select id="effort" class="input">
+              <option value="high">High · best quality</option>
+              <option value="medium">Medium · faster</option>
+              <option value="low">Low · fastest</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="label" for="base-url">API base URL <span class="font-normal text-slate-400">(optional)</span></label>
+          <input id="base-url" type="url" class="input" placeholder="https://api.anthropic.com" spellcheck="false">
+          <p class="mt-1.5 text-xs leading-relaxed text-slate-500">Point this at your own server-side proxy in production so the API key never has to live in the browser. With a proxy, the key field can stay empty.</p>
+        </div>
+        <p class="flex gap-2 rounded-lg bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-900 ring-1 ring-amber-200">
+          <i data-icon="alert" class="mt-px size-4 shrink-0"></i>
+          <span>Calling the API straight from the browser exposes the key to anyone who can open this page on this device. Only use it on trusted computers, or use a proxy.</span>
+        </p>
+      </div>
+
+      <fieldset class="space-y-4">
+        <legend class="label">Organization</legend>
+        <div>
+          <label class="mb-1 block text-xs font-medium text-slate-500" for="org-name">Name used in the content</label>
+          <input id="org-name" type="text" class="input" placeholder="Padre Wasson Foundation">
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-medium text-slate-500" for="cta-url">Donation / call-to-action link</label>
+          <input id="cta-url" type="url" class="input" placeholder="https://www.your-foundation.org/donate" spellcheck="false">
+          <p class="mt-1.5 text-xs text-slate-500">Used for the blog button, the newsletter button and the social captions.</p>
+        </div>
+      </fieldset>
+
+      <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-5">
+        <p class="text-xs text-slate-500">Notes, outputs and settings are kept in this browser's local storage.</p>
+        <button type="button" id="clear-data" class="btn btn-ghost btn-xs text-red-600 hover:bg-red-50 hover:text-red-700">Clear saved data</button>
+      </div>
+    </div>
+    <div class="flex justify-end gap-2 border-t border-slate-100 px-6 py-4">
+      <button value="close" class="btn btn-primary">Done</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toasts" class="pointer-events-none fixed inset-x-4 bottom-4 z-50 flex flex-col items-end gap-2 sm:inset-x-auto sm:right-6" aria-live="polite" aria-atomic="false"></div>
+
+<script type="module">
+/* =====================================================================
+   Padre Wasson Foundation · Content Pipeline
+   Single-file app: notes → blog post, social captions, newsletter (DE/EN)
+   → WordPress drafts. Engines: "simulated" (offline templates) or the
+   Claude API (official Anthropic TypeScript SDK, loaded on demand).
+   ===================================================================== */
+
+const SDK_URL = 'https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@0.128.0/+esm';
+const LANG_NAMES = { de: 'German', en: 'English' };
+const LANG_NATIVE = { de: 'Deutsch', en: 'English' };
+const MODEL_LABELS = { 'claude-opus-5': 'Claude Opus 5', 'claude-sonnet-5': 'Claude Sonnet 5' };
+
+/* ---------------------------------------------------------------------
+   Small utilities
+   --------------------------------------------------------------------- */
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const words = (s) => (String(s).trim().match(/\S+/g) || []).length;
+const fmt = (n) => Number(n).toLocaleString('en-US');
+const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
+
+const store = {
+  get(key, fallback) {
+    try { const v = localStorage.getItem('pwcp:' + key); return v === null ? fallback : JSON.parse(v); } catch { return fallback; }
+  },
+  set(key, value) { try { localStorage.setItem('pwcp:' + key, JSON.stringify(value)); } catch { /* storage unavailable */ } },
+  del(key) { try { localStorage.removeItem('pwcp:' + key); } catch { /* ignore */ } },
+  clear() { try { Object.keys(localStorage).filter((k) => k.startsWith('pwcp:')).forEach((k) => localStorage.removeItem(k)); } catch { /* ignore */ } },
+};
+
+const ICONS = {
+  copy: '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  settings: '<line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/>',
+  sparkles: '<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>',
+  file: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+  message: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  mail: '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>',
+  upload: '<path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/>',
+  plug: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+  terminal: '<polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/>',
+  code: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
+  info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+  alert: '<circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/>',
+  external: '<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+  globe: '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
+  minus: '<path d="M5 12h14"/>',
+};
+const icon = (name, cls = 'size-4') =>
+  `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
+const spinner = (cls = 'size-4') =>
+  `<svg class="spin ${cls}" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-opacity=".25" stroke-width="3"/><path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>`;
+function hydrateIcons(root = document) {
+  $$('i[data-icon]', root).forEach((el) => { el.outerHTML = icon(el.dataset.icon, el.className || 'size-4'); });
+}
+
+function toast(message, type = 'info', ms = 3800) {
+  const styles = {
+    success: ['check', 'text-emerald-600'],
+    error: ['alert', 'text-red-600'],
+    warn: ['alert', 'text-amber-600'],
+    info: ['info', 'text-brand-600'],
+  }[type] || ['info', 'text-brand-600'];
+  const el = document.createElement('div');
+  el.className = 'toast-in pointer-events-auto flex w-full max-w-sm items-start gap-2.5 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 shadow-lg';
+  el.setAttribute('role', type === 'error' ? 'alert' : 'status');
+  el.innerHTML = `<span class="mt-px ${styles[1]}">${icon(styles[0])}</span><span class="min-w-0 flex-1 leading-snug">${esc(message)}</span>`;
+  $('#toasts').append(el);
+  setTimeout(() => { el.style.transition = 'opacity .25s'; el.style.opacity = '0'; setTimeout(() => el.remove(), 260); }, ms);
+}
+
+/* ---------------------------------------------------------------------
+   App state
+   --------------------------------------------------------------------- */
+const DEFAULT_SETTINGS = {
+  engine: 'simulated', apiKey: '', rememberKey: false, model: 'claude-opus-5', effort: 'high', baseURL: '',
+  orgName: 'Padre Wasson Foundation', ctaUrl: '',
+};
+const state = {
+  settings: { ...DEFAULT_SETTINGS, ...store.get('settings', {}) },
+  target: store.get('target', 'both'),
+  outputs: { de: null, en: null },
+  campaignNotes: '',
+  lang: 'de',
+  tab: 'blog',
+  busy: false,
+  abort: null,
+  wpConnected: null,
+};
+if (state.settings.rememberKey) state.settings.apiKey = store.get('apiKey', '');
+const org = () => (state.settings.orgName || '').trim() || DEFAULT_SETTINGS.orgName;
+const ctaUrl = () => (state.settings.ctaUrl || '').trim();
+const cur = () => state.outputs[state.lang];
+const hasOutputs = () => Boolean(state.outputs.de || state.outputs.en);
+const saveCampaign = debounce(() => store.set('campaign', { outputs: state.outputs, lang: state.lang, notes: state.campaignNotes }), 400);
+function saveSettings() {
+  const { apiKey, ...rest } = state.settings;
+  store.set('settings', rest);
+  if (state.settings.rememberKey) store.set('apiKey', apiKey); else store.del('apiKey');
+}
+
+/* =====================================================================
+   1. NOTE ANALYSIS (used by the simulated engine and the live UI hints)
+   ===================================================================== */
+const STOPWORDS = {
+  de: new Set('und der die das wir mit für ist nicht ein eine einen auf den von zu im sich des dem haben hat wurde wurden sind auch es bei unsere unser unseren ihr sie aber oder noch nach wie durch über'.split(' ')),
+  en: new Set('the and we with for is to of our a an in was were are this that it on have has they their from by at be will been but or as'.split(' ')),
+};
+function detectLang(text) {
+  const tokens = String(text).toLowerCase().match(/\p{L}+/gu) || [];
+  let de = 0, en = 0;
+  for (const w of tokens) { if (STOPWORDS.de.has(w)) de++; if (STOPWORDS.en.has(w)) en++; }
+  de += (String(text).match(/[äöüß]/gi) || []).length * 0.5;
+  if (de + en < 3) return null;
+  return de >= en ? 'de' : 'en';
+}
+
+const THEMES = {
+  fundraising: {
+    stems: ['spend', 'donat', 'fundrais', 'raised', 'gesammelt', 'erlös', 'benefiz', 'charity', 'gala', 'lauf', 'läufer', 'marathon', 'auktion', 'auction', 'sponsor', 'tombola', 'basar', 'bazaar'],
+    en: { label: 'Fundraising', tag: 'Fundraising', emoji: '🎉', opener: 'Some days remind us what a community can achieve when it comes together.', why: 'Every donation, large or small, turns into something tangible: a school place, a warm meal, a safe home. Your generosity makes this work possible, and it grows stronger when we act together.', whyShort: 'Every contribution turns into real change for children.', subject: 'Look what we achieved together', button: 'Donate now' },
+    de: { label: 'Spendenaktion', tag: 'Spenden', emoji: '🎉', opener: 'Manche Tage zeigen uns, was eine Gemeinschaft erreichen kann, wenn sie zusammenhält.', why: 'Jede Spende – ob groß oder klein – wird zu etwas Greifbarem: einem Schulplatz, einer warmen Mahlzeit, einem sicheren Zuhause. Ihre Großzügigkeit macht diese Arbeit möglich, und gemeinsam wirkt sie noch stärker.', whyShort: 'Jeder Beitrag wird zu echter Veränderung für Kinder.', subject: 'Das haben wir gemeinsam erreicht', button: 'Jetzt spenden' },
+  },
+  education: {
+    stems: ['schul', 'school', 'bildung', 'education', 'lern', 'learn', 'student', 'schüler', 'lehrer', 'teacher', 'stipendi', 'scholarship', 'klassenzimmer', 'classroom', 'ausbildung', 'universit', 'nachhilfe', 'tutor', 'notebook', 'hefte', 'bücher', 'book'],
+    en: { label: 'Education', tag: 'Education', emoji: '📚', opener: 'Every child deserves the chance to learn, grow and dream big.', why: 'Education is one of the most powerful ways out of poverty. Every school year, every book and every hour of support gives a child the tools to shape their own future, and one day to give back to their community.', whyShort: 'Education changes lives, and it changes them for good.', subject: 'Learning that changes lives', button: 'Support education' },
+    de: { label: 'Bildung', tag: 'Bildung', emoji: '📚', opener: 'Jedes Kind verdient die Chance, zu lernen, zu wachsen und große Träume zu haben.', why: 'Bildung ist einer der wirksamsten Wege aus der Armut. Jedes Schuljahr, jedes Buch und jede Stunde Förderung gibt einem Kind das Werkzeug, seine Zukunft selbst zu gestalten – und eines Tages etwas an seine Gemeinschaft zurückzugeben.', whyShort: 'Bildung verändert Leben – nachhaltig.', subject: 'Bildung, die Leben verändert', button: 'Bildung fördern' },
+  },
+  health: {
+    stems: ['gesundheit', 'health', 'klinik', 'clinic', 'medizin', 'medical', 'medicine', 'arzt', 'ärzt', 'doctor', 'nurse', 'krankenhaus', 'hospital', 'therap', 'impf', 'vaccin', 'zahn', 'dental'],
+    en: { label: 'Health', tag: 'GlobalHealth', emoji: '🩺', opener: 'Good health is the foundation for everything a child can become.', why: 'Access to medical care means children can go to school, play and grow up with confidence. Preventive care and timely treatment protect not only individual children but entire families.', whyShort: 'Healthy children can grow, learn and thrive.', subject: 'Care that makes a difference', button: 'Support health care' },
+    de: { label: 'Gesundheit', tag: 'Gesundheit', emoji: '🩺', opener: 'Gesundheit ist die Grundlage für alles, was ein Kind werden kann.', why: 'Zugang zu medizinischer Versorgung bedeutet, dass Kinder zur Schule gehen, spielen und selbstbewusst aufwachsen können. Vorsorge und rechtzeitige Behandlung schützen nicht nur einzelne Kinder, sondern ganze Familien.', whyShort: 'Gesunde Kinder können wachsen, lernen und aufblühen.', subject: 'Fürsorge, die ankommt', button: 'Gesundheit fördern' },
+  },
+  nutrition: {
+    stems: ['essen', 'mahlzeit', 'ernährung', 'lebensmittel', 'food', 'meal', 'nutrition', 'hunger', 'küche', 'kitchen', 'frühstück', 'breakfast', 'lunch', 'mittagessen'],
+    en: { label: 'Nutrition', tag: 'ZeroHunger', emoji: '🍲', opener: 'No child should have to learn, play or grow up on an empty stomach.', why: 'A healthy, regular meal is more than food. It gives children the energy to concentrate at school, strengthens their health and offers a sense of security every single day.', whyShort: 'A full plate is where a good day begins.', subject: 'Every meal counts', button: 'Share a meal' },
+    de: { label: 'Ernährung', tag: 'Ernährung', emoji: '🍲', opener: 'Kein Kind sollte mit leerem Magen lernen, spielen oder aufwachsen müssen.', why: 'Eine gesunde, regelmäßige Mahlzeit ist mehr als Essen: Sie gibt Kindern Kraft, sich in der Schule zu konzentrieren, stärkt ihre Gesundheit und schenkt jeden Tag ein Stück Sicherheit.', whyShort: 'Ein voller Teller ist der Anfang eines guten Tages.', subject: 'Jede Mahlzeit zählt', button: 'Mahlzeiten schenken' },
+  },
+  volunteering: {
+    stems: ['volunteer', 'ehrenamt', 'freiwillig', 'helfer', 'helper', 'mentor', 'patenschaft', 'paten'],
+    en: { label: 'Volunteering', tag: 'Volunteering', emoji: '🤝', opener: 'Behind every project are people who give their time, their skills and their heart.', why: 'Volunteers bring more than helping hands. They bring encouragement, role models and friendships that last, and their commitment shows children that they are seen and valued.', whyShort: 'Time given is one of the most valuable gifts.', subject: 'The people who make it happen', button: 'Get involved' },
+    de: { label: 'Ehrenamt', tag: 'Ehrenamt', emoji: '🤝', opener: 'Hinter jedem Projekt stehen Menschen, die ihre Zeit, ihr Können und ihr Herz schenken.', why: 'Ehrenamtliche bringen mehr als helfende Hände mit: Sie schenken Ermutigung, Vorbilder und Freundschaften, die bleiben. Ihr Engagement zeigt Kindern, dass sie gesehen und wertgeschätzt werden.', whyShort: 'Geschenkte Zeit ist eines der wertvollsten Geschenke.', subject: 'Die Menschen, die es möglich machen', button: 'Mitmachen' },
+  },
+  building: {
+    stems: ['neubau', 'umbau', 'bauen', 'bauarbeit', 'bauprojekt', 'build', 'renovier', 'renovat', 'construct', 'gebäude', 'dach', 'roof', 'sanier', 'spielplatz', 'playground'],
+    en: { label: 'Building project', tag: 'CommunityDevelopment', emoji: '🏗️', opener: 'A safe place to live, learn and play changes everything.', why: 'Solid buildings create room to grow: bright classrooms, safe bedrooms and places where children can simply be children. Every brick is an investment in the next generation.', whyShort: 'Safe spaces give children room to grow.', subject: 'Building a better tomorrow', button: 'Support the project' },
+    de: { label: 'Bauprojekt', tag: 'Bauprojekt', emoji: '🏗️', opener: 'Ein sicherer Ort zum Leben, Lernen und Spielen verändert alles.', why: 'Solide Gebäude schaffen Raum für Entwicklung: helle Klassenzimmer, sichere Schlafräume und Orte, an denen Kinder einfach Kinder sein dürfen. Jeder Stein ist eine Investition in die nächste Generation.', whyShort: 'Sichere Räume geben Kindern Raum zum Wachsen.', subject: 'Wir bauen an einer besseren Zukunft', button: 'Projekt unterstützen' },
+  },
+  community: {
+    stems: [],
+    en: { label: 'Our work', tag: 'ChildrensRights', emoji: '💛', opener: 'Every child deserves a safe home, a caring family and the chance to thrive.', why: 'When children grow up feeling safe and supported, they gain the confidence to shape their own lives. Our work, and your support, makes that possible day after day.', whyShort: 'Together we give children a place where they belong.', subject: 'News from our foundation', button: 'Support our work' },
+    de: { label: 'Unsere Arbeit', tag: 'Kinderhilfe', emoji: '💛', opener: 'Jedes Kind verdient ein sicheres Zuhause, eine liebevolle Familie und die Chance, sich zu entfalten.', why: 'Wenn Kinder geborgen und gut begleitet aufwachsen, gewinnen sie das Selbstvertrauen, ihr Leben selbst in die Hand zu nehmen. Unsere Arbeit – und Ihre Unterstützung – macht das Tag für Tag möglich.', whyShort: 'Gemeinsam schenken wir Kindern einen Ort, an dem sie dazugehören.', subject: 'Neuigkeiten aus unserer Stiftung', button: 'Unsere Arbeit unterstützen' },
+  },
+};
+
+const MONTHS = '(?:jan(?:uar|uary)?|feb(?:ruar|ruary)?|märz|mar(?:ch)?|apr(?:il)?|mai|may|jun[ei]?|jul[iy]?|aug(?:ust)?|sep(?:t|tember)?|okt(?:ober)?|oct(?:ober)?|nov(?:ember)?|dez(?:ember)?|dec(?:ember)?)';
+const DATE_RES = [
+  /\b\d{1,2}\.\s?\d{1,2}\.(?:\d{2,4})?/g,
+  new RegExp(String.raw`\b\d{1,2}(?:\.|st|nd|rd|th)?\s+${MONTHS}\b\.?`, 'gi'),
+  new RegExp(String.raw`\b${MONTHS}\.?\s+\d{1,2}(?:st|nd|rd|th)?\b`, 'gi'),
+  /\b(?:19|20)\d{2}\b/g,
+  /\b\d{1,2}(?::\d{2})\s?(?:uhr|am|pm)?\b/gi,
+];
+const MONEY_RE = /(?:[€$£]\s?\d[\d.,]*(?:\s?(?:k|Tsd\.?|Mio\.?))?|\d[\d.,]*\s?(?:€|EUR\b|Euro\b|euros?\b|USD\b|dollars?\b))(?:\s+(?:an Spenden|Spenden|in donations|donations))?/i;
+const COUNT_RE = /(?<![\d.,])(\d{1,3}(?:[.,]\d{3})+|\d+)\s+(?:(?:neue|new|zusätzliche|additional|junge|young)\s+)?((?:kinder|children|kids|jugendliche|teenager|teilnehm|participant|läufer|runner|ehrenamtlich|volunteer|helfer|helper|schüler|student|familie|famil|mahlzeit|meal|gäst|guest|spender|donor|büch|book|notebook|heft|backpack|rucks|schultasche|bett|bed|klassenzimmer|classroom|schulklasse|school|schule|stipendi|scholarship|menschen|people|mentor|pat|sponsor|kilomet|km|paket|package|box|kiste)[\p{L}-]*)/iu;
+const PERCENT_RE = /\d\s?(?:%|prozent\b|percent\b)/i;
+const NEXT_RE = /\b(next|upcoming|planned|plan to|we will|we'll|will|going to|soon|future|nächste\w*|geplant|planen|künftig|zukünftig|demnächst|bald|ausblick|looking for|suchen)\b/i;
+const THANKS_RE = /\b(thank|thanks|grateful|gratitude|danke|dank|dankbar|herzlichen dank)\b/i;
+const QUOTE_RE = /[„“"«»”]([^„“"«»”]{8,})[“”"«»]/;
+// Sentence boundary that ignores German ordinals/dates ("am 14. September") and common abbreviations.
+const SENT_SPLIT = /(?<=[.!?…])(?<!(?:^|[\s(])\d{1,2}\.)(?<!\b(?:Dr|Prof|Nr|St|ca|bzw|inkl|evtl|ggf|usw|etc|vs|Mr|Mrs|Ms|z\.\s?B|e\.g|i\.e)\.)\s+(?=[\p{Lu}\p{N}„"“»(])/u;
+const MEETING_WORDS = /\b(meeting|notes?|notizen|protokoll|zusammenfassung|summary|call|besprechung|recap|transcript|transkript|update)\b/i;
+const CANONICAL_KEYS = [
+  [/^(title|titel|thema|topic|event|veranstaltung|projekt|project|betreff|subject)$/i, 'title'],
+  [/^(next|next steps?|nächste schritte|ausblick|to ?do|todos|outlook)$/i, 'next'],
+  [/^(thanks?|danke|dank|partner|sponsoren?|sponsors?)$/i, 'thanks'],
+  [/^(quote|zitat)$/i, 'quote'],
+];
+
+function stripDates(s) { return DATE_RES.reduce((acc, re) => acc.replace(re, ' '), s); }
+function hasImpactNumber(s) { return MONEY_RE.test(s) || COUNT_RE.test(s) || PERCENT_RE.test(s) || /\d/.test(stripDates(s)); }
+function sentence(s) {
+  let t = String(s).replace(/\s+/g, ' ').trim().replace(/^[,;:–—-]\s*/, '');
+  if (!t) return '';
+  t = t[0].toLocaleUpperCase() + t.slice(1);
+  if (!/[.!?…:"“”»)]$/.test(t)) t += '.';
+  return t;
+}
+function noEnd(s) { return String(s).replace(/[.!?…]+$/, ''); }
+function truncate(s, n) {
+  s = String(s).trim();
+  if (s.length <= n) return s;
+  const cut = s.slice(0, n - 1);
+  return cut.slice(0, Math.max(cut.lastIndexOf(' '), n * 0.6)).replace(/[\s,;:–—-]+$/, '') + '…';
+}
+const SMALL = new Set('a an the and or for of in on to with at by from as but nor vs'.split(' '));
+function titleCase(s) {
+  return s.split(' ').map((w, i) => (i > 0 && SMALL.has(w.toLowerCase())) ? w.toLowerCase() : (w[0] ? w[0].toUpperCase() + w.slice(1) : w)).join(' ');
+}
+
+function analyzeNotes(raw) {
+  const lines = String(raw).replace(/\r/g, '').split('\n').map((l) => l.trim()).filter(Boolean);
+  const a = { title: '', points: [], next: [], thanks: [], quote: '', lang: detectLang(raw) || 'en' };
+  const seen = new Set();
+  const push = (arr, s) => { const t = sentence(s); if (t.length > 3 && !seen.has(t.toLowerCase())) { seen.add(t.toLowerCase()); arr.push(t); } };
+
+  lines.forEach((line, i) => {
+    let s = line
+      .replace(/^\[?\(?\d{1,2}:\d{2}(?::\d{2})?\)?\]?\s*/, '')      // transcript timestamps
+      .replace(/^(?:[-*•–·>]+|\d+[.)])\s*/, '')                     // bullets / numbering
+      .replace(/\b(?:ähm|äh|ehm|um+|uh+|erm)\b,?\s*/gi, '')          // filler words
+      .trim();
+    if (!s) return;
+    if (/^#{1,6}\s/.test(line)) { if (!a.title) a.title = s.replace(/^#+\s*/, ''); return; }
+
+    const q = s.match(QUOTE_RE);
+    if (q && !a.quote && words(q[1]) >= 4) {
+      const attribution = s.slice(0, q.index).replace(/[:\s–—-]+$/, '').trim();
+      a.quote = { text: q[1].trim(), by: attribution };
+      return;
+    }
+
+    const kv = s.match(/^([\p{L}][\p{L} /&.-]{1,28}):\s+(.+)$/u);
+    if (kv) {
+      const key = kv[1].trim();
+      const canon = CANONICAL_KEYS.find(([re]) => re.test(key))?.[1];
+      if (canon === 'title') { if (!a.title) a.title = kv[2]; return; }
+      if (canon === 'next') { push(a.next, kv[2]); return; }
+      if (canon === 'thanks') { push(a.thanks, kv[2]); return; }
+      if (canon === 'quote') { a.quote = { text: kv[2].replace(/^["„“]|["“”]$/g, ''), by: '' }; return; }
+      // "Maria: we raised …" – speaker label in a transcript → keep the statement only
+      if (/^\p{Lu}\p{L}+$/u.test(key) && words(kv[2]) >= 4) s = kv[2];
+    }
+
+    if (i === 0 && lines.length > 1 && s.length <= 90 && !/[.!?]$/.test(s) && !a.title) { a.title = s; return; }
+
+    for (const part of s.split(SENT_SPLIT)) {
+      if (THANKS_RE.test(part)) push(a.thanks, part);
+      else if (NEXT_RE.test(part)) push(a.next, part);
+      else push(a.points, part);
+    }
+  });
+
+  // Clean the title: drop "– notes from the team call (Sept 2026)" style suffixes
+  if (a.title) {
+    a.title = a.title.replace(/\s+[–—-]\s+.*$/, (m) => (MEETING_WORDS.test(m) ? '' : m))
+      .replace(/\s*\((?:[^)]*)\)\s*$/, (m) => (MEETING_WORDS.test(m) || /\d/.test(m) ? '' : m))
+      .replace(/[:.\s]+$/, '').trim();
+    if (a.lang === 'en') a.title = titleCase(a.title);
+  }
+
+  a.numeric = a.points.filter(hasImpactNumber);
+  a.story = a.points.filter((p) => !a.numeric.includes(p));
+  // Notes made only of figures: lead with the first one, keep the rest as "impact in numbers".
+  if (!a.story.length && a.numeric.length) {
+    if (a.numeric.length >= 3) { a.story = a.numeric.slice(0, 1); a.numeric = a.numeric.slice(1); }
+    else { a.story = a.numeric; a.numeric = []; }
+  }
+
+  const all = [...a.points, ...a.next, ...a.thanks].join(' ');
+  const money = all.match(MONEY_RE);
+  const count = all.match(COUNT_RE);
+  a.stat = money ? money[0].trim() : (count ? count[0].trim() : '');
+
+  const tokens = String(raw).toLowerCase().match(/\p{L}+/gu) || [];
+  let best = 'community', bestScore = 0;
+  for (const [id, t] of Object.entries(THEMES)) {
+    const score = tokens.filter((w) => t.stems.some((st) => w.startsWith(st) || (st.length > 5 && w.includes(st)))).length;
+    if (score > bestScore) { best = id; bestScore = score; }
+  }
+  a.themeId = best;
+  a.theme = THEMES[best];
+  return a;
+}
+
+/* =====================================================================
+   2. SIMULATED ENGINE – localized templates filled with the notes
+   ===================================================================== */
+const PHRASES = {
+  en: {
+    titleHook: 'How Your Support Makes a Difference',
+    hHappened: 'What happened', hNumbers: 'The impact in numbers', hWhy: 'Why it matters', hThanks: 'Thank you', hNext: "What's next",
+    nextGeneric: 'We will keep you posted on how this work continues. If you would like to be part of the next chapter, we would love to hear from you.',
+    thanksGeneric: 'None of this would be possible without our donors, partners and volunteers. Thank you for standing with us.',
+    ctaHeading: 'Be part of it', ctaText: 'Your support creates lasting change for children and families. Every contribution counts.',
+    greeting: 'Dear friends and supporters,',
+    signoff: (o) => `With heartfelt thanks,\nYour team at the ${o}`,
+    liHook: (o, t) => `Impact update from the ${o}: ${t}`,
+    liResults: 'Key results:',
+    liThanks: 'Our sincere thanks go to every donor, partner and volunteer who made this possible.',
+    liCta: (u) => (u ? `Learn how you can support our work: ${u}` : 'Would you like to learn more or get involved? Send us a message, we would be glad to connect.'),
+    liTags: (tag) => ['Nonprofit', tag, 'SocialImpact'],
+    fbStat: (s) => `Together we made it happen: ${s}! 🎉`,
+    fbThanks: 'From the bottom of our hearts: THANK YOU to everyone who was part of this! 💛',
+    fbCta: (u) => (u ? `👉 Share this post and help us spread the word: ${u}` : '👉 Share this post and help us spread the word!'),
+    gbLead: (o) => `News from the ${o}: `,
+    gbCta: 'Learn more and support our work on our website.',
+    previewStat: (s) => `${s} and more: see what your support made possible.`,
+    previewGeneric: 'See what your support made possible, and what comes next.',
+    highlights: 'A few highlights:',
+    emailThanks: 'Thank you for being part of this journey. Your trust and generosity make every step possible.',
+    notice: (from) => `Simulated engine: the templates are written in English, but facts from your ${LANG_NAMES[from]} notes are quoted as written. Switch to the Claude API in Settings for a full translation.`,
+  },
+  de: {
+    titleHook: 'So wirkt Ihre Unterstützung',
+    hHappened: 'Was passiert ist', hNumbers: 'Die Wirkung in Zahlen', hWhy: 'Warum das wichtig ist', hThanks: 'Danke', hNext: 'Wie es weitergeht',
+    nextGeneric: 'Wir halten Sie auf dem Laufenden, wie es weitergeht. Wenn Sie beim nächsten Kapitel dabei sein möchten, freuen wir uns sehr über Ihre Nachricht.',
+    thanksGeneric: 'Nichts davon wäre möglich ohne unsere Spenderinnen und Spender, Partner und Ehrenamtlichen. Danke, dass Sie an unserer Seite stehen.',
+    ctaHeading: 'Machen Sie mit', ctaText: 'Ihre Unterstützung schafft nachhaltige Veränderung für Kinder und Familien. Jeder Beitrag zählt.',
+    greeting: 'Liebe Freundinnen und Freunde, liebe Unterstützerinnen und Unterstützer,',
+    signoff: (o) => `Herzliche Grüße\nIhr Team der ${o}`,
+    liHook: (o, t) => `Neues von der ${o}: ${t}`,
+    liResults: 'Die wichtigsten Ergebnisse:',
+    liThanks: 'Unser aufrichtiger Dank gilt allen Spenderinnen und Spendern, Partnern und Ehrenamtlichen, die das möglich gemacht haben.',
+    liCta: (u) => (u ? `So können Sie unsere Arbeit unterstützen: ${u}` : 'Sie möchten mehr erfahren oder sich engagieren? Schreiben Sie uns – wir freuen uns auf den Austausch.'),
+    liTags: (tag) => ['Stiftung', tag, 'GemeinsamWirken'],
+    fbStat: (s) => `Gemeinsam haben wir das geschafft: ${s}! 🎉`,
+    fbThanks: 'Von Herzen: DANKE an alle, die dabei waren! 💛',
+    fbCta: (u) => (u ? `👉 Teilt diesen Beitrag und helft uns, die Nachricht zu verbreiten: ${u}` : '👉 Teilt diesen Beitrag und helft uns, die Nachricht zu verbreiten!'),
+    gbLead: (o) => `Neues von der ${o}: `,
+    gbCta: 'Mehr erfahren und unsere Arbeit unterstützen – auf unserer Website.',
+    previewStat: (s) => `${s} und mehr: Sehen Sie, was Ihre Unterstützung bewirkt hat.`,
+    previewGeneric: 'Sehen Sie, was Ihre Unterstützung bewirkt hat – und wie es weitergeht.',
+    highlights: 'Einige Höhepunkte:',
+    emailThanks: 'Danke, dass Sie diesen Weg mit uns gehen. Ihr Vertrauen und Ihre Großzügigkeit machen jeden Schritt möglich.',
+    notice: (from) => `Simulierte Engine: Die Vorlagen sind auf Deutsch, Fakten aus Ihren Notizen (${LANG_NAMES[from]}) werden jedoch unverändert übernommen. Für eine vollständige Übersetzung in den Einstellungen die Claude API aktivieren.`,
+  },
+};
+
+function chunk(arr, size) { const out = []; for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size)); return out; }
+function formatQuote(q, lang) {
+  if (!q) return '';
+  const text = lang === 'de' ? `„${q.text}“` : `“${q.text}”`;
+  return q.by ? `${text} – ${q.by}` : text;
+}
+
+/** Returns the same structured shape the Claude API produces (see CAMPAIGN_SCHEMA). */
+function simulateCampaign(a, lang, o, url) {
+  const T = a.theme[lang];
+  const P = PHRASES[lang];
+  const title = a.title ? (a.title.length <= 48 ? `${a.title}: ${P.titleHook}` : a.title) : `${T.label}: ${P.titleHook}`;
+  const [first, ...rest] = a.story;
+  const intro = [T.opener, first].filter(Boolean).join(' ');
+
+  const sections = [];
+  const happened = chunk(rest, 2).map((c) => c.join(' '));
+  if (happened.length || a.quote) sections.push({ heading: P.hHappened, paragraphs: happened, bullets: [], quote: formatQuote(a.quote, lang) });
+  if (a.numeric.length) sections.push({ heading: P.hNumbers, paragraphs: [], bullets: a.numeric.slice(0, 6), quote: '' });
+  sections.push({ heading: P.hWhy, paragraphs: [T.why], bullets: [], quote: '' });
+  if (a.thanks.length) sections.push({ heading: P.hThanks, paragraphs: [`${a.thanks.join(' ')} ${P.thanksGeneric}`], bullets: [], quote: '' });
+  sections.push({ heading: P.hNext, paragraphs: [a.next.length ? a.next.join(' ') : P.nextGeneric], bullets: [], quote: '' });
+
+  const liTitle = a.title || T.label;
+  const liParts = [
+    P.liHook(o, liTitle),
+    a.story.slice(0, 2).join(' '),
+    a.numeric.length ? `${P.liResults}\n${a.numeric.slice(0, 3).map((n) => `• ${noEnd(n)}`).join('\n')}` : '',
+    [T.whyShort, a.next[0]].filter(Boolean).join(' '),
+    `${P.liThanks}\n${P.liCta(url)}`,
+  ].filter(Boolean);
+
+  const fbParts = [
+    `${T.emoji} ${T.opener}`,
+    a.story.slice(0, 2).join(' '),
+    a.stat ? P.fbStat(a.stat) : '',
+    P.fbThanks,
+    P.fbCta(url),
+  ].filter(Boolean);
+
+  const gbFact = truncate(noEnd(first || a.numeric[0] || T.whyShort), 150);
+  const google = `${P.gbLead(o)}${gbFact}${gbFact.endsWith('…') ? '' : '.'} ${P.gbCta}`;
+
+  const body = [
+    [T.opener, first].filter(Boolean).join(' '),
+    rest.slice(0, 2).join(' '),
+    a.numeric.length ? `${P.highlights} ${a.numeric.slice(0, 3).map(noEnd).join('; ')}.` : '',
+    [T.whyShort, a.next.length ? a.next.join(' ') : ''].filter(Boolean).join(' '),
+    P.emailThanks,
+  ].filter(Boolean);
+
+  return {
+    blog: {
+      title,
+      excerpt: truncate(intro, 155),
+      intro,
+      sections,
+      cta: { heading: P.ctaHeading, text: P.ctaText, button_text: T.button },
+    },
+    social: {
+      linkedin: { text: liParts.join('\n\n'), hashtags: P.liTags(T.tag) },
+      facebook: fbParts.join('\n\n'),
+      google_business: google,
+    },
+    newsletter: {
+      subject: `${T.emoji} ${truncate(a.title || T.subject, 44)}`,
+      preview_text: truncate(a.stat ? P.previewStat(a.stat) : P.previewGeneric, 90),
+      greeting: P.greeting,
+      body,
+      button_text: T.button,
+      signoff: P.signoff(o),
+    },
+  };
+}
+
+/* =====================================================================
+   3. CLAUDE ENGINE – official Anthropic TypeScript SDK in the browser
+   ===================================================================== */
+const SECTION_SCHEMA = {
+  type: 'object', additionalProperties: false, required: ['heading', 'paragraphs', 'bullets', 'quote'],
+  properties: {
+    heading: { type: 'string', description: 'H2 section heading' },
+    paragraphs: { type: 'array', items: { type: 'string' }, description: 'Readable paragraphs of 2-4 sentences, plain text' },
+    bullets: { type: 'array', items: { type: 'string' }, description: 'Optional bullet points (empty array if not needed)' },
+    quote: { type: 'string', description: 'A quote taken verbatim from the notes with attribution, or an empty string' },
+  },
+};
+const CAMPAIGN_SCHEMA = {
+  type: 'object', additionalProperties: false, required: ['blog', 'social', 'newsletter'],
+  properties: {
+    blog: {
+      type: 'object', additionalProperties: false, required: ['title', 'excerpt', 'intro', 'sections', 'cta'],
+      properties: {
+        title: { type: 'string' },
+        excerpt: { type: 'string', description: 'Meta description / excerpt, max 160 characters' },
+        intro: { type: 'string', description: 'Opening paragraph' },
+        sections: { type: 'array', items: SECTION_SCHEMA },
+        cta: {
+          type: 'object', additionalProperties: false, required: ['heading', 'text', 'button_text'],
+          properties: { heading: { type: 'string' }, text: { type: 'string' }, button_text: { type: 'string' } },
+        },
+      },
+    },
+    social: {
+      type: 'object', additionalProperties: false, required: ['linkedin', 'facebook', 'google_business'],
+      properties: {
+        linkedin: {
+          type: 'object', additionalProperties: false, required: ['text', 'hashtags'],
+          properties: {
+            text: { type: 'string', description: 'Post text without hashtags' },
+            hashtags: { type: 'array', items: { type: 'string' }, description: 'Exactly 3 hashtags without the # sign' },
+          },
+        },
+        facebook: { type: 'string' },
+        google_business: { type: 'string', description: 'Exactly two sentences' },
+      },
+    },
+    newsletter: {
+      type: 'object', additionalProperties: false, required: ['subject', 'preview_text', 'greeting', 'body', 'button_text', 'signoff'],
+      properties: {
+        subject: { type: 'string' },
+        preview_text: { type: 'string' },
+        greeting: { type: 'string' },
+        body: { type: 'array', items: { type: 'string' }, description: 'Email body paragraphs' },
+        button_text: { type: 'string' },
+        signoff: { type: 'string', description: 'Closing line and sender, may contain a line break' },
+      },
+    },
+  },
+};
+function schemaFor(langs) {
+  return {
+    type: 'object', additionalProperties: false, required: langs,
+    properties: Object.fromEntries(langs.map((l) => [l, CAMPAIGN_SCHEMA])),
+  };
+}
+
+function systemPrompt(o, url) {
+  return `You are the communications writer for the ${o}, a non-profit foundation. You turn raw notes, bullet points or meeting transcripts into a ready-to-publish content campaign for the foundation's website, social channels and newsletter.
+
+Facts
+- Use only facts contained in the notes. Never invent numbers, names, dates, places, quotes or outcomes. If a detail is missing, write around it.
+- Protect the dignity and privacy of the children and families you write about: no pity language, no identifying details about minors beyond what the notes state.
+- Tone: warm, hopeful, credible and impact-focused. Show what support made possible and invite readers to take part.
+
+Channels
+- WordPress blog post: an engaging, SEO-friendly title (max ~65 characters), an excerpt of max 160 characters, an opening paragraph, then 3-5 sections with H2 headings and short, readable paragraphs (2-4 sentences). Use bullets only where they help (e.g. figures). Use "quote" only for a quote that appears in the notes. End with a call to action (heading, one or two sentences, short button text).
+- LinkedIn: professional and impact-focused, 120-220 words, short paragraphs separated by blank lines, ends with a call to action. Put exactly 3 relevant hashtags in "hashtags" (without the # sign) and none in the text.
+- Facebook: warm, personal and community-oriented, 60-140 words, a few emoji are fine, thank the community and invite people to share or comment.
+- Google Business Profile update: exactly 2 sentences, max 300 characters, no hashtags, no emoji.
+- Mailchimp newsletter: a catchy subject line (max 50 characters, one emoji allowed), preview text of 40-90 characters that complements rather than repeats the subject, a greeting, 3-5 short body paragraphs, button text of 2-4 words, and a sign-off from the foundation's team (use a line break between the closing phrase and the sender).
+
+Languages
+- German ("de"): natural, idiomatic German. Address readers formally with "Sie" in the blog, LinkedIn, Google and newsletter; Facebook may use the informal plural "ihr". Use typographic quotes („…“).
+- English ("en"): natural, idiomatic English.
+- When several languages are requested, write equivalent localized versions with the same facts and structure. Do not translate word for word.
+
+Links
+- Donation / call-to-action link: ${url ? url : 'none provided. Do not include any URLs.'}
+${url ? '- You may mention the link once in LinkedIn, Facebook and the Google update. Do not put it in the blog text or newsletter body; the buttons carry it.\n' : ''}
+Write plain text only: no Markdown, no HTML.`;
+}
+
+let sdkPromise = null;
+function loadSdk() {
+  sdkPromise ??= import(SDK_URL).then((m) => m.default || m.Anthropic).catch((err) => {
+    sdkPromise = null;
+    throw new Error(`Could not load the Anthropic SDK (${err.message}). Check your internet connection.`);
+  });
+  return sdkPromise;
+}
+
+function describeApiError(err, Anthropic) {
+  if (Anthropic) {
+    if (err instanceof Anthropic.APIUserAbortError) return 'Generation cancelled.';
+    if (err instanceof Anthropic.AuthenticationError) return 'Claude API: the API key was rejected (401). Check it in Settings.';
+    if (err instanceof Anthropic.PermissionDeniedError) return 'Claude API: this key has no access to the selected model (403).';
+    if (err instanceof Anthropic.NotFoundError) return 'Claude API: model or endpoint not found (404). Check the model and base URL in Settings.';
+    if (err instanceof Anthropic.RateLimitError) return 'Claude API: rate limit reached (429). Wait a moment and try again.';
+    if (err instanceof Anthropic.BadRequestError) return `Claude API rejected the request (400): ${err.message}`;
+    if (err instanceof Anthropic.APIConnectionError) return 'Could not reach the Claude API. Check your connection, or the base URL in Settings.';
+    if (err instanceof Anthropic.APIError) return `Claude API error${err.status ? ` ${err.status}` : ''}: ${err.message}`;
+  }
+  return err?.message || String(err);
+}
+
+/**
+ * Streams one structured-output request and returns the parsed JSON.
+ * onText receives the accumulated JSON text so the pipeline can show progress.
+ */
+async function claudeRequest(userContent, langs, onText) {
+  const s = state.settings;
+  if (!s.apiKey && !s.baseURL) throw new Error('Add your Anthropic API key in Settings (or an API base URL for your proxy).');
+  const Anthropic = await loadSdk();
+  const client = new Anthropic({
+    apiKey: s.apiKey || 'set-by-proxy',
+    baseURL: s.baseURL || undefined,
+    dangerouslyAllowBrowser: true, // the key is entered by the user of this page; see the note in Settings
+  });
+  const params = {
+    model: s.model,
+    max_tokens: 64000,
+    thinking: { type: 'adaptive' },
+    output_config: { effort: s.effort, format: { type: 'json_schema', schema: schemaFor(langs) } },
+    system: systemPrompt(org(), ctaUrl()),
+    messages: [{ role: 'user', content: userContent }],
+  };
+  if (s.model === 'claude-opus-5') {
+    // Server-side fallback: if a safety classifier declines, the API retries on Anthropic's recommended model.
+    params.betas = ['server-side-fallback-2026-07-01'];
+    params.fallbacks = 'default';
+  }
+  try {
+    const stream = client.beta.messages.stream(params);
+    state.abort = () => stream.abort();
+    stream.on('text', (_delta, snapshot) => onText?.(snapshot));
+    const message = await stream.finalMessage();
+    if (message.stop_reason === 'refusal') {
+      const why = message.stop_details?.explanation;
+      throw new Error(`Claude declined to write this campaign${why ? `: ${why}` : '.'} Try rephrasing the notes.`);
+    }
+    if (message.stop_reason === 'max_tokens') throw new Error('The response was cut off (max_tokens). Try shorter notes or a single language.');
+    const text = message.content.filter((b) => b.type === 'text').map((b) => b.text).join('');
+    let data;
+    try { data = JSON.parse(text); } catch { throw new Error('Claude returned an unexpected format. Please try again.'); }
+    for (const l of langs) if (!data?.[l]?.blog || !data[l].social || !data[l].newsletter) throw new Error(`The ${LANG_NAMES[l]} version is incomplete. Please try again.`);
+    return { data, usage: message.usage, model: message.model };
+  } catch (err) {
+    throw new Error(describeApiError(err, Anthropic));
+  } finally {
+    state.abort = null;
+  }
+}
+
+/* =====================================================================
+   4. NORMALIZATION – structured campaign → editable outputs
+   ===================================================================== */
+function blogHtml(b, url) {
+  let h = b.intro ? `<p class="pw-lead">${esc(b.intro)}</p>` : '';
+  for (const sec of b.sections || []) {
+    if (sec.heading) h += `<h2>${esc(sec.heading)}</h2>`;
+    for (const p of sec.paragraphs || []) if (p.trim()) h += `<p>${esc(p)}</p>`;
+    const bullets = (sec.bullets || []).filter((x) => x.trim());
+    if (bullets.length) h += `<ul>${bullets.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>`;
+    if (sec.quote?.trim()) h += `<blockquote><p>${esc(sec.quote)}</p></blockquote>`;
+  }
+  if (b.cta) {
+    h += `<div class="pw-cta"><h3>${esc(b.cta.heading)}</h3><p>${esc(b.cta.text)}</p>`
+      + `<p class="pw-cta-btn"><a href="${esc(url || '#')}">${esc(b.cta.button_text)}</a></p></div>`;
+  }
+  return h;
+}
+
+function normalize(c, meta) {
+  const tags = (c.social.linkedin.hashtags || []).map((t) => '#' + String(t).replace(/^#/, '').replace(/\s+/g, '')).filter((t) => t.length > 1).slice(0, 3);
+  return {
+    blog: { title: c.blog.title, excerpt: c.blog.excerpt, html: blogHtml(c.blog, ctaUrl()) },
+    social: {
+      linkedin: `${c.social.linkedin.text.trim()}${tags.length ? `\n\n${tags.join(' ')}` : ''}`,
+      facebook: c.social.facebook.trim(),
+      google: c.social.google_business.trim(),
+    },
+    email: {
+      subject: c.newsletter.subject,
+      preview: c.newsletter.preview_text,
+      greeting: c.newsletter.greeting,
+      bodyHtml: c.newsletter.body.filter((p) => p.trim()).map((p) => `<p>${esc(p)}</p>`).join(''),
+      button: c.newsletter.button_text,
+      signoff: c.newsletter.signoff,
+    },
+    meta: { createdAt: new Date().toISOString(), ...meta },
+  };
+}
+
+/* =====================================================================
+   5. HTML HELPERS – clean inline HTML, Gutenberg blocks, plain text
+   ===================================================================== */
+const INLINE_TAGS = new Set(['STRONG', 'B', 'EM', 'I', 'U', 'S', 'CODE', 'SUB', 'SUP']);
+function inlineHtml(el) {
+  let out = '';
+  for (const n of el.childNodes) {
+    if (n.nodeType === Node.TEXT_NODE) out += esc(n.textContent);
+    else if (n.nodeType === Node.ELEMENT_NODE) {
+      const inner = inlineHtml(n);
+      if (n.tagName === 'BR') out += '<br>';
+      else if (n.tagName === 'A') {
+        const href = n.getAttribute('href') || '';
+        out += /^(https?:|mailto:|tel:|#|\/)/i.test(href) ? `<a href="${esc(href)}">${inner}</a>` : inner;
+      } else if (INLINE_TAGS.has(n.tagName)) { const t = n.tagName.toLowerCase(); out += `<${t}>${inner}</${t}>`; }
+      else out += inner;
+    }
+  }
+  return out.replace(/\u00a0/g, ' ').trim();
+}
+
+/** Converts the (possibly edited) preview HTML into WordPress content. mode: 'blocks' | 'classic' */
+function toWordPress(html, mode = 'blocks') {
+  const tpl = document.createElement('template');
+  tpl.innerHTML = html;
+  const out = [];
+  const blk = (name, markup, attrs) => (mode === 'blocks'
+    ? `<!-- wp:${name}${attrs ? ' ' + JSON.stringify(attrs) : ''} -->\n${markup}\n<!-- /wp:${name} -->`
+    : markup);
+  const para = (inner) => blk('paragraph', `<p>${inner}</p>`);
+  const walk = (nodes) => {
+    for (const n of nodes) {
+      if (n.nodeType === Node.TEXT_NODE) { const t = n.textContent.trim(); if (t) out.push(para(esc(t))); continue; }
+      if (n.nodeType !== Node.ELEMENT_NODE || !n.textContent.trim()) continue;
+      const tag = n.tagName;
+      if (/^H[1-6]$/.test(tag)) {
+        const level = Math.max(2, Number(tag[1]));
+        const cls = mode === 'blocks' ? ' class="wp-block-heading"' : '';
+        out.push(blk('heading', `<h${level}${cls}>${inlineHtml(n)}</h${level}>`, level !== 2 ? { level } : null));
+      } else if (tag === 'P' && n.classList.contains('pw-cta-btn') && n.querySelector('a')) {
+        const a = n.querySelector('a');
+        const href = esc(a.getAttribute('href') || '#');
+        const label = esc(a.textContent.trim());
+        out.push(mode === 'blocks'
+          ? `<!-- wp:buttons -->\n<div class="wp-block-buttons"><!-- wp:button -->\n<div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="${href}">${label}</a></div>\n<!-- /wp:button --></div>\n<!-- /wp:buttons -->`
+          : `<p><a class="button" href="${href}">${label}</a></p>`);
+      } else if (tag === 'UL' || tag === 'OL') {
+        const t = tag.toLowerCase();
+        const items = [...n.children].filter((li) => li.textContent.trim()).map((li) => (mode === 'blocks'
+          ? `<!-- wp:list-item -->\n<li>${inlineHtml(li)}</li>\n<!-- /wp:list-item -->`
+          : `<li>${inlineHtml(li)}</li>`)).join('\n');
+        const cls = mode === 'blocks' ? ' class="wp-block-list"' : '';
+        out.push(blk('list', `<${t}${cls}>${items}</${t}>`, t === 'ol' ? { ordered: true } : null));
+      } else if (tag === 'BLOCKQUOTE') {
+        const ps = n.querySelectorAll('p').length ? [...n.querySelectorAll('p')] : [n];
+        const inner = ps.filter((p) => p.textContent.trim()).map((p) => para(inlineHtml(p))).join('\n');
+        out.push(mode === 'blocks'
+          ? `<!-- wp:quote -->\n<blockquote class="wp-block-quote">${inner}</blockquote>\n<!-- /wp:quote -->`
+          : `<blockquote>${inner}</blockquote>`);
+      } else if (tag === 'DIV' || tag === 'SECTION' || tag === 'ARTICLE') {
+        const hasBlocks = [...n.children].some((c) => /^(P|H[1-6]|UL|OL|BLOCKQUOTE|DIV)$/.test(c.tagName));
+        if (hasBlocks) walk(n.childNodes); else out.push(para(inlineHtml(n)));
+      } else {
+        out.push(para(inlineHtml(n)));
+      }
+    }
+  };
+  walk(tpl.content.childNodes);
+  return out.join('\n\n');
+}
+
+function htmlToText(html) {
+  const tpl = document.createElement('template');
+  tpl.innerHTML = html;
+  const out = [];
+  const walk = (nodes) => {
+    for (const n of nodes) {
+      if (n.nodeType === Node.TEXT_NODE) { const t = n.textContent.trim(); if (t) out.push(t); continue; }
+      if (n.nodeType !== Node.ELEMENT_NODE) continue;
+      if (n.tagName === 'UL' || n.tagName === 'OL') out.push([...n.children].map((li) => `• ${li.textContent.trim()}`).join('\n'));
+      else if (n.tagName === 'DIV' && [...n.children].some((c) => /^(P|H[1-6]|UL|OL|DIV)$/.test(c.tagName))) walk(n.childNodes);
+      else if (n.tagName === 'P' && n.classList.contains('pw-cta-btn')) { const a = n.querySelector('a'); const href = a?.getAttribute('href'); out.push(`→ ${n.textContent.trim()}${href && href !== '#' ? ` (${href})` : ''}`); }
+      else if (n.textContent.trim()) out.push(n.textContent.replace(/\s+/g, ' ').trim());
+    }
+  };
+  walk(tpl.content.childNodes);
+  return out.join('\n\n');
+}
+
+/** Markdown-ish rendering of the current outputs, used as translation input for Claude. */
+function outputsForTranslation(o) {
+  const tpl = document.createElement('template');
+  tpl.innerHTML = o.blog.html;
+  const md = [];
+  const walk = (nodes) => {
+    for (const n of nodes) {
+      if (n.nodeType !== Node.ELEMENT_NODE) continue;
+      const t = n.textContent.replace(/\s+/g, ' ').trim();
+      if (!t) continue;
+      if (n.tagName === 'H2') md.push(`## ${t}`);
+      else if (/^H[3-6]$/.test(n.tagName)) md.push(`### ${t}`);
+      else if (n.tagName === 'UL' || n.tagName === 'OL') md.push([...n.children].map((li) => `- ${li.textContent.trim()}`).join('\n'));
+      else if (n.tagName === 'BLOCKQUOTE') md.push(`> ${t}`);
+      else if (n.tagName === 'DIV') walk(n.childNodes);
+      else if (n.classList?.contains('pw-cta-btn')) md.push(`[Button: ${t}]`);
+      else md.push(t);
+    }
+  };
+  walk(tpl.content.childNodes);
+  return {
+    blog: { title: o.blog.title, excerpt: o.blog.excerpt, body: md.join('\n\n') },
+    social: o.social,
+    newsletter: { subject: o.email.subject, preview_text: o.email.preview, greeting: o.email.greeting, body: htmlToText(o.email.bodyHtml), button_text: o.email.button, signoff: o.email.signoff },
+  };
+}
+
+function emailHtml(e, lang) {
+  const tpl = document.createElement('template');
+  tpl.innerHTML = e.bodyHtml;
+  const paras = [...tpl.content.childNodes].map((n) => (n.nodeType === Node.ELEMENT_NODE ? inlineHtml(n) : esc(n.textContent.trim()))).filter(Boolean);
+  const url = ctaUrl() || '#';
+  const p = 'margin:0 0 16px;';
+  const footer = lang === 'de'
+    ? { prefs: 'Einstellungen ändern', unsub: 'Abmelden' }
+    : { prefs: 'Update preferences', unsub: 'Unsubscribe' };
+  return `<!doctype html>
+<html lang="${lang}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(e.subject)}</title>
+</head>
+<body style="margin:0;padding:0;background:#f1f5f4;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">${esc(e.preview)}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f1f5f4;">
+<tr><td align="center" style="padding:24px 12px;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background:#ffffff;border-radius:12px;overflow:hidden;">
+<tr><td style="background:#1f5d58;padding:20px 32px;font-family:Arial,Helvetica,sans-serif;font-size:18px;font-weight:bold;color:#ffffff;">${esc(org())}</td></tr>
+<tr><td style="padding:32px;font-family:Georgia,'Times New Roman',serif;font-size:17px;line-height:1.6;color:#1f2937;">
+<p style="${p}">${esc(e.greeting)}</p>
+${paras.map((x) => `<p style="${p}">${x}</p>`).join('\n')}
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center" style="margin:28px auto;">
+<tr><td align="center" style="border-radius:999px;background:#ec7f33;"><a href="${esc(url)}" target="_blank" style="display:inline-block;padding:14px 30px;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:bold;color:#ffffff;text-decoration:none;border-radius:999px;">${esc(e.button)}</a></td></tr>
+</table>
+<p style="margin:0;">${esc(e.signoff).replace(/\n/g, '<br>')}</p>
+</td></tr>
+<tr><td style="padding:20px 32px;background:#f8faf9;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.5;color:#6b7280;text-align:center;">
+${esc(org())} · *|LIST:ADDRESSLINE|*<br>
+<a href="*|UPDATE_PROFILE|*" style="color:#6b7280;">${footer.prefs}</a> · <a href="*|UNSUB|*" style="color:#6b7280;">${footer.unsub}</a>
+</td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>`;
+}
+
+/* =====================================================================
+   6. CLIPBOARD
+   ===================================================================== */
+async function copyToClipboard(text, html) {
+  try {
+    if (html && window.ClipboardItem && navigator.clipboard?.write) {
+      await navigator.clipboard.write([new ClipboardItem({
+        'text/plain': new Blob([text], { type: 'text/plain' }),
+        'text/html': new Blob([html], { type: 'text/html' }),
+      })]);
+      return true;
+    }
+    if (navigator.clipboard?.writeText) { await navigator.clipboard.writeText(text); return true; }
+  } catch { /* fall through to the legacy path */ }
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly', '');
+  ta.style.cssText = 'position:fixed;top:-1000px;opacity:0';
+  document.body.append(ta);
+  ta.select();
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch { ok = false; }
+  ta.remove();
+  return ok;
+}
+
+const COPY_SOURCES = {
+  'blog-title': () => ({ text: cur().blog.title, label: 'Post title' }),
+  'blog-excerpt': () => ({ text: cur().blog.excerpt, label: 'Excerpt' }),
+  'blog-rich': () => ({ text: `${cur().blog.title}\n\n${htmlToText(cur().blog.html)}`, html: `<h1>${esc(cur().blog.title)}</h1>${toWordPress(cur().blog.html, 'classic')}`, label: 'Blog post' }),
+  'blog-html': () => ({ text: toWordPress(cur().blog.html, 'classic'), label: 'Blog HTML' }),
+  'blog-blocks': () => ({ text: toWordPress(cur().blog.html, 'blocks'), label: 'Gutenberg block markup' }),
+  linkedin: () => ({ text: cur().social.linkedin, label: 'LinkedIn caption' }),
+  facebook: () => ({ text: cur().social.facebook, label: 'Facebook caption' }),
+  google: () => ({ text: cur().social.google, label: 'Google Business update' }),
+  'email-subject': () => ({ text: cur().email.subject, label: 'Subject line' }),
+  'email-preview': () => ({ text: cur().email.preview, label: 'Preview text' }),
+  'email-body': () => ({ text: [cur().email.greeting, htmlToText(cur().email.bodyHtml), cur().email.signoff].join('\n\n'), label: 'Email body' }),
+  'email-button': () => ({ text: cur().email.button, label: 'Button text' }),
+  'email-html': () => ({ text: emailHtml(cur().email, state.lang), label: 'Email HTML' }),
+};
+
+document.addEventListener('click', async (ev) => {
+  const btn = ev.target.closest('[data-copy]');
+  if (!btn || !cur()) return;
+  const src = COPY_SOURCES[btn.dataset.copy]?.();
+  if (!src) return;
+  const ok = await copyToClipboard(src.text, src.html);
+  if (!ok) { toast('Copy failed – your browser blocked clipboard access.', 'error'); return; }
+  const original = btn.innerHTML;
+  btn.classList.add('copied');
+  btn.innerHTML = `${icon('check', 'size-3.5')}Copied`;
+  setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = original; }, 1500);
+  toast(`${src.label} copied to clipboard.`, 'success', 2200);
+});
+
+/* =====================================================================
+   7. PIPELINE STATUS
+   ===================================================================== */
+const STEPS = [
+  { id: 'analyze', name: 'Analyze notes', desc: 'Key facts, figures, tone and theme' },
+  { id: 'blog', name: 'WordPress blog post', desc: 'Title, headings, paragraphs, call to action' },
+  { id: 'social', name: 'Social media captions', desc: 'LinkedIn · Facebook · Google Business' },
+  { id: 'email', name: 'Mailchimp newsletter', desc: 'Subject, preview text, body, button' },
+  { id: 'translate', name: 'German ⇄ English', desc: 'Localized second-language version' },
+];
+const pipe = {
+  steps: {},
+  reset() {
+    this.steps = Object.fromEntries(STEPS.map((s) => [s.id, { status: 'idle', detail: '', t0: 0, ms: 0 }]));
+    this.render();
+  },
+  set(id, status, detail) {
+    const s = this.steps[id];
+    if (!s) return;
+    if (status === 'running' && s.status !== 'running') s.t0 = performance.now();
+    if ((status === 'done' || status === 'error') && s.t0) s.ms = performance.now() - s.t0;
+    s.status = status;
+    if (detail !== undefined) s.detail = detail;
+    this.render();
+  },
+  finishRunning(status = 'done') { for (const id of Object.keys(this.steps)) if (this.steps[id].status === 'running') this.set(id, status); },
+  render() {
+    const badge = {
+      idle: `<span class="grid size-7 place-items-center rounded-full border border-slate-200 bg-white text-xs font-semibold text-slate-400">·</span>`,
+      running: `<span class="grid size-7 place-items-center rounded-full bg-brand-50 text-brand-600 ring-1 ring-brand-200">${spinner('size-4')}</span>`,
+      done: `<span class="grid size-7 place-items-center rounded-full bg-emerald-500 text-white">${icon('check', 'size-4')}</span>`,
+      skipped: `<span class="grid size-7 place-items-center rounded-full bg-slate-100 text-slate-400">${icon('minus', 'size-4')}</span>`,
+      error: `<span class="grid size-7 place-items-center rounded-full bg-red-500 text-white">${icon('x', 'size-4')}</span>`,
+    };
+    const right = (s) => ({
+      idle: '', running: '<span class="text-brand-600">Working…</span>', skipped: 'Skipped', error: '<span class="text-red-600">Failed</span>',
+      done: s.ms ? `${(s.ms / 1000).toFixed(1)} s` : 'Done',
+    }[s.status]);
+    $('#pipeline').innerHTML = STEPS.map((step) => {
+      const s = this.steps[step.id];
+      return `<li class="flex items-start gap-3 ${s.status === 'skipped' ? 'opacity-60' : ''}">
+        ${badge[s.status]}
+        <div class="min-w-0 flex-1 pt-0.5">
+          <p class="text-sm font-medium text-slate-900">${esc(step.name)}</p>
+          <p class="truncate text-xs text-slate-500" title="${esc(s.detail || step.desc)}">${esc(s.detail || step.desc)}</p>
+        </div>
+        <span class="shrink-0 pt-1 meta">${right(s)}</span>
+      </li>`;
+    }).join('');
+  },
+};
+
+function setRunStatus(kind, text) {
+  const cls = {
+    idle: ['bg-slate-100 text-slate-600', 'bg-slate-300'],
+    running: ['bg-brand-50 text-brand-800', 'bg-brand-500 pulse-dot'],
+    done: ['bg-emerald-50 text-emerald-700', 'bg-emerald-500'],
+    error: ['bg-red-50 text-red-700', 'bg-red-500'],
+  }[kind];
+  const el = $('#run-status');
+  el.className = `chip ${cls[0]}`;
+  el.innerHTML = `<span class="dot ${cls[1]}"></span>${esc(text)}`;
+}
+
+/* =====================================================================
+   8. GENERATION FLOW
+   ===================================================================== */
+function selectedLangs() { return state.target === 'both' ? ['de', 'en'] : [state.target]; }
+
+function setBusy(busy, label = 'Generating…') {
+  state.busy = busy;
+  $('#generate').disabled = busy;
+  $('#generate-label').textContent = busy ? label : 'Generate Campaign';
+  $('#generate-icon').innerHTML = busy ? spinner('size-5') : icon('sparkles', 'size-5');
+  $('#cancel-run').hidden = !(busy && state.settings.engine === 'claude');
+  $$('#lang-toggle .lang-btn').forEach((b) => { b.disabled = busy || !hasOutputs(); });
+  $('#wp-export').disabled = busy || !hasOutputs();
+}
+
+/** Marks the content steps as done once a run has finished, even if a progress marker was missed. */
+function completeContentSteps() {
+  for (const id of ['blog', 'social', 'email']) if (pipe.steps[id].status !== 'done') pipe.set(id, 'done');
+}
+
+async function runSimulated(notes, langs) {
+  pipe.set('analyze', 'running', 'Reading notes…');
+  await sleep(450);
+  const a = analyzeNotes(notes);
+  pipe.set('analyze', 'done', `${a.points.length + a.next.length + a.thanks.length} facts · ${LANG_NAMES[a.lang]} notes · theme: ${a.theme.en.label}`);
+  const result = {};
+  for (const l of langs) result[l] = simulateCampaign(a, l, org(), ctaUrl());
+  for (const id of ['blog', 'social', 'email']) {
+    pipe.set(id, 'running');
+    await sleep(320 + Math.random() * 200);
+    pipe.set(id, 'done', { blog: `“${truncate(result[langs[0]].blog.title, 52)}”`, social: 'LinkedIn · Facebook · Google Business', email: `Subject: ${result[langs[0]].newsletter.subject}` }[id]);
+  }
+  if (langs.length > 1) {
+    pipe.set('translate', 'running');
+    await sleep(420);
+    pipe.set('translate', 'done', 'Deutsch + English versions ready');
+  } else {
+    pipe.set('translate', 'skipped', `Only ${LANG_NATIVE[langs[0]]} requested`);
+  }
+  const meta = { engine: 'simulated', sourceLang: a.lang };
+  return Object.fromEntries(langs.map((l) => [l, normalize(result[l], { ...meta, crossLang: a.lang !== l })]));
+}
+
+/** Maps the streamed JSON text to pipeline steps. */
+function progressTracker(langs, { translationOnly = false } = {}) {
+  let started = false;
+  const seen = new Set();
+  return (snapshot) => {
+    if (!started) {
+      started = true;
+      if (!translationOnly) pipe.set('analyze', 'done', 'Notes analysed by Claude');
+      pipe.set('blog', 'running', 'Writing…');
+    }
+    const mark = (key, fn) => { if (!seen.has(key) && snapshot.includes(key)) { seen.add(key); fn(); } };
+    mark('"social"', () => { pipe.set('blog', 'done', 'Title, sections and call to action'); pipe.set('social', 'running', 'Writing…'); });
+    mark('"newsletter"', () => { pipe.set('social', 'done', 'LinkedIn · Facebook · Google Business'); pipe.set('email', 'running', 'Writing…'); });
+    if (langs.length > 1 && new RegExp(`"${langs[1]}"\\s*:`).test(snapshot) && !seen.has('second')) {
+      seen.add('second');
+      pipe.set('email', 'done', 'Subject, preview, body and button');
+      pipe.set('translate', 'running', `Writing the ${LANG_NAMES[langs[1]]} version…`);
+    }
+  };
+}
+
+async function runClaude(notes, langs) {
+  pipe.set('analyze', 'running', `Sending notes to ${MODEL_LABELS[state.settings.model] || state.settings.model}…`);
+  if (langs.length === 1) pipe.set('translate', 'skipped', `Only ${LANG_NATIVE[langs[0]]} requested`);
+  const langList = langs.map((l) => `${LANG_NAMES[l]} (key "${l}")`).join(' and ');
+  const user = `Create the complete content campaign in ${langList}.
+
+Today's date: ${new Date().toISOString().slice(0, 10)}
+
+<notes>
+${notes}
+</notes>`;
+  const t0 = performance.now();
+  const { data, usage, model } = await claudeRequest(user, langs, progressTracker(langs));
+  pipe.finishRunning('done');
+  completeContentSteps();
+  if (langs.length > 1) pipe.set('translate', 'done', 'Deutsch + English versions ready');
+  const meta = { engine: 'claude', model, usage, seconds: (performance.now() - t0) / 1000 };
+  return Object.fromEntries(langs.map((l) => [l, normalize(data[l], meta)]));
+}
+
+async function generate() {
+  if (state.busy) return;
+  const notes = $('#notes').value.trim();
+  if (words(notes) < 5) {
+    toast('Paste a few notes first – at least a sentence or two.', 'warn');
+    $('#notes').focus();
+    return;
+  }
+  const langs = selectedLangs();
+  setBusy(true);
+  pipe.reset();
+  setRunStatus('running', 'Running');
+  $('#pipeline-sub').textContent = state.settings.engine === 'claude' ? `Claude · ${MODEL_LABELS[state.settings.model] || state.settings.model}` : 'Simulated engine';
+  const t0 = performance.now();
+  try {
+    const out = state.settings.engine === 'claude' ? await runClaude(notes, langs) : await runSimulated(notes, langs);
+    state.outputs = { de: null, en: null, ...out };
+    state.campaignNotes = notes;
+    if (!state.outputs[state.lang]) state.lang = langs[0];
+    saveCampaign();
+    renderOutputs();
+    setRunStatus('done', 'Complete');
+    updateRunMeta(performance.now() - t0);
+    toast('Campaign ready – review and copy your content.', 'success');
+    if (window.matchMedia('(max-width: 1023px)').matches) $('#outputs-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (err) {
+    pipe.finishRunning('error');
+    setRunStatus('error', 'Error');
+    $('#run-meta').textContent = err.message;
+    toast(err.message, 'error', 7000);
+  } finally {
+    setBusy(false);
+  }
+}
+
+async function translateTo(lang) {
+  const from = lang === 'de' ? 'en' : 'de';
+  const source = state.outputs[from];
+  if (!source || state.busy) return;
+  setBusy(true, 'Translating…');
+  pipe.reset();
+  pipe.set('analyze', 'skipped', 'Using the existing campaign');
+  setRunStatus('running', 'Translating');
+  const t0 = performance.now();
+  try {
+    let output;
+    if (state.settings.engine === 'claude') {
+      pipe.set('translate', 'running', `Translating into ${LANG_NAMES[lang]}…`);
+      const user = `Translate and localize this campaign into ${LANG_NAMES[lang]} (key "${lang}"). Keep the facts, structure, links and intent identical, follow the channel rules, and write natural ${LANG_NAMES[lang]} rather than a literal translation. The blog body is given as Markdown; return it in the schema's structure.
+
+<campaign lang="${from}">
+${JSON.stringify(outputsForTranslation(source), null, 2)}
+</campaign>`;
+      const { data, usage, model } = await claudeRequest(user, [lang], progressTracker([lang], { translationOnly: true }));
+      pipe.finishRunning('done');
+      completeContentSteps();
+      pipe.set('translate', 'done', `${LANG_NATIVE[lang]} version ready`);
+      output = normalize(data[lang], { engine: 'claude', model, usage, seconds: (performance.now() - t0) / 1000 });
+    } else {
+      pipe.set('translate', 'running', `Building the ${LANG_NAMES[lang]} version…`);
+      await sleep(500);
+      const a = analyzeNotes(state.campaignNotes);
+      output = normalize(simulateCampaign(a, lang, org(), ctaUrl()), { engine: 'simulated', sourceLang: a.lang, crossLang: a.lang !== lang });
+      ['blog', 'social', 'email'].forEach((id) => pipe.set(id, 'done'));
+      pipe.set('translate', 'done', `${LANG_NATIVE[lang]} version ready`);
+    }
+    state.outputs[lang] = output;
+    state.lang = lang;
+    saveCampaign();
+    renderOutputs();
+    setRunStatus('done', 'Complete');
+    updateRunMeta(performance.now() - t0);
+    toast(`${LANG_NAMES[lang]} version ready.`, 'success');
+  } catch (err) {
+    pipe.finishRunning('error');
+    setRunStatus('error', 'Error');
+    $('#run-meta').textContent = err.message;
+    toast(err.message, 'error', 7000);
+  } finally {
+    setBusy(false);
+  }
+}
+
+function updateRunMeta(ms) {
+  const o = cur();
+  if (!o) return;
+  const when = new Date(o.meta.createdAt).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+  const parts = [o.meta.engine === 'claude' ? `Claude · ${o.meta.model || ''}` : 'Simulated engine', when];
+  if (ms) parts.push(`${(ms / 1000).toFixed(1)} s`);
+  if (o.meta.usage) parts.push(`${fmt(o.meta.usage.input_tokens)} in / ${fmt(o.meta.usage.output_tokens)} out tokens`);
+  $('#run-meta').textContent = parts.join(' · ');
+}
+
+/* =====================================================================
+   9. OUTPUT RENDERING + INLINE EDITING
+   ===================================================================== */
+const copyBtn = (key, label = 'Copy', ic = 'copy') => `<button type="button" class="copy-btn" data-copy="${key}">${icon(ic, 'size-3.5')}${esc(label)}</button>`;
+const counter = (id) => `<span class="meta whitespace-nowrap" id="${id}"></span>`;
+function sentencesIn(s) { return String(s).split(SENT_SPLIT).map((x) => x.trim()).filter((x) => /\p{L}/u.test(x)).length; }
+function check(ok, text, warnText) { return ok ? `<span class="ok">✓ ${esc(text)}</span>` : `<span class="warn">! ${esc(warnText || text)}</span>`; }
+
+function renderOutputs() {
+  const any = hasOutputs();
+  $('#empty-state').hidden = any;
+  $$('#lang-toggle .lang-btn').forEach((b) => {
+    const l = b.dataset.lang;
+    const exists = Boolean(state.outputs[l]);
+    b.setAttribute('aria-pressed', String(l === state.lang && exists));
+    b.textContent = exists || !any ? l.toUpperCase() : `+ ${l.toUpperCase()}`;
+    b.title = exists ? `Show ${LANG_NAMES[l]} version` : any ? `Create the ${LANG_NAMES[l]} version` : '';
+    b.disabled = !any || state.busy;
+  });
+  $('#wp-export').disabled = !any || state.busy;
+  if (!any) { $$('[role="tabpanel"]').forEach((p) => { p.hidden = true; }); $('#output-notice').hidden = true; return; }
+
+  const o = cur();
+  const notice = $('#output-notice');
+  if (o.meta.engine === 'simulated' && o.meta.crossLang) {
+    notice.innerHTML = `${icon('info', 'mt-px size-4 shrink-0')}<span>${esc(PHRASES[state.lang].notice(o.meta.sourceLang))}</span>`;
+    notice.hidden = false;
+  } else notice.hidden = true;
+
+  renderBlog(o);
+  renderSocial(o);
+  renderEmail(o);
+  showTab(state.tab, false);
+  updateRunMeta();
+}
+
+function renderBlog(o) {
+  const panel = $('#panel-blog');
+  panel.lang = state.lang;
+  panel.innerHTML = `
+    <div class="space-y-5">
+      <div>
+        <div class="mb-1.5 flex items-center justify-between gap-2">
+          <label class="text-sm font-medium text-slate-700" for="blog-title">Post title</label>
+          <div class="flex items-center gap-3">${counter('blog-title-count')}${copyBtn('blog-title')}</div>
+        </div>
+        <textarea id="blog-title" rows="1" class="input autosize font-serif text-lg font-semibold leading-snug">${esc(o.blog.title)}</textarea>
+      </div>
+      <div>
+        <div class="mb-1.5 flex items-center justify-between gap-2">
+          <label class="text-sm font-medium text-slate-700" for="blog-excerpt">Excerpt / meta description</label>
+          <div class="flex items-center gap-3">${counter('blog-excerpt-count')}${copyBtn('blog-excerpt')}</div>
+        </div>
+        <textarea id="blog-excerpt" rows="2" class="input autosize">${esc(o.blog.excerpt)}</textarea>
+      </div>
+      <div class="overflow-hidden rounded-xl border border-slate-200">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 bg-slate-50 px-4 py-2.5">
+          <span class="meta" id="blog-stats"></span>
+          <div class="flex flex-wrap gap-1.5">${copyBtn('blog-rich', 'Copy post')}${copyBtn('blog-html', 'Copy HTML', 'code')}${copyBtn('blog-blocks', 'Copy blocks', 'code')}</div>
+        </div>
+        <article id="blog-body" class="pw-article" contenteditable="true" spellcheck="true" aria-label="Blog post body (editable)">${o.blog.html}</article>
+      </div>
+      <p class="flex items-center gap-1.5 text-xs text-slate-500">${icon('info', 'size-3.5')}Click into any text to edit it. Changes are saved automatically and used for copying and the WordPress export.</p>
+    </div>`;
+  const update = () => {
+    const t = $('#blog-title').value;
+    $('#blog-title-count').innerHTML = t.length <= 65 ? `${t.length} / 65` : `<span class="warn">${t.length} / 65 · long for SEO</span>`;
+    const e = $('#blog-excerpt').value;
+    $('#blog-excerpt-count').innerHTML = e.length <= 160 ? `${e.length} / 160` : `<span class="warn">${e.length} / 160</span>`;
+    const w = words($('#blog-body').innerText);
+    $('#blog-stats').textContent = `${fmt(w)} words · ${Math.max(1, Math.round(w / 200))} min read · editable preview`;
+  };
+  $('#blog-title').addEventListener('input', (ev) => { o.blog.title = ev.target.value.replace(/\s*\n\s*/g, ' '); update(); saveCampaign(); });
+  $('#blog-title').addEventListener('keydown', (ev) => { if (ev.key === 'Enter') ev.preventDefault(); });
+  $('#blog-excerpt').addEventListener('input', (ev) => { o.blog.excerpt = ev.target.value; update(); saveCampaign(); });
+  $('#blog-body').addEventListener('input', (ev) => { o.blog.html = ev.target.innerHTML; update(); saveCampaign(); });
+  update();
+}
+
+function renderSocial(o) {
+  const panel = $('#panel-social');
+  panel.lang = state.lang;
+  const card = (key, name, sub, badge, textId) => `
+    <article class="rounded-xl border border-slate-200 p-4">
+      <header class="mb-3 flex items-center justify-between gap-3">
+        <div class="flex min-w-0 items-center gap-3">
+          ${badge}
+          <div class="min-w-0">
+            <p class="text-sm font-semibold text-slate-900">${name}</p>
+            <p class="truncate text-xs text-slate-500">${sub}</p>
+          </div>
+        </div>
+        ${copyBtn(key)}
+      </header>
+      <label class="sr-only" for="${textId}">${name} caption</label>
+      <textarea id="${textId}" class="input autosize leading-relaxed" rows="4">${esc(o.social[key])}</textarea>
+      <div class="mt-2 flex flex-wrap items-center justify-between gap-2 meta" id="${textId}-meta"></div>
+    </article>`;
+  panel.innerHTML = `<div class="space-y-4">
+    ${card('linkedin', 'LinkedIn', 'Professional · impact-focused · 3 hashtags', '<span class="grid size-9 shrink-0 place-items-center rounded-lg bg-[#0a66c2] text-sm font-bold text-white">in</span>', 'li-text')}
+    ${card('facebook', 'Facebook', 'Warm · community-oriented', '<span class="grid size-9 shrink-0 place-items-center rounded-full bg-[#1877f2] text-lg font-bold text-white">f</span>', 'fb-text')}
+    ${card('google', 'Google Business Profile', 'Short 2-sentence update', '<span class="grid size-9 shrink-0 place-items-center rounded-lg border border-slate-200 bg-white text-base font-bold text-[#4285f4]">G</span>', 'gb-text')}
+  </div>`;
+  const metas = {
+    linkedin: (v) => { const n = (v.match(/(^|\s)#[\p{L}\p{N}_]+/gu) || []).length; return `${check(n === 3, '3 hashtags', `${n} hashtags (3 recommended)`)}<span>${fmt(words(v))} words · ${fmt(v.length)} / 3,000</span>`; },
+    facebook: (v) => { const w = words(v); return `${check(w <= 160, 'Easy to read', 'Long for Facebook – consider trimming')}<span>${fmt(w)} words · ${fmt(v.length)} characters</span>`; },
+    google: (v) => { const n = sentencesIn(v); return `${check(n === 2, '2 sentences', `${n} sentences (2 recommended)`)}<span>${fmt(v.length)} / 1,500</span>`; },
+  };
+  [['linkedin', 'li-text'], ['facebook', 'fb-text'], ['google', 'gb-text']].forEach(([key, id]) => {
+    const ta = $('#' + id);
+    const update = () => { $(`#${id}-meta`).innerHTML = metas[key](ta.value); };
+    ta.addEventListener('input', () => { o.social[key] = ta.value; update(); saveCampaign(); });
+    update();
+  });
+}
+
+function renderEmail(o) {
+  const panel = $('#panel-email');
+  panel.lang = state.lang;
+  const e = o.email;
+  panel.innerHTML = `
+    <div class="space-y-5">
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div>
+          <div class="mb-1.5 flex items-center justify-between gap-2">
+            <label class="text-sm font-medium text-slate-700" for="email-subject">Subject line</label>
+            <div class="flex items-center gap-3">${counter('email-subject-count')}${copyBtn('email-subject')}</div>
+          </div>
+          <input id="email-subject" class="input font-medium" value="${esc(e.subject)}">
+        </div>
+        <div>
+          <div class="mb-1.5 flex items-center justify-between gap-2">
+            <label class="text-sm font-medium text-slate-700" for="email-preview">Preview text</label>
+            <div class="flex items-center gap-3">${counter('email-preview-count')}${copyBtn('email-preview')}</div>
+          </div>
+          <input id="email-preview" class="input" value="${esc(e.preview)}">
+        </div>
+      </div>
+
+      <div class="rounded-xl border border-slate-200 bg-slate-100/70 p-3 sm:p-5">
+        <div class="mx-auto mb-3 flex max-w-[560px] items-center gap-3 rounded-lg bg-white px-3 py-2.5 text-sm shadow-sm ring-1 ring-slate-200" aria-label="Inbox preview">
+          <span class="grid size-8 shrink-0 place-items-center rounded-full bg-brand-700 text-xs font-bold text-white">${esc(initials(org()))}</span>
+          <div class="min-w-0 flex-1">
+            <p class="truncate text-xs text-slate-500">${esc(org())}</p>
+            <p class="truncate"><strong class="font-semibold text-slate-900" id="inbox-subject"></strong> <span class="text-slate-500" id="inbox-preview"></span></p>
+          </div>
+          <span class="meta">Inbox preview</span>
+        </div>
+        <div class="mx-auto max-w-[560px] overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
+          <div class="bg-brand-700 px-6 py-4 text-[15px] font-semibold text-white">${esc(org())}</div>
+          <div class="pw-email space-y-4 px-6 py-6">
+            <p id="email-greeting" contenteditable="true" spellcheck="true" aria-label="Greeting (editable)">${esc(e.greeting)}</p>
+            <div id="email-body" contenteditable="true" spellcheck="true" aria-label="Email body (editable)">${e.bodyHtml}</div>
+            <div class="py-3 text-center"><span id="email-button" class="pw-email-btn" contenteditable="true" spellcheck="true" aria-label="Button text (editable)">${esc(e.button)}</span></div>
+            <p id="email-signoff" class="whitespace-pre-line" contenteditable="true" spellcheck="true" aria-label="Sign-off (editable)">${esc(e.signoff)}</p>
+          </div>
+          <div class="border-t border-slate-100 bg-slate-50 px-6 py-3 text-center text-[11px] text-slate-400">${esc(org())} · Unsubscribe · Update preferences</div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <span class="meta" id="email-stats"></span>
+        <div class="flex flex-wrap gap-1.5">${copyBtn('email-body', 'Copy body')}${copyBtn('email-button', 'Copy button text')}${copyBtn('email-html', 'Copy email HTML', 'code')}</div>
+      </div>
+      <p class="flex items-start gap-1.5 text-xs leading-relaxed text-slate-500">${icon('info', 'mt-px size-3.5 shrink-0')}<span>“Copy email HTML” gives you a responsive, inline-styled template with Mailchimp merge tags (unsubscribe, address). Paste it into a <em>Code your own</em> template or a Code block.</span></p>
+    </div>`;
+  const update = () => {
+    const s = $('#email-subject').value, p = $('#email-preview').value;
+    $('#email-subject-count').innerHTML = s.length <= 50 ? `${s.length} / 50` : `<span class="warn">${s.length} / 50 · may be cut off</span>`;
+    $('#email-preview-count').innerHTML = p.length <= 90 ? `${p.length} / 90` : `<span class="warn">${p.length} / 90</span>`;
+    $('#inbox-subject').textContent = s;
+    $('#inbox-preview').textContent = `– ${p}`;
+    $('#email-stats').textContent = `${fmt(words($('#email-body').innerText))} words in the body · button: “${$('#email-button').innerText.trim()}”`;
+  };
+  const bind = (id, fn) => $('#' + id).addEventListener('input', (ev) => { fn(ev.target); update(); saveCampaign(); });
+  bind('email-subject', (t) => { e.subject = t.value; });
+  bind('email-preview', (t) => { e.preview = t.value; });
+  bind('email-greeting', (t) => { e.greeting = t.innerText.trim(); });
+  bind('email-body', (t) => { e.bodyHtml = t.innerHTML; });
+  bind('email-button', (t) => { e.button = t.innerText.trim(); });
+  bind('email-signoff', (t) => { e.signoff = t.innerText.trim(); });
+  $('#email-button').addEventListener('keydown', (ev) => { if (ev.key === 'Enter') ev.preventDefault(); });
+  update();
+}
+
+function initials(name) { return name.split(/\s+/).filter((w) => /^\p{Lu}/u.test(w)).slice(0, 2).map((w) => w[0]).join('') || name.slice(0, 2).toUpperCase(); }
+
+function autosize(ta) { ta.style.height = 'auto'; ta.style.height = `${ta.scrollHeight + 2}px`; }
+document.addEventListener('input', (ev) => { if (ev.target.matches?.('textarea.autosize')) autosize(ev.target); });
+
+// Paste as plain text into editable previews, so formatting from other apps doesn't leak into WordPress.
+document.addEventListener('paste', (ev) => {
+  const el = ev.target.closest?.('[contenteditable="true"]');
+  if (!el) return;
+  ev.preventDefault();
+  document.execCommand('insertText', false, ev.clipboardData.getData('text/plain'));
+});
+
+function showTab(tab, focus = true) {
+  state.tab = tab;
+  $$('[role="tab"]').forEach((t) => {
+    const on = t.dataset.tab === tab;
+    t.setAttribute('aria-selected', String(on));
+    t.tabIndex = on ? 0 : -1;
+    if (on && focus) t.focus();
+  });
+  if (!hasOutputs()) return;
+  $$('[role="tabpanel"]').forEach((p) => { p.hidden = p.id !== `panel-${tab}`; });
+  $$(`#panel-${tab} textarea.autosize`).forEach(autosize);
+  store.set('tab', tab);
+}
+
+/* =====================================================================
+   10. WORDPRESS REST API
+   ===================================================================== */
+function wpCreds() {
+  const raw = $('#wp-url').value.trim();
+  const user = $('#wp-user').value.trim();
+  const pass = $('#wp-pass').value.trim();
+  if (!raw) throw new Error('Enter your WordPress site URL.');
+  let base = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+  try { base = new URL(base).href.replace(/\/+$/, '').replace(/\/wp-admin.*$/, '').replace(/\/wp-json.*$/, ''); } catch { throw new Error('The site URL does not look valid.'); }
+  if (!user) throw new Error('Enter your WordPress username.');
+  if (!pass) throw new Error('Enter an application password (Users → Profile → Application Passwords).');
+  return { base, user, pass };
+}
+function basicAuth(user, pass) {
+  const bytes = new TextEncoder().encode(`${user}:${pass}`);
+  let bin = '';
+  bytes.forEach((b) => { bin += String.fromCharCode(b); });
+  return `Basic ${btoa(bin)}`;
+}
+
+/** Calls the REST API, falling back to ?rest_route= for sites without pretty permalinks. */
+async function wpFetch(path, { method = 'GET', query = {}, body } = {}) {
+  const { base, user, pass } = wpCreds();
+  const qs = new URLSearchParams(query).toString();
+  const urls = [`${base}/wp-json${path}${qs ? `?${qs}` : ''}`, `${base}/?rest_route=${path}${qs ? `&${qs}` : ''}`];
+  const headers = { Authorization: basicAuth(user, pass), Accept: 'application/json' };
+  if (body) headers['Content-Type'] = 'application/json';
+  let lastError;
+  for (const url of urls) {
+    let res;
+    try {
+      res = await fetch(url, { method, headers, body: body ? JSON.stringify(body) : undefined, credentials: 'omit' });
+    } catch {
+      const mixed = location.protocol === 'https:' && base.startsWith('http:');
+      throw new Error(mixed
+        ? 'This page runs on HTTPS, so it cannot call an http:// site. Use the https:// address of your WordPress site.'
+        : `Could not reach ${base}. Check the URL, and that the REST API is not blocked by a security plugin, firewall or CORS policy. “Copy as cURL” works as an alternative.`);
+    }
+    const text = await res.text();
+    let data = null;
+    try { data = text ? JSON.parse(text) : null; } catch { data = null; }
+    if (res.ok && data) return { data, base };
+    if (res.status === 404 && !data?.code) { lastError = new Error('No WordPress REST API found at this address (404). Check the site URL.'); continue; }
+    if (res.ok && !data) { lastError = new Error('The site answered, but not with WordPress REST API data. Check the site URL.'); continue; }
+    const wpMsg = data?.message ? data.message.replace(/<[^>]+>/g, '') : res.statusText;
+    if (res.status === 401) throw new Error(`WordPress rejected the login (401): ${wpMsg}. Check the username and application password.`);
+    if (res.status === 403) throw new Error(`Permission denied (403): ${wpMsg}. The user needs at least the Author role.`);
+    throw new Error(`WordPress error ${res.status}: ${wpMsg}`);
+  }
+  throw lastError;
+}
+
+function setWpState(kind, text) {
+  state.wpConnected = kind === 'ok';
+  const map = {
+    idle: ['bg-slate-100 text-slate-600', 'bg-slate-300'],
+    busy: ['bg-brand-50 text-brand-800', 'bg-brand-500 pulse-dot'],
+    ok: ['bg-emerald-50 text-emerald-700', 'bg-emerald-500'],
+    error: ['bg-red-50 text-red-700', 'bg-red-500'],
+  }[kind];
+  $('#wp-status').className = `chip ${map[0]}`;
+  $('#wp-status').innerHTML = `<span class="dot ${map[1]}"></span>${esc(text)}`;
+  $('#wp-dot').className = `dot ${map[1]}`;
+  $('#wp-label').textContent = `WordPress · ${kind === 'ok' ? 'connected' : kind === 'error' ? 'error' : kind === 'busy' ? 'working…' : 'not connected'}`;
+}
+
+function wpLog(kind, html) {
+  const log = $('#wp-log');
+  if (log.querySelector('.meta:only-child')) log.innerHTML = '';
+  const tone = { ok: 'border-emerald-200 bg-emerald-50/60 text-emerald-900', error: 'border-red-200 bg-red-50/70 text-red-900', info: 'border-slate-200 bg-slate-50 text-slate-700' }[kind];
+  const ic = { ok: 'check', error: 'alert', info: 'info' }[kind];
+  const row = document.createElement('div');
+  row.className = `flex items-start gap-2 rounded-lg border px-3 py-2 text-sm ${tone}`;
+  row.innerHTML = `${icon(ic, 'mt-0.5 size-4 shrink-0')}<div class="min-w-0 flex-1">${html}<p class="mt-0.5 text-[11px] opacity-60">${new Date().toLocaleTimeString()}</p></div>`;
+  log.prepend(row);
+}
+
+function saveWpPrefs() {
+  if ($('#wp-remember').checked) store.set('wp', { url: $('#wp-url').value.trim(), user: $('#wp-user').value.trim(), remember: true });
+  else store.del('wp');
+}
+
+async function wpTest() {
+  const btn = $('#wp-test');
+  btn.disabled = true;
+  setWpState('busy', 'Testing…');
+  try {
+    const { data, base } = await wpFetch('/wp/v2/users/me', { query: { context: 'edit' } });
+    const canWrite = data.capabilities ? Boolean(data.capabilities.edit_posts) : true;
+    setWpState(canWrite ? 'ok' : 'error', canWrite ? 'Connected' : 'No permission');
+    wpLog(canWrite ? 'ok' : 'error', `${canWrite ? 'Connected to' : 'Connected, but this user cannot create posts on'} <strong>${esc(new URL(base).host)}</strong> as <strong>${esc(data.name || data.slug || 'user')}</strong>${data.roles?.length ? ` (${esc(data.roles.join(', '))})` : ''}.`);
+    saveWpPrefs();
+  } catch (err) {
+    setWpState('error', 'Failed');
+    wpLog('error', esc(err.message));
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function wpTargets() {
+  const choice = $('#wp-lang').value;
+  const langs = choice === 'current' ? [state.lang] : choice === 'both' ? ['de', 'en'] : [choice];
+  return langs.filter((l) => state.outputs[l]);
+}
+function wpPayload(lang) {
+  const o = state.outputs[lang];
+  return {
+    title: o.blog.title,
+    content: toWordPress(o.blog.html, $('#wp-format').value),
+    excerpt: o.blog.excerpt,
+    status: $('#wp-post-status').value,
+  };
+}
+
+async function wpExport(ev) {
+  ev.preventDefault();
+  if (!hasOutputs()) { toast('Generate a campaign first.', 'warn'); return; }
+  const targets = wpTargets();
+  if (!targets.length) { toast('The selected language has not been generated yet.', 'warn'); return; }
+  const btn = $('#wp-export');
+  btn.disabled = true;
+  btn.innerHTML = `${spinner()}Uploading…`;
+  setWpState('busy', 'Uploading…');
+  let okCount = 0;
+  for (const lang of targets) {
+    try {
+      const payload = wpPayload(lang);
+      const { data, base } = await wpFetch('/wp/v2/posts', { method: 'POST', body: payload });
+      okCount++;
+      const edit = `${base}/wp-admin/post.php?post=${data.id}&action=edit`;
+      wpLog('ok', `<strong>${LANG_NAMES[lang]}</strong> ${payload.status === 'draft' ? 'draft' : 'post'} created (ID ${esc(data.id)}): “${esc(data.title?.raw || payload.title)}”
+        <span class="mt-1 flex flex-wrap gap-x-3 gap-y-1">
+          <a class="inline-flex items-center gap-1 font-medium underline underline-offset-2" href="${esc(edit)}" target="_blank" rel="noopener">Edit in WordPress ${icon('external', 'size-3.5')}</a>
+          ${data.link ? `<a class="inline-flex items-center gap-1 font-medium underline underline-offset-2" href="${esc(data.link)}" target="_blank" rel="noopener">Preview ${icon('external', 'size-3.5')}</a>` : ''}
+        </span>`);
+    } catch (err) {
+      wpLog('error', `<strong>${LANG_NAMES[lang]}</strong>: ${esc(err.message)}`);
+    }
+  }
+  if (okCount) { setWpState('ok', 'Connected'); saveWpPrefs(); toast(`${okCount} ${okCount === 1 ? 'draft' : 'drafts'} sent to WordPress.`, 'success'); }
+  else setWpState('error', 'Failed');
+  btn.innerHTML = `${icon('upload')}Export Draft to WordPress`;
+  btn.disabled = false;
+}
+
+async function wpCurl() {
+  if (!hasOutputs()) { toast('Generate a campaign first.', 'warn'); return; }
+  const raw = $('#wp-url').value.trim() || 'https://your-site.org';
+  const base = (/^https?:\/\//i.test(raw) ? raw : `https://${raw}`).replace(/\/+$/, '');
+  const user = $('#wp-user').value.trim() || 'USERNAME';
+  const cmds = wpTargets().map((lang) => `# ${LANG_NAMES[lang]} draft – set WP_APP_PASSWORD first: export WP_APP_PASSWORD='xxxx xxxx xxxx xxxx xxxx xxxx'
+curl -X POST '${base.replace(/'/g, "'\\''")}/wp-json/wp/v2/posts' \\
+  -u '${user.replace(/'/g, "'\\''")}':"$WP_APP_PASSWORD" \\
+  -H 'Content-Type: application/json' \\
+  --data-binary @- <<'JSON'
+${JSON.stringify(wpPayload(lang), null, 2)}
+JSON`);
+  if (!cmds.length) { toast('The selected language has not been generated yet.', 'warn'); return; }
+  const ok = await copyToClipboard(cmds.join('\n\n'));
+  toast(ok ? 'cURL command copied. Paste it into a terminal.' : 'Copy failed – your browser blocked clipboard access.', ok ? 'success' : 'error');
+}
+
+/* =====================================================================
+   11. SETTINGS + HEADER STATUS
+   ===================================================================== */
+/** Keeps the blog button link in sync when the donation link changes in Settings. */
+function applyCtaUrl() {
+  for (const o of [state.outputs.de, state.outputs.en]) {
+    if (!o) continue;
+    const tpl = document.createElement('template');
+    tpl.innerHTML = o.blog.html;
+    tpl.content.querySelectorAll('.pw-cta-btn a').forEach((a) => a.setAttribute('href', ctaUrl() || '#'));
+    o.blog.html = tpl.innerHTML;
+  }
+  saveCampaign();
+}
+
+function renderEngineStatus() {
+  const s = state.settings;
+  const claude = s.engine === 'claude';
+  const ready = !claude || Boolean(s.apiKey || s.baseURL);
+  $('#engine-dot').className = `dot ${!claude ? 'bg-amber-400' : ready ? 'bg-emerald-500' : 'bg-red-500'}`;
+  $('#engine-label').textContent = !claude ? 'Simulated engine' : ready ? `Claude · ${(MODEL_LABELS[s.model] || s.model).replace('Claude ', '')}` : 'Claude · key missing';
+  $('#engine-hint').innerHTML = !claude
+    ? 'Using the offline <strong class="font-medium text-slate-700">simulated engine</strong>. <button type="button" class="font-medium text-brand-700 underline underline-offset-2 hover:text-brand-900" data-open-settings>Connect the Claude API</button> for AI writing and translation.'
+    : ready
+      ? `Writing with <strong class="font-medium text-slate-700">${esc(MODEL_LABELS[s.model] || s.model)}</strong> via the Claude API. <button type="button" class="font-medium text-brand-700 underline underline-offset-2 hover:text-brand-900" data-open-settings>Change</button>`
+      : '<span class="text-red-600">Claude API selected, but no API key is set.</span> <button type="button" class="font-medium text-brand-700 underline underline-offset-2" data-open-settings>Add key</button>';
+  $('#claude-settings').hidden = !claude;
+  $$('[data-org-name]').forEach((el) => { el.textContent = org(); });
+}
+
+function initSettings() {
+  const s = state.settings;
+  const dlg = $('#settings-dialog');
+  $$('input[name="engine"]').forEach((r) => { r.checked = r.value === s.engine; });
+  $('#api-key').value = s.apiKey;
+  $('#remember-key').checked = s.rememberKey;
+  $('#model').value = s.model;
+  $('#effort').value = s.effort;
+  $('#base-url').value = s.baseURL;
+  $('#org-name').value = s.orgName;
+  $('#cta-url').value = s.ctaUrl;
+
+  const apply = () => {
+    s.engine = $('input[name="engine"]:checked')?.value || 'simulated';
+    s.apiKey = $('#api-key').value.trim();
+    s.rememberKey = $('#remember-key').checked;
+    s.model = $('#model').value;
+    s.effort = $('#effort').value;
+    s.baseURL = $('#base-url').value.trim().replace(/\/+$/, '');
+    s.orgName = $('#org-name').value.trim() || DEFAULT_SETTINGS.orgName;
+    s.ctaUrl = $('#cta-url').value.trim();
+    saveSettings();
+    renderEngineStatus();
+  };
+  dlg.addEventListener('input', apply);
+  dlg.addEventListener('change', apply);
+  dlg.addEventListener('close', () => { if (hasOutputs()) { applyCtaUrl(); renderOutputs(); } });
+  document.addEventListener('click', (ev) => {
+    if (ev.target.closest('[data-open-settings]')) { dlg.showModal(); }
+  });
+  dlg.addEventListener('click', (ev) => { if (ev.target === dlg) dlg.close(); });
+  $('#clear-data').addEventListener('click', () => {
+    if (!confirm('Clear saved notes, generated outputs and settings from this browser?')) return;
+    store.clear();
+    location.reload();
+  });
+  renderEngineStatus();
+}
+
+/* =====================================================================
+   12. EXAMPLES, INPUT HINTS, BOOT
+   ===================================================================== */
+const EXAMPLES = {
+  de: `Spendenlauf 2026 – Zusammenfassung Team-Meeting
+- Lauf am 14. September im Englischen Garten, München
+- 230 Läuferinnen und Läufer, darunter 3 Schulklassen und ein Firmenteam
+- 18.400 € Spenden gesammelt (Ziel waren 15.000 €)
+- Der Erlös geht komplett in Schulmaterial und Nachhilfe für die Kinder in unseren Partner-Kinderdörfern
+- 40 Ehrenamtliche an Verpflegungsständen und bei der Anmeldung
+- Maria (Projektleitung): „Man hat gespürt, wie viel Herz in diesem Tag steckt.“
+- Danke an die Bäckerei Huber für Brezen und Getränke
+- Nächstes Jahr: zweiter Lauf in Hamburg geplant, Anmeldung öffnet im März`,
+  en: `School supplies drive – notes from volunteer call (Sept 2026)
+- Collected 1,250 notebooks, 800 pencil sets and 60 backpacks
+- 3 partner schools in Munich and Augsburg joined; students organized the collection themselves
+- 25 volunteers packed boxes over two weekends
+- Shipping costs covered by a local logistics partner – huge thanks!
+- The supplies will reach 400 children at the start of the new school year
+- Next: launch tutoring sponsorships in January, looking for 20 mentors`,
+};
+
+function updateNotesInfo() {
+  const v = $('#notes').value;
+  $('#notes-stats').textContent = `${fmt(words(v))} words · ${fmt(v.length)} characters`;
+  const lang = v.trim().length > 20 ? detectLang(v) : null;
+  const chip = $('#notes-lang');
+  chip.hidden = !lang;
+  if (lang) chip.innerHTML = `${icon('globe', 'size-3')}Notes in ${LANG_NAMES[lang]}`;
+}
+
+function boot() {
+  hydrateIcons();
+  pipe.reset();
+  initSettings();
+
+  // Restore
+  const saved = store.get('campaign', null);
+  if (saved?.outputs && (saved.outputs.de || saved.outputs.en)) {
+    state.outputs = { de: saved.outputs.de || null, en: saved.outputs.en || null };
+    state.lang = state.outputs[saved.lang] ? saved.lang : (state.outputs.de ? 'de' : 'en');
+    state.campaignNotes = saved.notes || '';
+  }
+  $('#notes').value = store.get('notes', '') || state.campaignNotes || '';
+  state.tab = store.get('tab', 'blog');
+  $$('input[name="target-lang"]').forEach((r) => { r.checked = r.value === state.target; });
+  const wp = store.get('wp', null);
+  if (wp?.remember) { $('#wp-url').value = wp.url || ''; $('#wp-user').value = wp.user || ''; $('#wp-remember').checked = true; }
+  setWpState('idle', 'Not connected');
+  updateNotesInfo();
+  renderOutputs();
+  if (hasOutputs()) {
+    STEPS.forEach((s) => pipe.set(s.id, 'done', s.desc));
+    if (!(state.outputs.de && state.outputs.en)) pipe.set('translate', 'skipped');
+    setRunStatus('done', 'Restored');
+    $('#run-meta').textContent = `Restored from your last session · ${$('#run-meta').textContent}`;
+  }
+
+  // Input
+  const persistNotes = debounce(() => store.set('notes', $('#notes').value), 300);
+  $('#notes').addEventListener('input', () => { updateNotesInfo(); persistNotes(); });
+  $('#notes').addEventListener('keydown', (ev) => { if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey)) { ev.preventDefault(); generate(); } });
+  $('#clear-notes').addEventListener('click', () => { $('#notes').value = ''; updateNotesInfo(); store.set('notes', ''); $('#notes').focus(); });
+  document.addEventListener('click', (ev) => {
+    const ex = ev.target.closest('[data-example]');
+    if (!ex) return;
+    $('#notes').value = EXAMPLES[ex.dataset.example];
+    updateNotesInfo();
+    store.set('notes', $('#notes').value);
+    $('#notes').focus();
+    toast(ex.dataset.example === 'de' ? 'German example notes loaded.' : 'English example notes loaded.', 'info', 2000);
+  });
+  $$('input[name="target-lang"]').forEach((r) => r.addEventListener('change', () => { state.target = r.value; store.set('target', r.value); }));
+  $('#generate').addEventListener('click', generate);
+  $('#cancel-run').addEventListener('click', () => state.abort?.());
+
+  // Outputs
+  $$('#lang-toggle .lang-btn').forEach((b) => b.addEventListener('click', () => {
+    const l = b.dataset.lang;
+    if (state.outputs[l]) { state.lang = l; saveCampaign(); renderOutputs(); }
+    else translateTo(l);
+  }));
+  const tabs = $$('[role="tab"]');
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => showTab(t.dataset.tab));
+    t.addEventListener('keydown', (ev) => {
+      const d = { ArrowRight: 1, ArrowLeft: -1 }[ev.key];
+      if (d) { ev.preventDefault(); showTab(tabs[(i + d + tabs.length) % tabs.length].dataset.tab); }
+    });
+  });
+
+  // WordPress
+  $('#wp-form').addEventListener('submit', wpExport);
+  $('#wp-test').addEventListener('click', wpTest);
+  $('#wp-curl').addEventListener('click', wpCurl);
+  $('#wp-remember').addEventListener('change', saveWpPrefs);
+  ['#wp-url', '#wp-user', '#wp-pass'].forEach((sel) => $(sel).addEventListener('input', () => { if (state.wpConnected !== null) setWpState('idle', 'Not connected'); }));
+  $('#wp-pass-toggle').addEventListener('click', (ev) => {
+    const input = $('#wp-pass');
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    ev.currentTarget.textContent = show ? 'Hide' : 'Show';
+  });
+
+  // Make Enter in editable previews create paragraphs rather than <div>s.
+  try { document.execCommand('defaultParagraphSeparator', false, 'p'); } catch { /* not supported */ }
+}
+
+boot();
+</script>
+</body>
+</html>
