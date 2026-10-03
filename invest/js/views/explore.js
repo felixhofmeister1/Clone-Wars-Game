@@ -242,7 +242,7 @@
     const max = A.records[0][2];
     el.innerHTML = `
       ${UI.header('Art', { back: true, backLabel: 'Explore', sub: 'The market, the records and how people invest in it' })}
-      <p class="about">${esc(A.intro)} ${UI.risk(A.risk)}</p>
+      <p class="about">${esc(A.intro)}</p>${UI.riskLine(A.risk)}
       ${UI.section('Market Size', `<div class="tiles t4">${A.stats.map((s) => UI.stat(s.k, esc(s.v), esc(s.d))).join('')}</div>${UI.src([...new Set(A.stats.map((s) => s.src))])}`)}
       ${UI.section('Latest', A.recent.map((r) => `<article class="bitem mt"><h3>${esc(r.h)}</h3><p>${esc(r.t)}</p>${UI.src(r.src)}</article>`).join(''))}
       ${UI.section('Most Expensive Artworks Sold at Auction', `<div class="dbars recs">${A.records.map(([t, who, p, house, when], i) => `<div class="rec"><div class="rec-h"><span class="rec-i">${i + 1}</span><span class="rec-t"><b>${esc(t)}</b><span>${esc(who)} · ${esc(house)} · ${esc(when)}</span></span><span class="rec-p">$${U.fmtN(p, 1, 1)}M</span></div><div class="rec-bar"><i style="width:${((p / max) * 100).toFixed(1)}%"></i></div></div>`).join('')}</div><div class="src">${esc(A.recordsNote)} Sources: ${UI.src([window.CONTENT.S.klimt, window.CONTENT.S.may26, window.CONTENT.S.robb], 'Recent').replace(/^<div class="src">|<\/div>$/g, '')}</div>`)}
@@ -256,7 +256,7 @@
     const K = C().collectibles;
     el.innerHTML = `
       ${UI.header('Collectibles', { back: true, backLabel: 'Explore', sub: 'Watches, wine, cars, cards, comics, coins and more' })}
-      <p class="about">${esc(K.intro)} ${UI.risk(K.risk)}</p>
+      <p class="about">${esc(K.intro)}</p>${UI.riskLine(K.risk)}
       ${UI.section('', `<div class="tiles">${UI.stat(K.index.k, esc(K.index.v), esc(K.index.d))}</div>${UI.src(K.index.src)}`)}
       ${UI.section('Categories', `<div class="brief">${K.cats.map((c) => `<article class="bitem"><div class="split"><h3>${U.icon(c.icon)} ${esc(c.n)}</h3></div><p>${esc(c.t)}</p><details class="mt"><summary class="more-link">How to buy</summary><p class="about" style="margin-top:6px">${esc(c.how)}</p></details>${c.stocks ? `<div class="list mt">${c.stocks.map((id) => UI.row(id, { logo: true })).join('')}</div>` : ''}${c.src ? UI.src(c.src) : ''}</article>`).join('')}</div>`)}
       ${UI.section('Costs & Taxes', `<div class="article"><p>${esc(K.costs)}</p><p>${esc(K.tax)}</p></div>`)}`;

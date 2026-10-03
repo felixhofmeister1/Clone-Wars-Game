@@ -2,8 +2,8 @@
  * Researched, dated content for the Invest app.
  *
  * Everything with a number in it here was checked against the source listed
- * beside it (news reports, official releases, industry reports) in the week of
- * September 21-24, 2026. Live prices do NOT come from this file: they come from
+ * beside it (news reports, official releases, industry reports) between
+ * September 21 and October 3, 2026. Live prices do NOT come from this file: they come from
  * invest/data/*.js (the scheduled pipeline) or live APIs. The `snap` block is
  * only a last-resort fallback shown with its date when no data file is present.
  */
@@ -52,58 +52,72 @@
     nftApr: { n: 'CoinDesk, Apr 27 2026', u: 'https://www.coindesk.com/markets/2026/04/27/pudgy-penguins-bayc-rally-masks-a-shrinking-nft-market-as-volumes-and-users-fall' },
     anthropic: { n: 'TechCrunch, May 28 2026', u: 'https://techcrunch.com/2026/05/28/anthropic-raises-65-billion-nears-1t-valuation-ahead-of-ipo/' },
     openai: { n: 'SmartAsset (OpenAI IPO tracker)', u: 'https://smartasset.com/investing/openai-stock-ipo' },
-    ipoWatch: { n: 'U.S. News, IPOs 2026', u: 'https://money.usnews.com/investing/articles/new-and-upcoming-ipos-in-2026' }
+    ipoWatch: { n: 'U.S. News, IPOs 2026', u: 'https://money.usnews.com/investing/articles/new-and-upcoming-ipos-in-2026' },
+    jobsSep: { n: 'CNBC, Oct 2 2026', u: 'https://www.cnbc.com/2026/10/02/jobs-report-september-2026.html' },
+    yieldsOct2: { n: 'CNBC, Oct 2 2026', u: 'https://www.cnbc.com/2026/10/02/treasury-yields-bonds-nonfarm-payrolls.html' },
+    streetOct2: { n: 'TheStreet, Oct 2 2026', u: 'https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-oct-02-2026' },
+    q3: { n: 'First Financial Trust, Q3 2026 review', u: 'https://www.firstfinancialtrust.com/2026/10/01/quarterly-market-review-july-september-2026/' },
+    xiDeal: { n: 'Axios, Sep 26 2026', u: 'https://www.axios.com/2026/09/26/us-china-tariffs-trade-30-billion' },
+    xiDeal2: { n: 'U.S. News (Reuters), Sep 26 2026', u: 'https://www.usnews.com/news/top-news/articles/2026-09-26/china-us-agree-to-30-billion-tariff-cut-ai-dialogue-during-xi-visit' },
+    xiFortune: { n: 'Fortune, Sep 28 2026', u: 'https://fortune.com/2026/09/28/xi-trump-summit-us-china-relations-managed-decline/' },
+    iranOct: { n: 'GlobalSecurity Iran war update, Oct 2 2026', u: 'https://www.globalsecurity.org/military/ops/iran-war-oprep.htm' },
+    oilOct2: { n: 'Fortune, Oct 2 2026', u: 'https://fortune.com/article/price-of-oil-10-02-2026/' },
+    btcOct2: { n: 'Fortune, Oct 2 2026', u: 'https://fortune.com/article/price-of-bitcoin-10-02-2026/' },
+    goldOct2: { n: 'CNBC Select, Oct 2 2026', u: 'https://www.cnbc.com/select/the-price-of-gold-today-oct-2-2026/' },
+    cr: { n: 'Ballotpedia News, Sep 25 2026', u: 'https://news.ballotpedia.org/2026/09/25/stopgap-funding-bill-delayes-omb-grants-rule-until-december-11/' },
+    anthropicIpo: { n: 'Forge Global (summarizing WSJ and Reuters reports)', u: 'https://forgeglobal.com/insights/anthropic-upcoming-ipo-news/' },
+    pmms: { n: 'Freddie Mac PMMS', u: 'https://www.freddiemac.com/pmms' }
   };
 
   // ----------------------------------------------------------- Market brief
   const brief = {
-    date: '2026-09-24',
+    date: '2026-10-03',
     title: 'What is moving markets',
     items: [
       {
-        h: 'The Fed hiked for the first time since 2023',
-        t: 'On September 16 the FOMC voted 12-0 to raise the federal funds target range by a quarter point to 3.75%-4.00%, saying inflation "remains elevated" as oil prices climbed. Its projections left room for another increase this year. Kevin Warsh has chaired the Fed since May 22, when he succeeded Jerome Powell. The next decisions are due October 28 and December 9.',
-        src: [S.fedSep, S.warsh, S.fedCal]
+        h: 'A weak jobs report cooled bets on another Fed hike',
+        t: 'Employers added only 29,000 jobs in September, far below the 84,000 economists expected, and unemployment rose to 4.2%. Revisions cut 60,000 jobs from July and August combined, leaving July with a loss of 10,000. Traders now put the chance that the Fed holds rates at its October 28 decision at about 77%, though many still expect a hike in December.',
+        src: [S.jobsSep, S.yieldsOct2]
       },
       {
-        h: 'Treasury yields are at 19-year highs',
-        t: 'The 10-year yield jumped 15 basis points to 5.11% on September 23, its highest level since 2007; the 30-year reached 5.4% and the 5-year crossed 5% for the first time since 2007. The average 30-year mortgage rate rose to 6.95% in Freddie Mac\'s September 17 survey.',
-        src: [S.cnnBonds, S.street, S.mortgage]
+        h: 'Stocks ended the week mixed after a modest third quarter',
+        t: 'On Friday, October 2, the S&P 500 rose 0.49% to 7,722.93, the Nasdaq Composite gained 1.19% to 27,190.86 as Nvidia led tech higher, and the Dow added 250 points to 51,176.46. The S&P 500 gained about 2% in the third quarter, closing September 30 at 7,651.54, even though it slipped 0.5% in September.',
+        src: [S.streetOct2, S.q3]
       },
       {
-        h: 'Stocks pulled back from record territory',
-        t: 'The S&P 500 fell 0.75% to 7,706.03 on September 23, the Nasdaq Composite lost 1.13% to 26,936.04 and the Dow dropped 352 points to 51,511.59. The S&P 500 had set 27 record closes in 2026 through late August.',
-        src: [S.street, S.fool27]
+        h: 'The Fed hiked in September; borrowing costs stay high',
+        t: 'The FOMC raised its target range by a quarter point to 3.75%-4.00% on September 16, its first increase since 2023, under Chair Kevin Warsh, who succeeded Jerome Powell in May. The 10-year Treasury yield, which hit 5.11% on September 23 for the first time since 2007, was near 5.3% after the jobs data, and Freddie Mac\'s 30-year mortgage average reached 7.03% on September 24.',
+        src: [S.fedSep, S.warsh, S.yieldsOct2, S.pmms]
       },
       {
-        h: 'An oil shock from the Iran war',
-        t: 'Fighting that began with US and Israeli strikes on February 28 has restricted traffic through the Strait of Hormuz; the IEA calls it the largest supply disruption in the history of the oil market. Brent settled at $101.61 and WTI at $92.71 on September 23. At the UN this week Iran proposed a regional ceasefire of up to 60 days and a phased reopening of Hormuz.',
-        src: [S.oil, S.iranWar, S.iranTalks]
+        h: 'No deal yet on Iran; oil eased but stays near $100',
+        t: 'US-Iran talks on the sidelines of the UN General Assembly ended without an agreement on a ceasefire or reopening the Strait of Hormuz, where traffic has been restricted since the war began on February 28. Brent settled at $99.68 and WTI at $91.24 on October 2, both lower on the day.',
+        src: [S.iranOct, S.iranWar, S.oilOct2]
       },
       {
-        h: 'Inflation is stuck at 3.4%',
-        t: 'Consumer prices rose 3.4% from a year earlier in August, driven by gasoline (+27.4%). Core inflation, which excludes food and energy, slowed to 2.4%, the lowest since March 2021. Employers added 162,000 jobs in August with unemployment at 4.1%, and GDP grew at a 1.5% annual rate in the second quarter.',
-        src: [S.cpi, S.jobs, S.gdp]
+        h: 'Trump and Xi agreed to cut tariffs on about $30 billion of goods',
+        t: 'At their September 24 summit in Washington the two sides agreed to lower tariffs on roughly $30 billion of "non-sensitive" goods. China committed to buy 20 million tons of US coal and about $12 billion of additional US farm products over 12 months, and both agreed to talks on AI risks and new military communication channels. Analysts noted few breakthroughs and a shorter-than-expected two-month extension of the trade truce.',
+        src: [S.xiDeal, S.xiDeal2, S.xiFortune]
       },
       {
-        h: 'Trump and Xi meet in Washington',
-        t: 'Xi Jinping arrived on September 23 for a one-day summit on the 24th covering trade, AI, critical minerals, the Iran war and Taiwan. The US held back a planned "excess capacity" tariff report until after the meeting, and a reciprocal tariff-cut framework worth about $30 billion was reported to be under discussion.',
-        src: [S.xi, S.xiTariff]
+        h: 'Inflation was 3.4% in August; September data is next',
+        t: 'Consumer prices rose 3.4% from a year earlier in August, driven by gasoline (+27.4%), while core inflation slowed to 2.4%, the lowest since March 2021. Real GDP grew at a 1.5% annual rate in the second quarter. A stopgap funding bill keeps the federal government open through December 11, so there was no October 1 shutdown.',
+        src: [S.cpi, S.gdp, S.cr]
       },
       {
-        h: 'The year of the mega-IPO',
-        t: 'SpaceX listed on Nasdaq as SPCX on June 12 at $135 a share, raising about $75 billion, the largest IPO ever. Cerebras (CBRS) and Fervo Energy (FRVO) debuted in May. The second quarter was the biggest on record for US IPO proceeds ($104.8 billion). OpenAI and Anthropic have both filed confidentially for listings.',
-        src: [S.spacex, S.cerebras, S.fervo, S.ipoQ2]
+        h: 'The mega-IPO pipeline: SpaceX is public, Anthropic reportedly next',
+        t: 'SpaceX listed on Nasdaq as SPCX on June 12 at $135 a share, raising about $75 billion in the largest IPO ever; Cerebras (CBRS) and Fervo Energy (FRVO) debuted in May. Anthropic, which filed confidentially in June, is reported by the Wall Street Journal and Reuters to be targeting a Nasdaq listing in November after an October roadshow; the company has not confirmed timing or valuation.',
+        src: [S.spacex, S.cerebras, S.fervo, S.anthropicIpo]
       },
       {
-        h: 'Crypto is recovering, but far below its peak',
-        t: 'Bitcoin traded around $84,000-$86,000 on September 23, about a third below its October 6, 2025 record near $126,000, and roughly $26,000 lower than a year earlier. In Washington, the CLARITY Act for crypto market structure stalled on September 15 when a Senate cloture vote failed 49-50.',
-        src: [S.btc, S.btcAth, S.clarity]
+        h: 'Crypto: off the lows, a third below the peak',
+        t: 'Bitcoin traded between roughly $84,600 and $86,700 on October 2, about a third below its October 6, 2025 record near $126,000. In Washington, the CLARITY Act for crypto market structure stalled on September 15 when a Senate cloture vote failed 49-50.',
+        src: [S.btcOct2, S.btcAth, S.clarity]
       },
       {
-        h: 'Gold holds above $4,000; the dollar is firm',
-        t: 'Gold slipped to about $4,300 an ounce and silver to about $65 on September 23 as the hawkish Fed lifted the dollar. The US Dollar Index was near 100.6, EUR/USD about 1.145 and USD/JPY about 157.5.',
-        src: [S.gold, S.fx]
+        h: 'Gold is holding above $4,100',
+        t: 'Spot gold traded between about $4,140 and $4,220 an ounce on October 2, depending on the time and source, down from around $4,300 in late September as the dollar firmed after the Fed\'s hike.',
+        src: [S.goldOct2, S.gold]
       }
     ]
   };
@@ -113,40 +127,34 @@
     { k: 'Fed funds target', v: '3.75%-4.00%', d: 'Raised 0.25 pt on Sep 16, 2026', fred: 'DFEDTARU', src: S.fedSep },
     { k: 'CPI inflation', v: '3.4%', d: 'August 2026, year over year', fred: 'CPIAUCSL', src: S.cpi },
     { k: 'Core CPI', v: '2.4%', d: 'August 2026, lowest since March 2021', fred: 'CPILFESL', src: S.cpi },
-    { k: 'Unemployment', v: '4.1%', d: 'August 2026', fred: 'UNRATE', src: S.jobs },
-    { k: 'Payrolls', v: '+162K', d: 'Jobs added in August 2026', fred: 'PAYEMS', src: S.jobs },
+    { k: 'Unemployment', v: '4.2%', d: 'September 2026', fred: 'UNRATE', src: S.jobsSep },
+    { k: 'Payrolls', v: '+29K', d: 'Jobs added in September 2026', fred: 'PAYEMS', src: S.jobsSep },
     { k: 'Real GDP growth', v: '1.5%', d: 'Q2 2026, annualized (2nd estimate)', fred: 'A191RL1Q225SBEA', src: S.gdp },
     { k: '10-year Treasury', v: '5.11%', d: 'Sep 23, 2026, highest since 2007', fred: 'DGS10', src: S.cnnBonds },
-    { k: '30-year mortgage', v: '6.95%', d: 'Freddie Mac, Sep 17, 2026', fred: 'MORTGAGE30US', src: S.mortgage },
+    { k: '30-year mortgage', v: '7.03%', d: 'Freddie Mac, Sep 24, 2026', fred: 'MORTGAGE30US', src: S.pmms },
     { k: 'Median home price', v: '$429,100', d: 'Existing homes, August 2026 (+1.6% y/y)', src: S.nar }
   ];
 
   // Last-resort quotes (Sep 23, 2026 close unless noted), used only when no data file is available.
   const snap = {
-    date: '2026-09-23',
+    date: '2026-10-02',
     q: {
-      '^GSPC': { p: 7706.03, chp: -0.75, src: S.street },
-      '^IXIC': { p: 26936.04, chp: -1.13, src: S.street },
-      '^DJI': { p: 51511.59, ch: -352.10, chp: -0.68, src: S.street },
-      '^TNX': { p: 5.11, src: S.cnnBonds },
-      '^TYX': { p: 5.40, src: S.cnnBonds },
-      'CL=F': { p: 92.71, chp: 2.42, src: S.oil },
-      'BZ=F': { p: 101.61, chp: 2.37, src: S.oil },
-      'GC=F': { p: 4304.11, src: S.gold, note: 'spot' },
-      'SI=F': { p: 65.06, src: S.gold, note: 'spot' },
-      'EURUSD=X': { p: 1.1446, src: S.fx },
-      'JPY=X': { p: 157.5, src: S.fx },
-      'DX-Y.NYB': { p: 100.6, src: S.fx },
-      'c:bitcoin': { p: 84353, src: S.btc },
-      'SPCX': { p: 148.36, src: S.spacex, note: 'Sep 23 price reported by Investing.com' }
+      '^GSPC': { p: 7722.93, chp: 0.49, src: S.streetOct2 },
+      '^IXIC': { p: 27190.86, chp: 1.19, src: S.streetOct2 },
+      '^DJI': { p: 51176.46, ch: 250, src: S.streetOct2 },
+      'BZ=F': { p: 99.68, chp: -2.57, src: S.oilOct2 },
+      'CL=F': { p: 91.24, chp: -1.76, src: S.oilOct2 },
+      'GC=F': { p: 4218.01, src: S.goldOct2, note: 'spot, 9:00 AM ET' },
+      'c:bitcoin': { p: 84612.28, src: S.btcOct2, note: '8:44 PM ET' }
     }
   };
 
   const calendar = [
-    { d: '2026-09-24', h: 'Trump-Xi summit, Washington', t: 'Trade, tariffs, AI, critical minerals, Iran and Taiwan on the agenda.', src: S.xi },
-    { d: '2026-10-28', h: 'FOMC rate decision', t: 'Two-day meeting Oct 27-28; statement at 2:00 PM ET.', src: S.fedCal },
+    { d: '2026-10-28', h: 'FOMC rate decision', t: 'Two-day meeting Oct 27-28; statement at 2:00 PM ET. Futures priced about a 77% chance of no change after the September jobs report.', src: S.fedCal },
     { d: '2026-11-01', h: 'New I bond rate', t: 'TreasuryDirect announces the November 2026 - April 2027 rate around this date.', src: S.ibond },
-    { d: '2026-12-09', h: 'FOMC decision + projections', t: 'Final meeting of 2026 (Dec 8-9), with a new dot plot.', src: S.fedCal }
+    { d: '2026-11-03', h: 'US midterm elections', t: 'All House seats and about a third of the Senate are on the ballot.' },
+    { d: '2026-12-09', h: 'FOMC decision + projections', t: 'Final meeting of 2026 (Dec 8-9), with a new dot plot.', src: S.fedCal },
+    { d: '2026-12-11', h: 'Government funding deadline', t: 'The stopgap spending bill funds federal agencies through this date.', src: S.cr }
   ];
 
   // ---------------------------------------------------------------- Guides
@@ -372,7 +380,7 @@
   const priv = {
     intro: 'The most valuable startups now stay private for many years. Most investors can only reach them through funds, secondary platforms or the IPO itself. Valuations below are from the latest reported funding rounds or share sales, not live prices.',
     companies: [
-      { n: 'Anthropic', v: 965e9, d: 'May 2026', t: 'AI lab behind the Claude models. Raised $65 billion in a Series H round at a $965 billion post-money valuation; reportedly filed a confidential draft IPO registration in June 2026.', src: S.anthropic },
+      { n: 'Anthropic', v: 965e9, d: 'May 2026', t: 'AI lab behind the Claude models. Raised $65 billion in a Series H round at a $965 billion post-money valuation and filed a confidential draft IPO registration in June 2026. The WSJ and Reuters report it is targeting a Nasdaq listing in November; the company has not confirmed timing.', src: S.anthropic },
       { n: 'OpenAI', v: 852e9, d: 'Mar 2026', t: 'Maker of ChatGPT. Closed a $122 billion round at an $852 billion post-money valuation on March 31, 2026, and filed confidentially for an IPO; its CFO told staff in August it will be public in 2027 or sooner.', src: S.openai },
       { n: 'ByteDance', v: null, d: '2026', t: 'Owner of TikTok and Douyin. Secondary-market valuation estimates range from roughly $330 billion to $480 billion depending on the source and date.', src: S.ipoWatch },
       { n: 'Stripe', v: 159e9, d: 'Feb 2026', t: 'Online payments infrastructure. Valued at $159 billion in a February 2026 employee tender offer; no IPO timeline confirmed.', src: S.ipoWatch },
@@ -384,7 +392,7 @@
       { s: 'CBRS', n: 'Cerebras Systems', d: 'May 14, 2026', t: 'Priced at $185 and raised $5.55 billion; rose about 68% on day one.', src: S.cerebras },
       { s: 'FRVO', n: 'Fervo Energy', d: 'May 13, 2026', t: 'Priced at $27 and raised $1.89 billion, the largest clean-energy IPO on record; closed day one at $36.54.', src: S.fervo }
     ],
-    pipeline: 'Reported IPO candidates include Anthropic, OpenAI, Databricks, Discord (confidential filing, January 2026) and Kraken (confidential filing, November 2025).',
+    pipeline: 'Reported IPO candidates include Anthropic (reportedly targeting November 2026), OpenAI (its CFO has said 2027 or sooner), Databricks, Discord (confidential filing, January 2026) and Kraken (confidential filing, November 2025).',
     ways: [
       ['Buy at or after the IPO', 'Most brokers let you request IPO shares; allocations for hot deals are small. You can always buy once trading starts.'],
       ['Secondary marketplaces', 'Platforms such as Forge Global, EquityZen and Hiive match accredited investors with employees selling shares. Minimums are high and trades can take weeks.'],

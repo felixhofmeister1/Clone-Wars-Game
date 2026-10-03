@@ -94,7 +94,8 @@
   };
   D.byClass = (cls) => D.allAssets().filter((a) => a.c === cls);
   D.tagged = (tag) => CAT.assets.filter((a) => a.t && a.t.includes(tag));
-  D.cur = (a, q) => (q && q.cur) || a.cur || (a.c === 'rate' || a.c === 'index' || a.c === 'fx' ? null : 'USD');
+  // Index levels, yields and exchange rates are not amounts of money, so they get no currency symbol.
+  D.cur = (a, q) => (a && (a.c === 'rate' || a.c === 'index' || a.c === 'fx') ? null : (q && q.cur) || (a && a.cur) || 'USD');
 
   // --------------------------------------------------------------- quotes
   function cgIndex(list, src, t) {
@@ -180,7 +181,7 @@
     if (!q) return '—';
     mode = mode || App.S.settings.changeMode;
     if (mode === 'mcap' && isNum(q.mc)) return U.compact(q.mc, a && a.c === 'nft' ? 'USD' : D.cur(a, q));
-    if (mode === 'abs' && isNum(q.ch)) return U.signed(q.ch, a && a.c, D.cur(a, q));
+    if (mode === 'abs' && isNum(q.ch)) return U.signed(q.ch, a && a.c, D.cur(a, q), q.p);
     return U.pct(q.chp);
   };
 
@@ -255,8 +256,10 @@
 
   // Look for a newer copy of the pipeline data on GitHub (useful when this copy
   // of the app is hosted from a branch that the scheduled job does not update).
-  async function checkRemote() {
+  async function checkRemote(force) {
     if (!App.S.settings.remoteData) return;
+    // Only worth the download when this copy's data is missing or stale.
+    if (!force && D.M && D.dataAge() < 6 * 3600000) { D.status.remote = 'local data is recent'; return; }
     D.status.remote = 'checking';
     const branches = BRANCHES.slice();
     try {
@@ -671,7 +674,7 @@
     if (on) { pollCoinGecko(); connectCoinbase(); } else { clearTimeout(cgTimer); disconnectCoinbase(); D.status.coingecko = 'off'; }
   };
   D.refreshNow = async () => {
-    await Promise.all([pollCoinGecko(), checkRemote()]);
+    await Promise.all([pollCoinGecko(), checkRemote(true)]);
     D.syncFinnhub();
     D.emit('market');
   };

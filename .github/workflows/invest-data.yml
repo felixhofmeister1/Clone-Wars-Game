@@ -67,6 +67,7 @@ jobs:
         run: node invest/scripts/update-data.mjs --yahoo "$RUNNER_TEMP/yahoo.json"
         env:
           COINGECKO_DEMO_KEY: ${{ secrets.COINGECKO_DEMO_KEY }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
           FORCE_HISTORY: ${{ (github.event_name == 'push' || inputs.full) && '1' || '' }}
 
       - name: Commit changes

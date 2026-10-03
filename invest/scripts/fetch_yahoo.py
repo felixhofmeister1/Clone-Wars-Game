@@ -14,6 +14,7 @@ Usage: python fetch_yahoo.py symbols.json out.json
 """
 import json
 import math
+import re
 import sys
 import time
 import concurrent.futures as cf
@@ -37,6 +38,28 @@ def num(x, p=7):
 def intval(x):
     f = num(x, 15)
     return int(round(f)) if f is not None else None
+
+
+def unix(x, default=None):
+    """Seconds since epoch from an int, float or datetime/Timestamp (yfinance returns both)."""
+    if x is None:
+        return default
+    if hasattr(x, "timestamp"):
+        try:
+            return int(x.timestamp())
+        except Exception:  # noqa: BLE001
+            return default
+    try:
+        return int(x)
+    except (TypeError, ValueError):
+        return default
+
+
+def person(name):
+    if not name:
+        return None
+    name = re.sub(r"^(Mr|Ms|Mrs|Dr|Prof)\.?\s+", "", str(name).strip())
+    return re.sub(r"\s+", " ", name)
 
 
 def clean(d):
@@ -102,12 +125,12 @@ def build_quote(info, fast):
         "ma50": num(info.get("fiftyDayAverage")), "ma200": num(info.get("twoHundredDayAverage")),
         "na": intval(info.get("totalAssets") or info.get("netAssets")),
         "er": num(er, 4),
-        "ms": info.get("marketState"), "t": intval(info.get("regularMarketTime")),
+        "ms": info.get("marketState"), "t": unix(info.get("regularMarketTime")),
         "pp": num(info.get("postMarketPrice")), "ppc": num(info.get("postMarketChangePercent"), 5), "ppt": intval(info.get("postMarketTime")),
         "pre": num(info.get("preMarketPrice")), "prec": num(info.get("preMarketChangePercent"), 5),
         "cur": info.get("currency"), "ex": info.get("fullExchangeName") or info.get("exchange"), "xc": info.get("exchange"),
         "qt": info.get("quoteType"), "name": info.get("longName") or info.get("shortName"),
-        "earn": intval(info.get("earningsTimestampStart") or info.get("earningsTimestamp")),
+        "earn": unix(info.get("earningsTimestampStart") or info.get("earningsTimestamp")),
         "src": "yahoo",
     })
 
@@ -126,7 +149,7 @@ def build_profile(info, tk):
     prof = {
         "sum": summary, "sec": info.get("sector"), "ind": info.get("industry"), "emp": intval(info.get("fullTimeEmployees")),
         "web": info.get("website"), "city": info.get("city"), "st": info.get("state"), "cty": info.get("country"),
-        "ceo": ceo.get("name") if ceo else None, "ceot": ceo.get("title") if ceo else None,
+        "ceo": person(ceo.get("name")) if ceo else None, "ceot": ceo.get("title") if ceo else None,
         "beta": num(info.get("beta") or info.get("beta3Year"), 4),
         "rec": info.get("recommendationKey") if info.get("recommendationKey") not in (None, "none") else None,
         "recm": num(info.get("recommendationMean"), 3),
@@ -170,8 +193,8 @@ def intraday(tk):
     md = tk.history_metadata or {}
     reg = ((md.get("currentTradingPeriod") or {}).get("regular") or {})
     first, last = pts[0][0], pts[-1][0]
-    s = min(reg.get("start", first), first)
-    e = max(reg.get("end", last), last)
+    s = min(unix(reg.get("start"), first), first)
+    e = max(unix(reg.get("end"), last), last)
     if e - s > 26 * 3600:
         s = max(first, e - 24 * 3600)
     n = 600 if e - s <= 9 * 3600 else 1800
@@ -241,8 +264,8 @@ def work(entry, want_hist, want_prof):
         d = retry(lambda: intraday(tk), tries=2)
         if d:
             res["intraday"] = d
-    except Exception:  # noqa: BLE001
-        pass
+    except Exception as e:  # noqa: BLE001
+        res["ierr"] = f"{type(e).__name__}: {e}"[:160]
     if want_prof and info:
         try:
             res["profile"] = build_profile(info, tk)
@@ -282,6 +305,8 @@ def main():
                 out["errors"].append(f"{sid}: no quote {r.get('err', '')}")
             if "intraday" in r:
                 out["intraday"][sid] = r["intraday"]
+            elif r.get("ierr") and len(out["errors"]) < 400:
+                out["errors"].append(f"{sid}: intraday {r['ierr']}")
             if "hist" in r:
                 out["hist"][sid] = r["hist"]
             if "profile" in r:

@@ -62,7 +62,7 @@
     const foot = document.getElementById('side-foot');
     if (foot) {
       const M = App.D.M;
-      foot.innerHTML = `${M && M.updated ? 'Data updated ' + U.dateTimeET(Date.parse(M.updated)) : 'Research snapshot · Sep 23, 2026'}<br>${App.D.cg.src === 'live' ? 'Crypto live · ' : ''}<a href="#/more/data">Sources</a> · Not investment advice`;
+      foot.innerHTML = `${M && M.updated ? 'Data updated ' + U.dateTimeET(Date.parse(M.updated)) : 'Research snapshot · ' + U.fmtDate(Date.parse(window.CONTENT.snap.date + 'T12:00:00Z'), { month: 'short', day: 'numeric', year: 'numeric' })}<br>${App.D.cg.src === 'live' ? 'Crypto live · ' : ''}<a href="#/more/data">Sources</a> · Not investment advice`;
     }
   }
 

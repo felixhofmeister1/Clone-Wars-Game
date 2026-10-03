@@ -109,7 +109,7 @@
     if (prof) {
       if (prof.sec) facts.push(['Sector', esc(prof.sec)]);
       if (prof.ind) facts.push(['Industry', esc(prof.ind)]);
-      if (prof.ceo) facts.push([/chief executive|ceo/i.test(prof.ceot || '') ? 'CEO' : 'Leader', esc(prof.ceo)]);
+      if (prof.ceo) facts.push([/chief executive|ceo/i.test(prof.ceot || '') ? 'CEO' : 'Leader', esc(prof.ceo.replace(/^(Mr|Ms|Mrs|Dr|Prof)\.?\s+/, '').replace(/\s+/g, ' '))]);
       if (U.isNum(prof.emp)) facts.push(['Employees', U.int(prof.emp)]);
       if (prof.city || prof.cty) facts.push(['Headquarters', esc([prof.city, prof.st, prof.cty].filter(Boolean).join(', '))]);
       if (prof.web) facts.push(['Website', `<a href="${esc(prof.web)}" target="_blank" rel="noopener">${esc(prof.web.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, ''))}</a>`]);
@@ -185,12 +185,12 @@
       const cost = lots.reduce((s, h) => s + h.qty * (h.cost || 0), 0);
       const val = q && U.isNum(q.p) ? qty * q.p : null;
       const gain = U.isNum(val) ? val - cost : null;
-      html += `<div class="tile"><div class="stat-k">Your holdings</div><div class="split"><div class="stat-v">${U.isNum(val) ? U.money(val, cur) : '—'}</div><div class="${U.dir(gain)}" style="font-weight:600">${U.isNum(gain) ? U.signed(gain, null, cur) + (cost ? ' (' + U.pct((gain / cost) * 100) + ')' : '') : ''}</div></div><div class="stat-s">${U.fmtN(qty, 0, 8)} ${esc(a.s)} · avg cost ${U.money(cost / qty, cur)} · ${lots.length} lot${lots.length > 1 ? 's' : ''}</div></div>`;
+      html += `<div class="tile"><div class="stat-k">Your holdings</div><div class="split"><div class="stat-v">${U.isNum(val) ? U.money(val, cur) : '—'}</div><div class="${U.dir(gain)}" style="font-weight:600">${U.isNum(gain) ? U.signed(gain, null, cur, 1) + (cost ? ' (' + U.pct((gain / cost) * 100) + ')' : '') : ''}</div></div><div class="stat-s">${U.fmtN(qty, 0, 8)} ${esc(a.s)} · avg cost ${U.money(cost / qty, cur)} · ${lots.length} lot${lots.length > 1 ? 's' : ''}</div></div>`;
     }
     if (pp) {
       const val = q && U.isNum(q.p) ? pp.qty * q.p : null;
       const gain = U.isNum(val) ? val - pp.qty * pp.cost : null;
-      html += `<div class="tile mt"><div class="stat-k">Paper trading position</div><div class="split"><div class="stat-v">${U.isNum(val) ? U.money(val, cur) : '—'}</div><div class="${U.dir(gain)}" style="font-weight:600">${U.isNum(gain) ? U.signed(gain, null, cur) + ' (' + U.pct((gain / (pp.qty * pp.cost)) * 100) + ')' : ''}</div></div><div class="stat-s">${U.fmtN(pp.qty, 0, 8)} ${esc(a.s)} · avg ${U.money(pp.cost, cur)}</div></div>`;
+      html += `<div class="tile mt"><div class="stat-k">Paper trading position</div><div class="split"><div class="stat-v">${U.isNum(val) ? U.money(val, cur) : '—'}</div><div class="${U.dir(gain)}" style="font-weight:600">${U.isNum(gain) ? U.signed(gain, null, cur, 1) + ' (' + U.pct((gain / (pp.qty * pp.cost)) * 100) + ')' : ''}</div></div><div class="stat-s">${U.fmtN(pp.qty, 0, 8)} ${esc(a.s)} · avg ${U.money(pp.cost, cur)}</div></div>`;
     }
     return UI.section('Your Position', html);
   }
@@ -250,7 +250,9 @@
       const watched = App.S.inAnyList(id);
       const isNft = a.c === 'nft';
       const tvSym = App.TV.symbol(a, q);
-      const range = lastRange[id] || (a.c === 'crypto' ? '1D' : '1D');
+      // Open on the 1-day view only when an intraday line exists; otherwise start from daily history.
+      const hasIntraday = (q && q.d && q.d.c && q.d.c.length > 1) || (a.c === 'crypto' && App.S.settings.liveCrypto);
+      const range = lastRange[id] || (hasIntraday ? '1D' : '1M');
       this.range = range;
       this.compare = null;
 
@@ -373,7 +375,7 @@
       const last = pts[pts.length - 1][1];
       const ch = last - ref;
       const chp = ref ? (ch / ref) * 100 : 0;
-      rsum.innerHTML = `<span class="${U.dir(ch)}">${U.signed(ch, a.c, cur)} (${U.pct(chp)})</span> ${esc(RANGE_LABEL[range] || '')}`;
+      rsum.innerHTML = `<span class="${U.dir(ch)}">${U.signed(ch, a.c, cur, last)} (${U.pct(chp)})</span> ${esc(RANGE_LABEL[range] || '')}`;
       csrc.textContent = s.src ? s.src : '';
       const hero = {
         p: el.querySelector('[data-hero="p"]'),
@@ -401,13 +403,13 @@
             const [t, v] = info.point;
             const d = v - ref;
             hero.p.textContent = U.price(v, a.c, cur);
-            hero.c.textContent = `${U.signed(d, a.c, cur)} (${U.pct(ref ? (d / ref) * 100 : 0)})`;
+            hero.c.textContent = `${U.signed(d, a.c, cur, v)} (${U.pct(ref ? (d / ref) * 100 : 0)})`;
             hero.c.className = 'hero-c ' + U.dir(d);
             hero.t.textContent = s.intraday ? U.fmtDate(t, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : U.fmtDate(t, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
           } else if (info.range) {
             const [p1, p2] = info.range;
             const d = p2[1] - p1[1];
-            hero.p.textContent = U.signed(d, a.c, cur);
+            hero.p.textContent = U.signed(d, a.c, cur, p2[1]);
             hero.c.textContent = U.pct(p1[1] ? (d / p1[1]) * 100 : 0);
             hero.c.className = 'hero-c ' + U.dir(d);
             const f = (t) => (s.intraday ? U.fmtDate(t, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : U.dateLong(t));

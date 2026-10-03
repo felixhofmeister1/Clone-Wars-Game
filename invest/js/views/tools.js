@@ -109,7 +109,7 @@
         inv.push([Date.now(), invested]);
         const lump = (invested / firstPrice) * q.p;
         return {
-          out: [['Invested', $(invested)], ['Value today', $(value)], ['Gain', `<span class="${U.dir(value - invested)}">${U.signed(value - invested, null, 'USD')} (${U.pct(((value - invested) / invested) * 100)})</span>`], ['Lump sum instead', $(lump), 'all at the start']],
+          out: [['Invested', $(invested)], ['Value today', $(value)], ['Gain', `<span class="${U.dir(value - invested)}">${U.signed(value - invested, null, 'USD', 1)} (${U.pct(((value - invested) / invested) * 100)})</span>`], ['Lump sum instead', $(lump), 'all at the start']],
           chart: (host) => App.Chart.multi(host, [{ name: 'Portfolio value', color: App.Chart.series(0), pts: val }, { name: 'Money invested', color: App.Chart.series(1), pts: inv, dash: true }], { fmtY: (x) => U.compact(x, 'USD'), fmtX: (t) => U.dateLong(t), height: 230, label: 'DCA value over time' }),
           note: `Buys ${$(v.amt)} of ${a.s} every month at the closing price in the app's history data (${esc(h ? h.src : 'CoinGecko')}), valued at today's price of ${UI.priceText(v.asset, q)}. Excludes dividends, fees and taxes. Past results do not predict future returns.`
         };
@@ -149,7 +149,7 @@
       id: 'mortgage', n: 'Mortgage', sub: 'Monthly payment and total interest', icon: 'home',
       fields: () => [
         { k: 'price', label: 'Home price', value: 429100 }, { k: 'down', label: 'Down payment (%)', value: 20, step: 0.5 },
-        { k: 'rate', label: 'Interest rate (%)', value: +(latestFred('MORTGAGE30US') || 6.95).toFixed(2), step: 0.01 },
+        { k: 'rate', label: 'Interest rate (%)', value: +(latestFred('MORTGAGE30US') || 7.03).toFixed(2), step: 0.01 },
         { k: 'years', label: 'Term (years)', type: 'select', value: '30', options: [['30', '30 years'], ['20', '20 years'], ['15', '15 years'], ['10', '10 years']] },
         { k: 'tax', label: 'Property tax (%/yr)', value: 1.1, step: 0.05 }, { k: 'ins', label: 'Insurance ($/yr)', value: 2000 }
       ],
@@ -161,7 +161,7 @@
           out: [['Principal & interest', $(am.pmt, 2), 'per month'], ['With tax & insurance', $(am.pmt + extra, 2), 'per month'], ['Loan amount', $(loan)], ['Total interest', $(am.total - loan)]],
           chart: (h) => App.Chart.columns(h, am.yearly.map((x) => String(x.y)), [{ name: 'Principal', color: App.Chart.series(0), values: am.yearly.map((x) => x.p) }, { name: 'Interest', color: App.Chart.series(1), values: am.yearly.map((x) => x.i) }], { fmtY: (x) => U.compact(x, 'USD'), label: 'Payments by year' }),
           table: `<table class="tbl"><tr><th>Year</th><th>Principal</th><th>Interest</th><th>Balance</th></tr>${am.yearly.map((x) => `<tr><td>${x.y}</td><td>${$(x.p)}</td><td>${$(x.i)}</td><td>${$(x.bal)}</td></tr>`).join('')}</table>`,
-          note: `Default rate is the latest Freddie Mac 30-year average${latestFred('MORTGAGE30US') ? '' : ' (6.95%, Sep 17, 2026)'}; default price is the US median existing-home price for August 2026 ($429,100, NAR).`
+          note: `Default rate is the latest Freddie Mac 30-year average${latestFred('MORTGAGE30US') ? '' : ' (7.03%, Sep 24, 2026)'}; default price is the US median existing-home price for August 2026 ($429,100, NAR).`
         };
       }
     },
@@ -267,7 +267,7 @@
       fields: () => [{ k: 'buy', label: 'Buy price', value: 100, step: 0.01 }, { k: 'sell', label: 'Sell price', value: 118, step: 0.01 }, { k: 'qty', label: 'Quantity', value: 50, step: 'any' }, { k: 'fees', label: 'Total fees', value: 0, step: 0.01 }],
       calc(v) {
         const pl = (v.sell - v.buy) * v.qty - v.fees;
-        return { out: [['Profit / loss', `<span class="${U.dir(pl)}">${U.signed(pl, null, 'USD')}</span>`], ['Return', U.pct((pl / (v.buy * v.qty)) * 100)], ['Break-even price', $(v.buy + v.fees / v.qty, 2)]] };
+        return { out: [['Profit / loss', `<span class="${U.dir(pl)}">${U.signed(pl, null, 'USD', 1)}</span>`], ['Return', U.pct((pl / (v.buy * v.qty)) * 100)], ['Break-even price', $(v.buy + v.fees / v.qty, 2)]] };
       }
     },
     {

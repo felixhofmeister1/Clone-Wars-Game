@@ -25,7 +25,7 @@
   UI.chgText = (id, q) => {
     if (!q) return '—';
     const a = App.D.asset(id);
-    return U.isNum(q.ch) ? `${U.signed(q.ch, a && a.c, App.D.cur(a || {}, q))} (${U.pct(q.chp)})` : U.pct(q.chp);
+    return U.isNum(q.ch) ? `${U.signed(q.ch, a && a.c, App.D.cur(a || {}, q), q.p)} (${U.pct(q.chp)})` : U.pct(q.chp);
   };
 
   UI.priceText = (id, q) => {
@@ -98,6 +98,7 @@
     const m = map[kind] || map.pipeline;
     return `<span class="badge ${m[1]}">${m[1] === 'live' ? '<i class="dotlive"></i>' : ''}${m[0]}</span>`;
   };
+  UI.riskLine = (n) => `<div class="riskline"><span>Risk</span>${UI.risk(n)}<b>${['', 'Low', 'Moderate', 'Medium', 'High', 'Very high'][n] || ''}</b></div>`;
   UI.risk = (n) => `<span class="risk" aria-label="Risk ${n} of 5">${[1, 2, 3, 4, 5].map((i) => `<i class="${i <= n ? 'on' : ''}"></i>`).join('')}</span>`;
 
   // ------------------------------------------------------------- toast

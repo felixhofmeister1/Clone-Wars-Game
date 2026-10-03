@@ -18,7 +18,7 @@
     const D = App.D;
     const bits = [];
     if (D.M && D.M.updated) bits.push(`Prices ${U.dateTimeET(Date.parse(D.M.updated))}`);
-    else bits.push('Research snapshot · Sep 23, 2026 close');
+    else bits.push('Research snapshot · ' + U.fmtDate(Date.parse(window.CONTENT.snap.date + 'T12:00:00Z'), { month: 'short', day: 'numeric', year: 'numeric' }) + ' close');
     if (D.cg.src === 'live') bits.push('crypto live');
     if (D.status.finnhub === 'live') bits.push('stocks live');
     const live = D.cg.src === 'live' || D.status.coinbase === 'live' || D.status.finnhub === 'live';

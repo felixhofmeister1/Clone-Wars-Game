@@ -131,7 +131,7 @@
       el.innerHTML = `${UI.header('Economy', { back: true, backLabel: 'More', sub: 'Official US data from FRED, BLS, the Treasury, the New York Fed and Freddie Mac' })}
         <div data-part="tiles"><div class="skel" style="height:300px"></div></div>
         ${UI.section('Yield Curve', '<div id="curve" class="chart-wrap" style="min-height:230px"></div><div class="src" id="curve-src"></div>')}
-        ${UI.section('Latest Researched Readings', `<div class="tiles">${C().macro.map((m) => UI.stat(m.k, esc(m.v), esc(m.d))).join('')}</div>${UI.src([...new Set(C().macro.map((m) => m.src))])}`, { sub: 'From official releases and news reports as of September 24, 2026' })}`;
+        ${UI.section('Latest Researched Readings', `<div class="tiles">${C().macro.map((m) => UI.stat(m.k, esc(m.v), esc(m.d))).join('')}</div>${UI.src([...new Set(C().macro.map((m) => m.src))])}`, { sub: 'From official releases and news reports as of ' + U.fmtDate(Date.parse(C().brief.date + 'T12:00:00Z'), { month: 'long', day: 'numeric', year: 'numeric' }) })}`;
       App.D.loadMacro().then(() => this.fill());
     },
     fill() {
@@ -139,7 +139,7 @@
       if (!el) return;
       const M = App.D.macro;
       const box = el.querySelector('[data-part="tiles"]');
-      if (!M || !M.fred) { box.innerHTML = '<div class="note">' + U.icon('info') + '<span>The economic data file has not been generated yet. The researched readings below are current as of September 24, 2026.</span></div>'; App.views.drawCurve(el.querySelector('#curve'), el.querySelector('#curve-src')); return; }
+      if (!M || !M.fred) { box.innerHTML = '<div class="note">' + U.icon('info') + '<span>The economic data file has not been generated yet. The researched readings below are current as of ' + U.fmtDate(Date.parse(C().brief.date + 'T12:00:00Z'), { month: 'long', day: 'numeric', year: 'numeric' }) + '.</span></div>'; App.views.drawCurve(el.querySelector('#curve'), el.querySelector('#curve-src')); return; }
       box.innerHTML = `<div class="tiles t4">${ECON.map((def) => {
         const pts = econSeries(def);
         if (!pts || !pts.length) return '';
@@ -166,10 +166,18 @@
     render(el) {
       el.innerHTML = `${UI.header('Calendar', { back: true, backLabel: 'More' })}
         ${UI.section('Key Dates', `<div class="list">${C().calendar.map((c) => `<div class="row"><span class="r-main"><span class="r-sym" style="font-size:16px">${esc(c.h)}</span><span class="r-name" style="white-space:normal">${esc(c.t)}</span></span><span class="r-right"><span class="r-price">${U.fmtDate(Date.parse(c.d + 'T12:00:00Z'), { month: 'short', day: 'numeric' })}</span><span class="r-chg flat">${Date.parse(c.d + 'T23:59:59Z') < Date.now() ? 'Past' : U.fmtDate(Date.parse(c.d + 'T12:00:00Z'), { weekday: 'short' })}</span></span></div>`).join('')}</div>${UI.src([C().S.fedCal, C().S.ibond])}`)}
+        ${UI.section('Upcoming Earnings', '<div data-part="earn"><div class="skel" style="height:120px"></div></div>', { sub: 'Next reporting dates for companies in this app (Yahoo Finance). Dates can be estimates until the company confirms them.' })}
         ${UI.section('Economic Calendar', `<div id="tv-cal"><button class="tv-load" data-act="cal">${U.icon('cal')}<span><b>Load live economic calendar</b><span>Upcoming releases with forecasts and actuals, from TradingView</span></span></button></div>`)}
         ${UI.section('US Market Holidays', `<div class="kv">${[['Thanksgiving', 'Thu, Nov 26, 2026'], ['Day after Thanksgiving', 'Fri, Nov 27, 2026 · closes 1:00 PM ET'], ['Christmas Eve', 'Thu, Dec 24, 2026 · closes 1:00 PM ET'], ['Christmas', 'Fri, Dec 25, 2026'], ['New Year\'s Day', 'Fri, Jan 1, 2027'], ['Martin Luther King Jr. Day', 'Mon, Jan 18, 2027'], ['Washington\'s Birthday', 'Mon, Feb 15, 2027'], ['Good Friday', 'Fri, Mar 26, 2027']].map(([k, v]) => `<div class="kv-row"><span>${k}</span><b>${v}</b></div>`).join('')}</div><div class="src">NYSE and Nasdaq schedule.</div>`)}`;
       el.addEventListener('click', (e) => {
         if (e.target.closest('[data-act="cal"]')) { const h = el.querySelector('#tv-cal'); h.style.height = '620px'; App.TV.calendar(h); }
+      });
+      App.D.loadProfiles().then(() => {
+        const box = el.querySelector('[data-part="earn"]');
+        if (!box) return;
+        const now = Date.now() / 1000 - 86400;
+        const soon = window.CATALOG.assets.filter((a) => a.c === 'stock').map((a) => [a, App.D.profile(a.id)]).filter(([, p]) => p && U.isNum(p.earn) && p.earn >= now && p.earn <= now + 45 * 86400).sort((x, y) => x[1].earn - y[1].earn);
+        box.innerHTML = soon.length ? `<div class="list">${soon.slice(0, 40).map(([a, p]) => `<a class="row arow" href="#/a/${encodeURIComponent(a.id)}"><span class="r-main"><span class="r-sym">${esc(a.s)}</span><span class="r-name">${esc(a.n)}</span></span><span class="r-right"><span class="r-price">${U.fmtDate(p.earn * 1000, { month: 'short', day: 'numeric' })}</span><span class="r-chg flat">${U.fmtDate(p.earn * 1000, { weekday: 'short' })}</span></span></a>`).join('')}</div>` : '<div class="empty small"><p>No earnings dates in the next 45 days in the current data.</p></div>';
       });
     }
   };
@@ -329,7 +337,7 @@
           <p><b>Sentiment:</b> CNN Business Fear &amp; Greed Index and the alternative.me Crypto Fear &amp; Greed Index.</p>
           <p><b>Exchange rates:</b> Yahoo Finance, with European Central Bank reference rates via Frankfurter as a fallback.</p>
           <p><b>Charts &amp; widgets:</b> native charts use the data above. The optional Pro chart, heatmaps, headlines, technical ratings and economic calendar are embedded from TradingView.</p>
-          <p><b>Research content:</b> art, collectibles, private markets, cash rates, the market brief and guides were written from the sources linked beside each figure, checked in the week of September 21-24, 2026.</p>
+          <p><b>Research content:</b> art, collectibles, private markets, cash rates, the market brief and guides were written from the sources linked beside each figure, checked between September 21 and October 3, 2026.</p>
         </div>`)}
         <p class="footer-note">Data is provided for information only and may be delayed or contain errors. Verify prices with your broker before trading.</p>`;
       el.onclick = (e) => { if (e.target.closest('[data-act="refresh"]')) { D.refreshNow().then(() => this.render(el)); UI.toast('Refreshing', 'refresh'); } };

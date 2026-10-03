@@ -52,11 +52,13 @@ Nothing in the app is invented. Every price and statistic shows its source and t
   fetches the most recent `market.js` committed by the data job from GitHub.
 * **Research** – [`js/content.js`](js/content.js) holds the dated brief, art market figures and
   auction records, collectibles, private-company valuations, cash rates, retirement limits and
-  guides, each with a link to its source (checked September 21–24, 2026).
+  guides, each with a link to its source (checked September 21 – October 3, 2026).
 
 Run the data job yourself from the **Actions** tab ("Invest market data" → Run workflow). Scheduled
 runs only happen on the repository's default branch. To stop the updates, disable that workflow.
-Optional: add a repository secret `COINGECKO_DEMO_KEY` to raise CoinGecko rate limits.
+Optional repository secrets: `COINGECKO_DEMO_KEY` raises CoinGecko rate limits, and a free
+`FRED_API_KEY` (fred.stlouisfed.org) unlocks the full set of FRED economic series; without it the job
+uses the official fallbacks, because FRED's public download endpoint blocks GitHub's runners.
 
 ## Files
 

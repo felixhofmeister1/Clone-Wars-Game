@@ -237,9 +237,12 @@ async function runNFTs() {
       const n = await cg(`/nfts/${a.chain}/contract/${a.contract}`);
       out[a.id] = shape(n);
     } catch (e) {
-      status.notes.push(`NFT ${a.n}: ${e.message}`);
+      try {
+        await sleep(CG_KEY ? 800 : 2200);
+        out[a.id] = shape(await cg('/nfts/' + a.id.slice(2)));
+      } catch (e2) { status.notes.push(`NFT ${a.n}: ${e.message}`); }
     }
-    await sleep(CG_KEY ? 1200 : 4000);
+    await sleep(CG_KEY ? 800 : 2200);
   }
   // Largest collections by market cap across all chains (Solana, Bitcoin, ...)
   try {
@@ -248,7 +251,7 @@ async function runNFTs() {
     out._top = top.map((t) => t.id);
     for (const t of top.slice(0, 24)) {
       if (have.has(t.id)) continue;
-      await sleep(CG_KEY ? 1200 : 4000);
+      await sleep(CG_KEY ? 800 : 2200);
       try { out['n:' + t.id] = shape(await cg('/nfts/' + t.id)); } catch (e) { /* skip */ }
     }
   } catch (e) { log('nft list failed:', e.message); }
@@ -267,7 +270,7 @@ async function runCryptoHistory(cryptoList) {
     if (cgFails >= 4) break;
     try {
       const y = await cg(`/coins/${a.cg}/market_chart?vs_currency=usd&days=365&interval=daily`);
-      await sleep(CG_KEY ? 1500 : 5000);
+      await sleep(CG_KEY ? 800 : 2200);
       const w = await cg(`/coins/${a.cg}/market_chart?vs_currency=usd&days=7`);
       await writeHistory(a.id, {
         asOf: NOW.toISOString(), src: 'CoinGecko',
@@ -277,7 +280,7 @@ async function runCryptoHistory(cryptoList) {
       });
       ok++;
     } catch (e) { status.notes.push(`history ${a.s}: ${e.message}`); }
-    await sleep(CG_KEY ? 1500 : 5000);
+    await sleep(CG_KEY ? 800 : 2200);
   }
   status.sources.cryptoHistory = { ok, total: Math.min(30, coins.length) };
 }
@@ -331,26 +334,33 @@ function shapeSeries(rows, freq, keep) {
 
 async function runFred() {
   const out = {};
+  const key = process.env.FRED_API_KEY || '';
   const from = new Date(NOW.getTime() - 13 * 365 * 86400000).toISOString().slice(0, 10);
-  let fails = 0;
-  await pool(FRED, 2, async ([id, freq, keep]) => {
-    if (fails >= 3) return;
-    try {
-      const start = keep === -1 ? '1947-01-01' : from;
-      const csv = await http(`https://fred.stlouisfed.org/graph/fredgraph.csv?id=${id}&cosd=${start}`, { type: 'text', retries: 1, timeout: 45000 });
-      const rows = csv.trim().split(/\r?\n/).slice(1).map((l) => l.split(',')).filter((r) => r[1] && r[1] !== '.' && isNum(Number(r[1]))).map((r) => [r[0], Number(r[1])]);
-      if (rows.length) { out[id] = shapeSeries(rows, freq, keep); fails = 0; }
-    } catch (e) {
-      fails++;
-      status.notes.push(`FRED ${id}: ${e.message}`);
+  const parseCsv = (csv) => csv.trim().split(/\r?\n/).slice(1).map((l) => l.split(',')).filter((r) => r[1] && r[1] !== '.' && isNum(Number(r[1]))).map((r) => [r[0], Number(r[1])]);
+  const fetchOne = async (id, keep) => {
+    const start = keep === -1 ? '1947-01-01' : from;
+    if (key) {
+      const j = await http(`https://api.stlouisfed.org/fred/series/observations?series_id=${id}&api_key=${key}&file_type=json&observation_start=${start}`, { retries: 2, timeout: 30000 });
+      return (j.observations || []).filter((o) => o.value !== '.' && isNum(Number(o.value))).map((o) => [o.date, Number(o.value)]);
     }
+    return parseCsv(await http(`https://fred.stlouisfed.org/graph/fredgraph.csv?id=${id}&cosd=${start}`, { type: 'text', retries: 0, timeout: 20000 }));
+  };
+  // FRED's public CSV endpoint often blocks cloud runners; probe once before trying every series.
+  if (!key) {
+    try { await fetchOne('UNRATE', 150); } catch (e) { status.notes.push('FRED unreachable without an API key (' + e.message + '); using official fallbacks'); log('fred: unreachable, skipping'); return out; }
+  }
+  await pool(FRED, 3, async ([id, freq, keep]) => {
+    try {
+      const rows = await fetchOne(id, keep);
+      if (rows.length) out[id] = shapeSeries(rows, freq, keep);
+    } catch (e) { status.notes.push(`FRED ${id}: ${e.message}`); }
   });
   log(`fred: ${Object.keys(out).length}/${FRED.length}`);
   return out;
 }
 
 // Official fallbacks used when FRED is unreachable. Each fills the FRED id it stands in for.
-async function fredFallbacks(have, treasuryRows) {
+async function fredFallbacks(have, treasuryRows, vixDaily) {
   const out = {};
   const missing = (id) => !have[id];
   // U.S. Treasury daily par yields -> DGS3MO, DGS2, DGS10, T10Y2Y
@@ -367,7 +377,8 @@ async function fredFallbacks(have, treasuryRows) {
   // New York Fed: effective fed funds rate with the FOMC target range
   if (missing('DFEDTARU') || missing('DFEDTARL')) {
     try {
-      const j = await http('https://markets.newyorkfed.org/api/rates/unsecured/effr/last/1600.json', { retries: 2 });
+      const startDate = new Date(NOW.getTime() - 6 * 365 * 86400000).toISOString().slice(0, 10);
+      const j = await http(`https://markets.newyorkfed.org/api/rates/unsecured/effr/search.json?startDate=${startDate}&endDate=${NOW.toISOString().slice(0, 10)}`, { retries: 2 });
       const rows = (j.refRates || []).filter((r) => isNum(r.targetRateTo)).map((r) => [r.effectiveDate, r.targetRateFrom, r.targetRateTo]).sort((a, b) => (a[0] < b[0] ? -1 : 1));
       if (rows.length) {
         out.DFEDTARU = shapeSeries(rows.map((r) => [r[0], r[2]]), 'd');
@@ -392,6 +403,18 @@ async function fredFallbacks(have, treasuryRows) {
       if (rows.length) out.MORTGAGE30US = shapeSeries(rows, 'w', 280);
     } catch (e) { status.notes.push('Freddie Mac PMMS: ' + e.message); }
   }
+  // University of Michigan consumer sentiment (published table)
+  if (missing('UMCSENT')) {
+    try {
+      const csv = await http('https://www.sca.isr.umich.edu/files/tbmics.csv', { type: 'text', retries: 2 });
+      const months = { january: '01', february: '02', march: '03', april: '04', may: '05', june: '06', july: '07', august: '08', september: '09', october: '10', november: '11', december: '12' };
+      const rows = csv.trim().split(/\r?\n/).slice(1).map((l) => l.split(',').map((x) => x.trim())).map(([m, y, v]) => [`${y}-${months[(m || '').toLowerCase()] || '00'}-01`, Number(v)])
+        .filter((r) => isNum(r[1]) && !r[0].includes('-00-')).sort((a, b) => (a[0] < b[0] ? -1 : 1));
+      if (rows.length) out.UMCSENT = shapeSeries(rows, 'm', 150);
+    } catch (e) { status.notes.push('UMich sentiment: ' + e.message); }
+  }
+  // VIX daily closes from the Yahoo history already fetched this run
+  if (missing('VIXCLS') && vixDaily && vixDaily.length) out.VIXCLS = shapeSeries(vixDaily, 'd');
   // Bureau of Labor Statistics public API (no key; 10 years per request)
   const bls = { CPIAUCSL: 'CUSR0000SA0', CPILFESL: 'CUSR0000SA0L1E', UNRATE: 'LNS14000000', PAYEMS: 'CES0000000001' };
   const want = Object.keys(bls).filter(missing);
@@ -506,7 +529,8 @@ if (doHistory || !prevMacro.fred) {
   const tr = await runTreasury(6);
   curve = tr.curve;
   fred = await runFred();
-  Object.assign(fred, await fredFallbacks(fred, tr.rows));
+  const vix = (Y.hist && Y.hist['^VIX'] && Y.hist['^VIX'].y || []).map(([d, v]) => [new Date(d * 86400000).toISOString().slice(0, 10), v]);
+  Object.assign(fred, await fredFallbacks(fred, tr.rows, vix));
   status.sources.fred = { ok: Object.keys(fred).length, total: FRED.length };
 }
 

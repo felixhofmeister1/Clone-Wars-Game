@@ -530,3 +530,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 14px; font-varian
 details summary { list-style: none; cursor: pointer; }
 details summary::-webkit-details-marker { display: none; }
 .bitem h3 .ic { width: 20px; height: 20px; vertical-align: -4px; margin-right: 4px; color: var(--label2); }
+input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+.riskline { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--label2); margin: 4px 0 6px; }
+.riskline b { color: var(--label); font-weight: 600; }

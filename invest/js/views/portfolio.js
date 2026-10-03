@@ -94,8 +94,8 @@
       <div class="hero">
         <div class="stat-k">Total value · ${esc(base())}</div>
         <div class="hero-total">${money(t.value)}</div>
-        <div class="hero-c"><span class="${U.dir(t.day)}">${hide() ? '' : U.signed(t.day, null, base())} (${U.pct(dayPct)})</span><span class="muted">today</span></div>
-        <div class="hero-c"><span class="${U.dir(t.gain)}">${hide() ? '' : U.signed(t.gain, null, base())} (${U.pct(gainPct)})</span><span class="muted">total gain</span></div>
+        <div class="hero-c"><span class="${U.dir(t.day)}">${hide() ? '' : U.signed(t.day, null, base(), 1)} (${U.pct(dayPct)})</span><span class="muted">today</span></div>
+        <div class="hero-c"><span class="${U.dir(t.gain)}">${hide() ? '' : U.signed(t.gain, null, base(), 1)} (${U.pct(gainPct)})</span><span class="muted">total gain</span></div>
         ${t.missing ? `<div class="hero-t">${t.missing} holding${t.missing > 1 ? 's' : ''} without a current price are excluded.</div>` : ''}
       </div>
       <div class="btn-row"><button class="btn primary" data-act="add">${U.icon('plus')} Add</button><button class="btn secondary" data-act="custom">Other asset</button><button class="btn secondary" data-act="io">${U.icon('download')} Export</button></div>
@@ -166,8 +166,8 @@
       <div class="hero">
         <div class="stat-k">Paper account value · USD</div>
         <div class="hero-total">${U.money(total)}</div>
-        <div class="hero-c"><span class="${U.dir(ret)}">${U.signed(ret, null, 'USD')} (${U.pct((ret / P.start) * 100)})</span><span class="muted">since ${U.dateLong(P.created)}</span></div>
-        <div class="hero-c"><span class="${U.dir(day)}">${U.signed(day, null, 'USD')}</span><span class="muted">today</span></div>
+        <div class="hero-c"><span class="${U.dir(ret)}">${U.signed(ret, null, 'USD', 1)} (${U.pct((ret / P.start) * 100)})</span><span class="muted">since ${U.dateLong(P.created)}</span></div>
+        <div class="hero-c"><span class="${U.dir(day)}">${U.signed(day, null, 'USD', 1)}</span><span class="muted">today</span></div>
       </div>
       <div class="tiles">${UI.stat('Buying power', U.money(P.cash))}${UI.stat('Invested', U.money(posVal))}</div>
       <div class="btn-row"><button class="btn primary" data-act="ptrade">${U.icon('swap')} Trade</button><button class="btn secondary" data-act="preset">${U.icon('refresh')} Reset</button></div>

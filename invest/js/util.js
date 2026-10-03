@@ -60,9 +60,10 @@
   U.int = (x) => (isNum(x) ? fmtN(Math.round(x), 0, 0) : '—');
   U.pct = (x, digits = 2, sign = true) => (isNum(x) ? (sign && x > 0 ? '+' : x < 0 ? '−' : '') + fmtN(Math.abs(x), digits, digits) + '%' : '—');
   U.pctPlain = (x, digits = 2) => (isNum(x) ? fmtN(x, digits, digits) + '%' : '—');
-  U.signed = (x, cls, cur) => {
+  // Signed change. `ref` (usually the price) decides the decimals, so a $0.61 move on a $700 stock reads "−$0.61".
+  U.signed = (x, cls, cur, ref) => {
     if (!isNum(x)) return '—';
-    const d = cls === 'rate' ? 2 : U.priceDigits(x, cls);
+    const d = cls === 'rate' ? 2 : U.priceDigits(isNum(ref) && ref !== 0 ? ref : x, cls);
     return (x > 0 ? '+' : x < 0 ? '−' : '') + (cls === 'rate' || cls === 'index' || cls === 'fx' ? '' : U.curSym(cur)) + fmtN(Math.abs(x), d, d);
   };
   U.dir = (x) => (!isNum(x) || x === 0 ? 'flat' : x > 0 ? 'up' : 'down');
